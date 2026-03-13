@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中药材全国追踪</title>
+  <style>
+    :root {
+      --bg: #06111e;
+      --bg-soft: #0b1c30;
+      --panel: rgba(9, 25, 44, 0.9);
+      --panel-strong: rgba(10, 29, 51, 0.96);
+      --line: rgba(88, 214, 180, 0.14);
+      --line-strong: rgba(88, 214, 180, 0.28);
+      --text: #eef7f5;
+      --muted: #92aaa2;
+      --accent: #58d6b4;
+      --accent-deep: #1cb593;
+      --accent-2: #ffc857;
+      --accent-3: #7bb0ff;
+      --danger: #ff8c8c;
+      --danger-deep: #ff5f5f;
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(88, 214, 180, 0.16), transparent 24%),
+        radial-gradient(circle at 85% 12%, rgba(255, 200, 87, 0.1), transparent 20%),
+        radial-gradient(circle at 52% 88%, rgba(123, 176, 255, 0.14), transparent 28%),
+        linear-gradient(180deg, #05101b 0%, #071524 28%, #091728 62%, #050c15 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: #062019;
+      font-size: 20px;
+      background: linear-gradient(135deg, var(--accent), #8fead2);
+      box-shadow: 0 0 24px rgba(88, 214, 180, 0.28);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-pill {
+      padding: 10px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--accent);
+      background: rgba(88, 214, 180, 0.08);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      padding: 22px 0 24px;
+      align-items: stretch;
+    }
+
+    .hero-main,
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-main {
+      padding: 34px 34px 30px;
+      min-height: 360px;
+    }
+
+    .hero-main::before,
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(88, 214, 180, 0.4), transparent);
+      opacity: 0.55;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--accent);
+      background: rgba(88, 214, 180, 0.07);
+      font-size: 14px;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(88, 214, 180, 0.65);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(88, 214, 180, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(88, 214, 180, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(88, 214, 180, 0); }
+    }
+
+    .hero-title {
+      margin: 22px 0 16px;
+      max-width: 740px;
+      font-size: clamp(38px, 7vw, 78px);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-lead {
+      max-width: 820px;
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 148px;
+      padding: 13px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line-strong);
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.02);
+      font-weight: 600;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(88, 214, 180, 0.5);
+    }
+
+    .button.primary {
+      color: #062019;
+      background: linear-gradient(135deg, var(--accent), #98f0d9);
+      border-color: transparent;
+    }
+
+    .source-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .source-chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(123, 176, 255, 0.18);
+      background: rgba(123, 176, 255, 0.08);
+      color: #bfd6ff;
+      font-size: 13px;
+    }
+
+    .hero-side {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background:
+        radial-gradient(circle at 80% 18%, rgba(123, 176, 255, 0.16), transparent 24%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+        var(--panel-strong);
+    }
+
+    .side-label {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .side-big {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--accent-2);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mini-card .mini-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .mini-card .mini-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .side-note {
+      margin: 0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 200, 87, 0.08);
+      color: #f6dc9c;
+      line-height: 1.8;
+      font-size: 14px;
+      border: 1px solid rgba(255, 200, 87, 0.16);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      margin-top: 10px;
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-sub {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .green {
+      color: var(--accent);
+    }
+
+    .gold {
+      color: var(--accent-2);
+    }
+
+    .blue {
+      color: var(--accent-3);
+    }
+
+    .red {
+      color: var(--danger);
+    }
+
+    .layout-two {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 26px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .panel-sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .trend-panel {
+      min-height: 420px;
+    }
+
+    .chart-area {
+      padding: 22px 24px 26px;
+    }
+
+    .chart-frame {
+      padding: 18px 18px 10px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(123, 176, 255, 0.08), transparent 72%),
+        rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(123, 176, 255, 0.14);
+    }
+
+    .chart-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .axis-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .signal-panel {
+      min-height: 420px;
+    }
+
+    .signal-list {
+      margin: 0;
+      padding: 14px 22px 24px;
+      list-style: none;
+    }
+
+    .signal-list li {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .signal-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .signal-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .signal-name {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .signal-tag {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #062019;
+      background: var(--accent);
+    }
+
+    .signal-desc {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .heat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .heat-list {
+      display: grid;
+      gap: 14px;
+      padding: 20px 22px 24px;
+    }
+
+    .heat-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .heat-index {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .heat-copy {
+      min-width: 0;
+    }
+
+    .heat-name {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .heat-desc {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .heat-metric {
+      min-width: 70px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--accent-2);
+      font-size: 15px;
+    }
+
+    .bar {
+      grid-column: 2 / span 2;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      margin-top: -2px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .origin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 20px 22px 24px;
+    }
+
+    .origin-card {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(123, 176, 255, 0.12);
+    }
+
+    .origin-name {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .origin-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .origin-hot {
+      margin-top: 14px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .board-list {
+      margin: 0;
+      padding: 14px 22px 24px;
+      list-style: none;
+    }
+
+    .board-list li {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .board-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .board-name {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .board-desc {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .board-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .table-panel {
+      margin-bottom: 18px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      padding: 8px 18px 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th,
+    td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    .table-strong {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .chip {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(123, 176, 255, 0.1);
+      color: #bfd6ff;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      padding: 20px 22px 24px;
+    }
+
+    .module-card {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .module-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .module-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .module-priority {
+      margin-top: 14px;
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #062019;
+      background: var(--accent);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 22px 6px 0;
+      color: var(--muted);
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 1160px) {
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .layout-two,
+      .heat-grid,
+      .board-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .origin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main,
+      .hero-side {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100%, calc(100% - 20px));
+      }
+
+      .topbar {
+        padding-top: 10px;
+      }
+
+      .hero-title {
+        font-size: 42px;
+      }
+
+      .hero-lead {
+        font-size: 16px;
+      }
+
+      .stats,
+      .module-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head {
+        padding: 20px 18px 16px;
+      }
+
+      .chart-area,
+      .heat-list,
+      .origin-grid,
+      .module-grid,
+      .table-wrap,
+      .board-list,
+      .signal-list {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .panel-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">药</div>
+        <div>
+          <h1>中药材全国追踪</h1>
+          <p>价格、市场、产区与趋势的中药材数据看板</p>
+        </div>
+      </div>
+      <div class="status-pill">演示数据版 · 可继续接入真实数据</div>
+    </header>
+
+    <section class="hero">
+      <article class="hero-main">
+        <div class="eyebrow">
+          <span class="pulse"></span>
+          中药材行情首页 Demo
+        </div>
+        <h2 class="hero-title">把价格、市场、产区和趋势，放到一张图里。</h2>
+        <p class="hero-lead">
+          这个版本已经不是纯占位页，而是一个可以继续往下做的首页原型。
+          它先用演示数据跑通结构，后面你只要把真实数据接进来，
+          就能逐步变成一个真正的中药材全国行情站。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#quotes">查看报价样例</a>
+          <a class="button" href="#modules">查看功能结构</a>
+        </div>
+        <div class="source-strip">
+          <span class="source-chip">来源规划：药通网</span>
+          <span class="source-chip">来源规划：中药材天地网</span>
+          <span class="source-chip">人工核验：首批重点品种</span>
+        </div>
+      </article>
+
+      <aside class="hero-side panel">
+        <div>
+          <div class="side-label">今日状态</div>
+          <div class="side-big">价格监测已跑通</div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <div class="mini-label">最新快照</div>
+            <div class="mini-value gold">03-13</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">当前阶段</div>
+            <div class="mini-value blue">MVP</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">首批市场</div>
+            <div class="mini-value">4</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">首批品种</div>
+            <div class="mini-value green">12</div>
+          </div>
+        </div>
+        <p class="side-note">
+          现在最适合继续做的方向，是先把“涨跌榜、市场热度、品种报价表”接上真实数据。
+          地图和详情页可以放在第二步。
+        </p>
+      </aside>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="layout-two">
+      <article class="panel trend-panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">七日行情指数</h2>
+            <p class="panel-sub">用首页趋势模块承接“整体热度、报价活跃度、价格波动”的第一视觉焦点。</p>
+          </div>
+          <div class="chip">首页主图</div>
+        </div>
+        <div class="chart-area">
+          <div class="chart-frame">
+            <div class="chart-meta">
+              <span>指数越高，表示报价活跃度和波动热度越高</span>
+              <span>当前峰值：86</span>
+            </div>
+            <svg id="trendChart" viewBox="0 0 760 260" aria-label="七日行情指数图"></svg>
+            <div class="axis-row" id="axisRow"></div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="panel signal-panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">今日信号</h2>
+            <p class="panel-sub">把最值得注意的品种和事件，压缩到首页右栏，方便第一眼判断当天行情。</p>
+          </div>
+          <div class="chip">P1</div>
+        </div>
+        <ul class="signal-list" id="signalList"></ul>
+      </aside>
+    </section>
+
+    <section class="heat-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">市场热度</h2>
+            <p class="panel-sub">先把四大市场做起来，后续再扩到更多区域市场与地方集散地。</p>
+          </div>
+          <div class="chip">重点市场</div>
+        </div>
+        <div class="heat-list" id="marketHeat"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">产区热区</h2>
+            <p class="panel-sub">第二个高价值模块是产区，尤其适合展示省份、县域和道地药材的热度。</p>
+          </div>
+          <div class="chip">重点产区</div>
+        </div>
+        <div class="origin-grid" id="originHeat"></div>
+      </article>
+    </section>
+
+    <section class="board-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">今日涨幅榜</h2>
+            <p class="panel-sub">这是用户最容易理解，也最容易传播的首页模块。</p>
+          </div>
+          <div class="chip">涨价</div>
+        </div>
+        <ul class="board-list" id="gainerList"></ul>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">今日跌幅榜</h2>
+            <p class="panel-sub">涨跌榜一起出现，页面会更完整，也更像真正的行情产品。</p>
+          </div>
+          <div class="chip">跌价</div>
+        </div>
+        <ul class="board-list" id="loserList"></ul>
+      </article>
+    </section>
+
+    <section class="panel table-panel" id="quotes">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">重点报价样例</h2>
+          <p class="panel-sub">接下来最值得做的，就是把这张报价表连到真实数据源上。</p>
+        </div>
+        <div class="chip">表格入口</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>品种</th>
+              <th>规格</th>
+              <th>市场</th>
+              <th>今日价</th>
+              <th>昨日价</th>
+              <th>涨跌幅</th>
+              <th>来源</th>
+            </tr>
+          </thead>
+          <tbody id="quoteRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="modules">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">下一步功能结构</h2>
+          <p class="panel-sub">你现在已经有一个能打开的网站了，下一阶段就是把首页拆成真正的业务模块。</p>
+        </div>
+        <div class="chip">开发顺序</div>
+      </div>
+      <div class="module-grid">
+        <div class="module-card">
+          <h3>报价接入</h3>
+          <p>先让首页表格和涨跌榜吃到真实数据，这是最关键的一步。</p>
+          <span class="module-priority">P1</span>
+        </div>
+        <div class="module-card">
+          <h3>市场页</h3>
+          <p>按亳州、安国、玉林、成都拆出市场页面，看活跃品种与主流报价。</p>
+          <span class="module-priority">P1</span>
+        </div>
+        <div class="module-card">
+          <h3>品种详情页</h3>
+          <p>某个药材的历史走势、规格差异、产区和近期快讯。</p>
+          <span class="module-priority">P2</span>
+        </div>
+        <div class="module-card">
+          <h3>产区地图</h3>
+          <p>把产区热区和道地产区做成地图，后续会成为最有辨识度的模块。</p>
+          <span class="module-priority">P2</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>当前地址：<strong>yaocaiquanguo.pages.dev</strong></div>
+      <div>当前页面为演示数据版，我已经把结构搭好了，下一步可以继续把真实数据接进来。</div>
+    </footer>
+  </main>
+
+  <script>
+    const dashboard = {
+      stats: [
+        { label: "监测报价", value: "126", sub: "今日采样条数", tone: "green" },
+        { label: "上涨品种", value: "18", sub: "日内上调", tone: "gold" },
+        { label: "下跌品种", value: "7", sub: "日内回落", tone: "red" },
+        { label: "重点市场", value: "4", sub: "亳州 / 安国 / 玉林 / 成都", tone: "blue" },
+        { label: "产区覆盖", value: "12", sub: "甘肃 / 云南 / 广西等", tone: "green" }
+      ],
+      trend: {
+        labels: ["03-07", "03-08", "03-09", "03-10", "03-11", "03-12", "03-13"],
+        values: [62, 66, 71, 69, 78, 81, 86]
+      },
+      signals: [
+        {
+          name: "当归走强",
+          tag: "热度上升",
+          desc: "甘肃统货报价继续抬升，亳州市场询价频次明显增加。"
+        },
+        {
+          name: "白芷平稳",
+          tag: "波动较小",
+          desc: "主流市场报价区间变化不大，短期更适合观察成交量。"
+        },
+        {
+          name: "黄芪关注度高",
+          tag: "产区联动",
+          desc: "产区与市场同步升温，适合作为首页重点跟踪品种。"
+        }
+      ],
+      markets: [
+        { name: "亳州市场", desc: "重点监测品种 28 个", score: 92 },
+        { name: "安国市场", desc: "日内调价品种 14 个", score: 84 },
+        { name: "玉林市场", desc: "南方品种活跃度较高", score: 78 },
+        { name: "成都市场", desc: "根茎类品种波动偏明显", score: 73 }
+      ],
+      origins: [
+        { name: "甘肃岷县", meta: "当归、黄芪、党参核心产区", hot: "热度指数 91" },
+        { name: "云南文山", meta: "三七关注度高，价格讨论活跃", hot: "热度指数 86" },
+        { name: "广西玉林周边", meta: "交易流通热度高，南货活跃", hot: "热度指数 79" },
+        { name: "安徽亳州周边", meta: "市场联动强，适合做热区展示", hot: "热度指数 77" }
+      ],
+      gainers: [
+        { name: "当归", desc: "甘肃统货 · 亳州市场", value: "+6.8%" },
+        { name: "黄芪", desc: "条芪 · 安国市场", value: "+4.9%" },
+        { name: "党参", desc: "中条 · 成都市场", value: "+3.6%" },
+        { name: "三七", desc: "120头 · 玉林市场", value: "+3.2%" }
+      ],
+      losers: [
+        { name: "白芷", desc: "统货 · 亳州市场", value: "-2.6%" },
+        { name: "桔梗", desc: "饮片料 · 安国市场", value: "-1.9%" },
+        { name: "苍术", desc: "统货 · 玉林市场", value: "-1.4%" },
+        { name: "山药", desc: "怀山药片 · 成都市场", value: "-1.1%" }
+      ],
+      quotes: [
+        { herb: "当归", spec: "甘肃统货", market: "亳州", today: "62 元/kg", yesterday: "58 元/kg", change: "+6.8%", source: "人工整理演示" },
+        { herb: "黄芪", spec: "条芪", market: "安国", today: "39 元/kg", yesterday: "37.2 元/kg", change: "+4.9%", source: "人工整理演示" },
+        { herb: "党参", spec: "中条", market: "成都", today: "91 元/kg", yesterday: "87.8 元/kg", change: "+3.6%", source: "人工整理演示" },
+        { herb: "三七", spec: "120头", market: "玉林", today: "134 元/kg", yesterday: "129.8 元/kg", change: "+3.2%", source: "人工整理演示" },
+        { herb: "白芷", spec: "统货", market: "亳州", today: "25 元/kg", yesterday: "25.7 元/kg", change: "-2.6%", source: "人工整理演示" },
+        { herb: "桔梗", spec: "饮片料", market: "安国", today: "36 元/kg", yesterday: "36.7 元/kg", change: "-1.9%", source: "人工整理演示" }
+      ]
+    };
+
+    function renderStats() {
+      const root = document.getElementById("stats");
+      root.innerHTML = dashboard.stats.map((item) => `
+        <article class="stat">
+          <div class="stat-label">${item.label}</div>
+          <div class="stat-value ${item.tone}">${item.value}</div>
+          <div class="stat-sub">${item.sub}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderTrend() {
+      const svg = document.getElementById("trendChart");
+      const axis = document.getElementById("axisRow");
+      const labels = dashboard.trend.labels;
+      const values = dashboard.trend.values;
+      const width = 760;
+      const height = 260;
+      const paddingX = 28;
+      const top = 18;
+      const bottom = 210;
+      const min = Math.min(...values) - 5;
+      const max = Math.max(...values) + 4;
+      const stepX = (width - paddingX * 2) / (values.length - 1);
+
+      const points = values.map((value, index) => {
+        const x = paddingX + index * stepX;
+        const y = bottom - ((value - min) / (max - min)) * (bottom - top);
+        return { x, y, value };
+      });
+
+      const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+      const areaPath = `${linePath} L ${points[points.length - 1].x} ${bottom} L ${points[0].x} ${bottom} Z`;
+
+      const grid = [0, 1, 2, 3].map((row) => {
+        const y = top + ((bottom - top) / 3) * row;
+        return `<line x1="${paddingX}" y1="${y}" x2="${width - paddingX}" y2="${y}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 8" />`;
+      }).join("");
+
+      const dots = points.map((point) => `
+        <circle cx="${point.x}" cy="${point.y}" r="5" fill="#58d6b4"></circle>
+        <circle cx="${point.x}" cy="${point.y}" r="12" fill="rgba(88,214,180,0.14)"></circle>
+      `).join("");
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(88,214,180,0.32)" />
+            <stop offset="100%" stop-color="rgba(88,214,180,0.02)" />
+          </linearGradient>
+          <linearGradient id="lineStroke" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#58d6b4" />
+            <stop offset="100%" stop-color="#ffc857" />
+          </linearGradient>
+        </defs>
+        ${grid}
+        <path d="${areaPath}" fill="url(#areaFill)"></path>
+        <path d="${linePath}" fill="none" stroke="url(#lineStroke)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+        ${dots}
+      `;
+
+      axis.innerHTML = labels.map((label) => `<span>${label}</span>`).join("");
+    }
+
+    function renderSignals() {
+      const root = document.getElementById("signalList");
+      root.innerHTML = dashboard.signals.map((item) => `
+        <li>
+          <div class="signal-top">
+            <div class="signal-name">${item.name}</div>
+            <span class="signal-tag">${item.tag}</span>
+          </div>
+          <div class="signal-desc">${item.desc}</div>
+        </li>
+      `).join("");
+    }
+
+    function renderMarkets() {
+      const root = document.getElementById("marketHeat");
+      root.innerHTML = dashboard.markets.map((item, index) => `
+        <div class="heat-row">
+          <div class="heat-index">${index + 1}</div>
+          <div class="heat-copy">
+            <div class="heat-name">${item.name}</div>
+            <div class="heat-desc">${item.desc}</div>
+          </div>
+          <div class="heat-metric">${item.score}</div>
+          <div class="bar">
+            <div class="bar-fill" style="width:${item.score}%"></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderOrigins() {
+      const root = document.getElementById("originHeat");
+      root.innerHTML = dashboard.origins.map((item) => `
+        <article class="origin-card">
+          <div class="origin-name">${item.name}</div>
+          <div class="origin-meta">${item.meta}</div>
+          <div class="origin-hot">${item.hot}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderBoard(listId, items, tone) {
+      const root = document.getElementById(listId);
+      root.innerHTML = items.map((item) => `
+        <li>
+          <div>
+            <div class="board-name">${item.name}</div>
+            <div class="board-desc">${item.desc}</div>
+          </div>
+          <div class="board-value ${tone}">${item.value}</div>
+        </li>
+      `).join("");
+    }
+
+    function renderQuotes() {
+      const root = document.getElementById("quoteRows");
+      root.innerHTML = dashboard.quotes.map((item) => `
+        <tr>
+          <td class="table-strong">${item.herb}</td>
+          <td>${item.spec}</td>
+          <td>${item.market}</td>
+          <td>${item.today}</td>
+          <td>${item.yesterday}</td>
+          <td class="${item.change.startsWith('-') ? 'red' : 'green'}">${item.change}</td>
+          <td>${item.source}</td>
+        </tr>
+      `).join("");
+    }
+
+    renderStats();
+    renderTrend();
+    renderSignals();
+    renderMarkets();
+    renderOrigins();
+    renderBoard("gainerList", dashboard.gainers, "green");
+    renderBoard("loserList", dashboard.losers, "red");
+    renderQuotes();
+  </script>
+</body>
+</html>
