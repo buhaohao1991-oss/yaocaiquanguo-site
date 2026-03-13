@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-03-13 23:36:46",
+    "generated_at": "2026-03-14 00:00:47",
     "source_file": "中药材全国追踪_近3日整理_2026-03-13.xlsx",
     "latest_date": "2026-03-13",
     "available_dates": [
@@ -15,310 +15,2161 @@
       "安国",
       "玉林"
     ],
-    "focus_market_count": 10,
     "source_count": 2,
-    "note": "当前这批数据以产地行情为主，四大市场已覆盖 3/4，行业热点 0 条，后面建议把政策和新闻单独补进来。"
+    "herb_count": 96,
+    "note": "当前已整理 181 条产地行情、10 条四大市场记录，行业热点 0 条。"
   },
   "status": "真实数据版 · 最新整理于 2026-03-13",
   "hero": {
-    "eyebrow": "中药材产地与市场情报首页",
-    "title": "先把产地行情、四大市场和行业热点，放到一个首页里。",
-    "lead": "这版不再按股市的涨跌榜逻辑来做，而是围绕你现在真正能拿到的数据：产地信息、四大市场信息，以及后续要补的政策与新闻热点。",
+    "eyebrow": "只做三块：产地行情 / 四大市场 / 行业热点",
+    "title": "先把最有价值的信息做深，再做宽。",
+    "lead": "首页不再铺无关模块，当前只保留三个主板块。产地行情按时间顺序完整收录，四大市场按市场分组维护，行业热点单独沉淀政策和新闻。",
     "source_strip": [
-      "来源网站：2 个",
-      "覆盖日期：3 天",
-      "当前数据源：中药材全国追踪_近3日整理_2026-03-13.xlsx"
-    ],
-    "side_big": "产地情报已接入",
-    "side_note": "当前这批数据以产地行情为主，四大市场已覆盖 3/4，行业热点 0 条，后面建议把政策和新闻单独补进来。"
+      "产地行情：181 条",
+      "四大市场：10 条",
+      "行业热点：0 条",
+      "来源网站：2 个"
+    ]
   },
-  "side_metrics": [
-    {
-      "label": "最新日期",
-      "value": "03-13",
-      "tone": "gold"
-    },
-    {
-      "label": "覆盖天数",
-      "value": "3",
-      "tone": "blue"
-    },
-    {
-      "label": "市场覆盖",
-      "value": "3/4",
-      "tone": ""
-    },
-    {
-      "label": "热点条数",
-      "value": "0",
-      "tone": "red"
-    }
-  ],
-  "stats": [
-    {
-      "label": "近三日记录",
-      "value": "200",
-      "sub": "当前已整理的数据条数",
-      "tone": "green"
-    },
-    {
-      "label": "覆盖品种",
-      "value": "96",
-      "sub": "来自产地与市场的药材品种",
-      "tone": "gold"
-    },
-    {
-      "label": "产地行情",
-      "value": "181",
-      "sub": "当前这批数据以产地更新为主",
-      "tone": "green"
-    },
-    {
-      "label": "四大市场",
-      "value": "10",
-      "sub": "已覆盖 3/4，其他市场 9 条",
-      "tone": "blue"
-    },
-    {
-      "label": "行业热点",
-      "value": "0",
-      "sub": "政策与新闻需要单独持续录入",
-      "tone": "red"
-    }
-  ],
-  "trend": {
-    "labels": [
-      "03-11",
-      "03-12",
-      "03-13"
+  "origin": {
+    "total": 181,
+    "latest_date": "2026-03-13",
+    "items": [
+      {
+        "date": "2026-03-13",
+        "herb": "黄连",
+        "spec": "鸡爪连价格",
+        "location": "湖北利川",
+        "price": "335 元/kg",
+        "tag": "关注",
+        "summary": "3月13日湖北省利川市汪营镇黄连市场交易",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557190"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "黄连",
+        "spec": "鸡爪连价格",
+        "location": "四川什邡",
+        "price": "310 元/kg",
+        "tag": "走快",
+        "summary": "四川省什邡市冰川镇黄连走动尚可",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557215"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "马兜铃",
+        "spec": "统货",
+        "location": "山东日照",
+        "price": "12 元/kg",
+        "tag": "走快",
+        "summary": "山东省日照市莒县棋山镇马兜铃按需走销",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557192"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "金银花",
+        "spec": "青花不包检头茬货",
+        "location": "河北邢台巨鹿县",
+        "price": "103 元/kg",
+        "tag": "走快",
+        "summary": "河北邢台巨鹿县金银花走动良好",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557236"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "金樱子",
+        "spec": "中后期货",
+        "location": "湖南永州零陵区邮亭圩",
+        "price": "13.5 元/kg",
+        "tag": "平稳",
+        "summary": "湖南永州零陵区邮亭圩金樱子价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557202"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "金樱子",
+        "spec": "中前期货要价",
+        "location": "江西黎川",
+        "price": "8.5 元/kg",
+        "tag": "平稳",
+        "summary": "江西省抚州市黎川县金樱子价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557214"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "连翘",
+        "spec": "挥发油够的",
+        "location": "河南洛阳市栾川县",
+        "price": "43 元/kg",
+        "tag": "关注",
+        "summary": "河南洛阳市栾川县连翘多商寻货",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557206"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "连翘",
+        "spec": "挥发油合格货",
+        "location": "山西陵川",
+        "price": "43 元/kg",
+        "tag": "关注",
+        "summary": "山西晋城市陵川县连翘走动顺畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557216"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "赤芍",
+        "spec": "去头统货价格",
+        "location": "内蒙古呼伦贝尔塔温敖宝镇",
+        "price": "28 元/kg",
+        "tag": "关注",
+        "summary": "内蒙古呼伦贝尔塔温敖宝镇赤芍开始少量交易",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557235"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "蝉蜕",
+        "spec": "山地货",
+        "location": "山西陵川",
+        "price": "630 元/kg",
+        "tag": "平稳",
+        "summary": "山西晋城市陵川县蝉蜕行情稳中有升",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557207"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "蔓荆子",
+        "spec": "原包货价格维持",
+        "location": "云南德宏州瑞丽",
+        "price": "17 元/kg",
+        "tag": "平稳",
+        "summary": "云南省德宏州瑞丽市口岸蔓荆子行情平稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557189"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "菊花",
+        "spec": "北京菊药厂货",
+        "location": "河北邢台巨鹿县",
+        "price": "21 元/kg",
+        "tag": "关注",
+        "summary": "河北邢台巨鹿县菊花商家购货力度不大",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557237"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "苦杏仁",
+        "spec": "统货价格",
+        "location": "甘肃平凉",
+        "price": "18 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省平凉市华亭市苦杏仁交易不畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557238"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "苍术",
+        "spec": "全干好货价格",
+        "location": "内蒙古呼伦贝尔塔温敖宝镇",
+        "price": "30 元/kg",
+        "tag": "关注",
+        "summary": "内蒙古呼伦贝尔塔温敖宝镇苍术寻货商家不少",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557234"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "艾叶",
+        "spec": "统货",
+        "location": "陕西镇坪",
+        "price": "7 元/kg",
+        "tag": "平稳",
+        "summary": "陕西省安康市镇坪县钟宝镇艾叶价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557188"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "砂仁",
+        "spec": "圆果价格",
+        "location": "云南德宏州瑞丽",
+        "price": "28 元/kg",
+        "tag": "关注",
+        "summary": "云南省德宏州瑞丽市口岸砂仁行情波动不大",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557184"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "石菖蒲",
+        "spec": "一般统货",
+        "location": "重庆丰都",
+        "price": "52 元/kg",
+        "tag": "关注",
+        "summary": "重庆市丰都县三元镇石菖蒲走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557213"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "石榴皮",
+        "spec": "手选饮片货",
+        "location": "山东枣庄",
+        "price": "6 元/kg",
+        "tag": "走快",
+        "summary": "山东省枣庄市阴平镇石榴皮按需走销",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557223"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "益母草",
+        "spec": "饮片货",
+        "location": "河南桐柏",
+        "price": "4 元/kg",
+        "tag": "平稳",
+        "summary": "河南省南阳市桐柏县益母草正常走动",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557217"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "皂角刺",
+        "spec": "新统货",
+        "location": "山东枣庄",
+        "price": "20 元/kg",
+        "tag": "关注",
+        "summary": "山东省枣庄市阴平镇皂角刺少商寻货",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557219"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "白花蛇舌草",
+        "spec": "陈一年选个",
+        "location": "河南驻马店确山",
+        "price": "5.5 元/kg",
+        "tag": "关注",
+        "summary": "河南省驻马店确山县竹沟镇白花蛇舌草走动放缓",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557203"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "生地",
+        "spec": "上扬，现统装货",
+        "location": "山西运城河津",
+        "price": "11 元/kg",
+        "tag": "上扬",
+        "summary": "山西省运城地区河津市生地走畅价升",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557218"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "珠子参",
+        "spec": "统货",
+        "location": "陕西周至",
+        "price": "550 元/kg",
+        "tag": "关注",
+        "summary": "陕西省西安市周至县珠子参行情反弹",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557231"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "玄参",
+        "spec": "鲜货收购价",
+        "location": "河南孟州",
+        "price": "1.3 元/kg",
+        "tag": "产新",
+        "summary": "河南省孟州市南庄镇玄参产新基本结束",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557195"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "猪苓",
+        "spec": "小统货",
+        "location": "陕西周至",
+        "price": "105 元/kg",
+        "tag": "关注",
+        "summary": "陕西省西安市周至县猪苓走动顺畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557232"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "淫羊藿",
+        "spec": "野生小圆叶统货",
+        "location": "陕西宝鸡",
+        "price": "110 元/kg",
+        "tag": "关注",
+        "summary": "陕西省宝鸡市眉县横渠镇淫羊藿行情小幅上调",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557191"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "水半夏",
+        "spec": "统装货",
+        "location": "江西信丰",
+        "price": "9.5 元/kg",
+        "tag": "关注",
+        "summary": "江西省赣州市信丰县水半夏走畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557204"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "桂皮",
+        "spec": "鲜生皮农户采购价",
+        "location": "广西防城港市",
+        "price": "6 元/kg",
+        "tag": "产新",
+        "summary": "广西省防城港市肉桂产新",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557209"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "柴胡",
+        "spec": "硬切货价格",
+        "location": "甘肃正宁",
+        "price": "80 元/kg",
+        "tag": "坚挺",
+        "summary": "甘肃省庆阳市正宁县柴胡行情坚挺",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557186"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "枳实",
+        "spec": "上扬，现1.0-2.0的对开货",
+        "location": "江西黎川",
+        "price": "21 元/kg",
+        "tag": "上扬",
+        "summary": "江西省抚州市黎川县枳实好货不多",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557205"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "杜仲",
+        "spec": "统皮",
+        "location": "陕西周至",
+        "price": "12 元/kg",
+        "tag": "平稳",
+        "summary": "陕西省西安市周至县杜仲行情平稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557225"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "木姜子",
+        "spec": "统装货交易价",
+        "location": "湖南永州零陵区邮亭圩",
+        "price": "16 元/kg",
+        "tag": "关注",
+        "summary": "湖南永州零陵区邮亭圩木姜子走动依然不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557200"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "广枣",
+        "spec": "明显变化，现统装货交易价",
+        "location": "湖南永州零陵区邮亭圩",
+        "price": "5 元/kg",
+        "tag": "平稳",
+        "summary": "湖南永州零陵区邮亭圩广枣价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557199"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "山茱萸",
+        "spec": "药厂货",
+        "location": "河南洛阳市栾川县",
+        "price": "40 元/kg",
+        "tag": "下滑",
+        "summary": "河南洛阳市栾川县山茱萸行情略有下调",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557210"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "山桃仁",
+        "spec": "统货售价",
+        "location": "甘肃平凉",
+        "price": "35 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省平凉市华亭市山桃仁寻货商家不多",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557239"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "山东省日照市莒县棋山镇丹",
+        "spec": "药厂货",
+        "location": "山东日照",
+        "price": "10 元/kg",
+        "tag": "关注",
+        "summary": "山东省日照市莒县棋山镇丹参价格暂稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557193"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "大黄",
+        "spec": "手工切片价格",
+        "location": "甘肃正宁",
+        "price": "4.6 元/kg",
+        "tag": "下滑",
+        "summary": "甘肃省庆阳市正宁县大黄价格小幅下滑",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557233"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "地丁",
+        "spec": "统货售价",
+        "location": "山东日照",
+        "price": "5 元/kg",
+        "tag": "关注",
+        "summary": "山东省日照市莒县棋山镇地丁走动一般",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557208"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "土鳖虫",
+        "spec": "小土鳖虫",
+        "location": "江苏丹阳",
+        "price": "28 元/kg",
+        "tag": "关注",
+        "summary": "江苏省丹阳市皇塘镇土鳖虫按需走动",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557198"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "土茯苓",
+        "spec": "统货价格",
+        "location": "四川筠连",
+        "price": "25 元/kg",
+        "tag": "关注",
+        "summary": "四川省筠连县塘坝乡土茯苓货源零星交易为主",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557196"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "半枝莲",
+        "spec": "头茬统个",
+        "location": "河南驻马店确山",
+        "price": "5.6 元/kg",
+        "tag": "关注",
+        "summary": "河南省驻马店确山县竹沟镇半枝莲少商寻货",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557201"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "冬瓜皮",
+        "spec": "一般统货",
+        "location": "河南孟州",
+        "price": "8 元/kg",
+        "tag": "关注",
+        "summary": "河南省孟州市南庄镇冬瓜皮货源走动情况良好",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557197"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "八角茴香",
+        "spec": "全干大红",
+        "location": "广西防城港市",
+        "price": "25 元/kg",
+        "tag": "平稳",
+        "summary": "广西防城港市八角茴香价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557211"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "侧柏叶",
+        "spec": "饮片货",
+        "location": "山东枣庄",
+        "price": "3.5 元/kg",
+        "tag": "平稳",
+        "summary": "山东省枣庄市阴平镇侧柏叶价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557224"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "仙茅",
+        "spec": "缅甸货价格",
+        "location": "云南德宏州瑞丽",
+        "price": "55 元/kg",
+        "tag": "关注",
+        "summary": "云南省德宏州瑞丽市口岸仙茅货源较少",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557185"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "鲜货交易价",
+        "location": "甘肃正宁",
+        "price": "3 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县丹参采挖继续",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557187"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "鲜货收购价",
+        "location": "河南孟州",
+        "price": "2.8 元/kg",
+        "tag": "关注",
+        "summary": "河南省孟州市南庄镇丹参行情略有上调",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557194"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "交易价",
+        "location": "山西运城河津",
+        "price": "14 元/kg",
+        "tag": "平稳",
+        "summary": "山西省运城地区河津市丹参价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557212"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "黄连",
+        "spec": "黄连片价格在",
+        "location": "湖北恩施州利川",
+        "price": "380 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州利川市黄连走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104780.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "黄柏",
+        "spec": "黄柏丝价格在",
+        "location": "湖北恩施州鹤峰",
+        "price": "65 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州鹤峰县黄柏走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104778.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "麦冬",
+        "spec": "统货",
+        "location": "四川三台",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "四川省绵阳市三台县3月13号川麦冬行情阐述",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104781.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "麦冬",
+        "spec": "价格相比昨日回调",
+        "location": "2026年3月13日 四",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "2026年3月13日 四川三台麦冬进入大量产新阶段",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104784.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "鹿衔草",
+        "spec": "本地鹿衔草毛草报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "15 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗鹿衔草行情与前期保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104824.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "香加皮",
+        "spec": "产地根部统货价格为",
+        "location": "甘肃",
+        "price": "12 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳地区香加皮处于平缓走动",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104850.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "防风",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市防风产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104832.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "防风",
+        "spec": "本地家种4年生的关防风报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "55 元/kg",
+        "tag": "关注",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗防风有货源供应",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104829.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "金银花",
+        "spec": "黄白一级过色选",
+        "location": "山东平邑",
+        "price": "95 元/kg",
+        "tag": "关注",
+        "summary": "山东省临沂市平邑县金银花行情走快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104838.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "酸枣仁",
+        "spec": "98货价格",
+        "location": "河北内丘",
+        "price": "470 元/kg",
+        "tag": "平稳",
+        "summary": "河北省邢台市内丘县酸枣仁走动正常",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104822.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "赤芍",
+        "spec": "本地家种赤芍报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "28 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗赤芍行情在平稳中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104831.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "蒲公英",
+        "spec": "产地售价",
+        "location": "甘肃正宁",
+        "price": "6 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县蒲公英行情与年前基本持平",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104848.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "茵陈",
+        "spec": "产地统货售价",
+        "location": "甘肃",
+        "price": "6.4 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区茵陈行情不温不火",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104847.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "苍术",
+        "spec": "本地家种苍术报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "27 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗苍术行情表现坚挺",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104830.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "穿心莲",
+        "spec": "全草价格",
+        "location": "广西贵港市桥圩镇穿心莲行",
+        "price": "4.5 元/kg",
+        "tag": "平稳",
+        "summary": "广西贵港市桥圩镇穿心莲行情保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104796.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "百合",
+        "spec": "精选特级价格为",
+        "location": "湖南龙牙百合近期走货畅快",
+        "price": "135 元/kg",
+        "tag": "走快",
+        "summary": "湖南产地龙牙百合近期走货畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104841.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "白鲜皮",
+        "spec": "本地白鲜皮85%的货价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "125 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗白鲜皮行情平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104825.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "玄参",
+        "spec": "鲜货报价在",
+        "location": "河南许昌",
+        "price": "1 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市玄参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104834.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "淫羊藿",
+        "spec": "本地淫羊藿报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "85 元/kg",
+        "tag": "上扬",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗淫羊藿行情继续上扬",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104827.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "泽泻",
+        "spec": "统货",
+        "location": "广西贵港市桥圩镇泽泻产新",
+        "price": "待补充",
+        "tag": "产新",
+        "summary": "广西贵港市桥圩镇泽泻产新上市货少",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104793.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "柴胡",
+        "spec": "本地所产的药厂货要价",
+        "location": "甘肃",
+        "price": "58 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区柴胡行情暂时平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104846.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "板蓝根",
+        "spec": "本地板蓝根统货报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "9 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗板蓝根货源正常购销中",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104823.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "广藿香",
+        "spec": "统条价格",
+        "location": "广西贵港市桥圩镇广藿香行",
+        "price": "7.5 元/kg",
+        "tag": "关注",
+        "summary": "广西贵港市桥圩镇广藿香行情好于去年",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104795.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "巴戟天",
+        "spec": "统货",
+        "location": "广东肇庆",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "广东省肇庆市高要区巴戟天鲜货开始抢时采挖",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104839.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "山麦冬",
+        "spec": "近期价格在",
+        "location": "湖北襄阳",
+        "price": "11 元/kg",
+        "tag": "产新",
+        "summary": "湖北省襄阳市山麦冬产新中 价格下滑",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104774.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "女贞子",
+        "spec": "统货",
+        "location": "河南桐柏",
+        "price": "1.6 元/kg",
+        "tag": "关注",
+        "summary": "河南省南阳市桐柏县女贞子货源充足",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104750.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "地黄",
+        "spec": "地黄（三级）价格为",
+        "location": "河南武陟",
+        "price": "11 元/kg",
+        "tag": "走快",
+        "summary": "河南省焦作市武陟县 地黄 走势畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104820.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "土大黄",
+        "spec": "统货价格在",
+        "location": "甘肃正宁",
+        "price": "5.5 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县土大黄延续年前价格",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104849.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "升麻",
+        "spec": "坚挺，现本地光升麻报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "72 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗升麻行情在坚挺中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104826.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "全蝎",
+        "spec": "3到5厘米统货价格在",
+        "location": "河南洛阳",
+        "price": "1400 元/kg",
+        "tag": "平稳",
+        "summary": "河南省洛阳市老城区全蝎走势平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104751.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "仙鹤草",
+        "spec": "片子",
+        "location": "河南桐柏",
+        "price": "8 元/kg",
+        "tag": "上扬",
+        "summary": "河南省南阳市桐柏县仙鹤草价格上浮",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104749.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "本地所产的售价",
+        "location": "甘肃",
+        "price": "10 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区丹参行情基本稳定",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104845.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市丹参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104833.html"
+      },
+      {
+        "date": "2026-03-13",
+        "herb": "丹参",
+        "spec": "产地干货精品货",
+        "location": "山东平邑",
+        "price": "16.5 元/kg",
+        "tag": "走快",
+        "summary": "山东省临沂市平邑县丹参产地近期走货快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104837.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "黄芩",
+        "spec": "统货",
+        "location": "山西陵川",
+        "price": "5.8 元/kg",
+        "tag": "关注",
+        "summary": "山西晋城市陵川县黄芩价格微升",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557131"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "黄精",
+        "spec": "药厂货",
+        "location": "贵州黔南州瓮安",
+        "price": "38 元/kg",
+        "tag": "平稳",
+        "summary": "贵州省黔南州瓮安县黄精价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557130"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "黄柏",
+        "spec": "带皮个子",
+        "location": "湖北十堰",
+        "price": "30 元/kg",
+        "tag": "关注",
+        "summary": "湖北省十堰市房县黄柏走动不畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557144"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "鱼腥草",
+        "spec": "统货",
+        "location": "陕西镇坪",
+        "price": "5 元/kg",
+        "tag": "关注",
+        "summary": "陕西省安康市镇坪县钟宝镇鱼腥草成交量少",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557133"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "骨碎补",
+        "spec": "统装货交易价",
+        "location": "江西黎川",
+        "price": "49 元/kg",
+        "tag": "平稳",
+        "summary": "江西省抚州市黎川县骨碎补价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557122"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "野菊花",
+        "spec": "90以上颗粒货",
+        "location": "陕西蓝田曳湖镇",
+        "price": "32 元/kg",
+        "tag": "关注",
+        "summary": "陕西蓝田曳湖镇野菊花走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557120"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "重楼",
+        "spec": "多芽统货价格",
+        "location": "云南腾冲",
+        "price": "40 元/kg",
+        "tag": "关注",
+        "summary": "云南省保山市腾冲县重楼寻货商家较少",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557145"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "连翘",
+        "spec": "挥发油合格货",
+        "location": "山西晋城市陵川县",
+        "price": "43 元/kg",
+        "tag": "关注",
+        "summary": "山西晋城市陵川县连翘走动顺畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557121"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "路路通",
+        "spec": "去柄货价格",
+        "location": "湖北英山",
+        "price": "3.5 元/kg",
+        "tag": "产新",
+        "summary": "湖北省黄冈市英山县石头咀镇路路通开始产新",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557141"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "赤芍",
+        "spec": "统货售价",
+        "location": "甘肃平凉",
+        "price": "30 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省平凉市华亭市赤芍走动缓慢",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557140"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "补骨脂",
+        "spec": "新品统货价格",
+        "location": "云南德宏州瑞丽",
+        "price": "10 元/kg",
+        "tag": "关注",
+        "summary": "云南省德宏州瑞丽市口岸补骨脂新品来货",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557150"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "蝉蜕",
+        "spec": "上扬，现半沙半淤大壳药厂货",
+        "location": "陕西宝鸡",
+        "price": "630 元/kg",
+        "tag": "上扬",
+        "summary": "陕西省宝鸡市眉县横渠镇蝉蜕走动顺畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557136"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "虎杖",
+        "spec": "段野生货价格",
+        "location": "湖北十堰",
+        "price": "5.2 元/kg",
+        "tag": "走快",
+        "summary": "湖北省十堰市房县虎杖正常走销",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557143"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "莲子心",
+        "spec": "统装货价格",
+        "location": "湖南湘潭",
+        "price": "72 元/kg",
+        "tag": "关注",
+        "summary": "湖南省湘潭县花石镇莲子心走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557125"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "莲子",
+        "spec": "石莲子",
+        "location": "湖南湘潭",
+        "price": "18 元/kg",
+        "tag": "平稳",
+        "summary": "湖南省湘潭县花石镇莲子价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557126"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "荷叶",
+        "spec": "可切片的优质货",
+        "location": "江西黎川",
+        "price": "9.5 元/kg",
+        "tag": "关注",
+        "summary": "江西省抚州市黎川县荷叶走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557123"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "草果",
+        "spec": "统货售价",
+        "location": "云南腾冲",
+        "price": "44 元/kg",
+        "tag": "关注",
+        "summary": "云南省保山市腾冲县草果零星交易",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557146"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "石菖蒲",
+        "spec": "统装货交易价",
+        "location": "湖南常德",
+        "price": "60 元/kg",
+        "tag": "关注",
+        "summary": "湖南省常德市澧县石菖蒲走动转畅",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557127"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "玉竹",
+        "spec": "统装片子",
+        "location": "湖南湘潭",
+        "price": "48 元/kg",
+        "tag": "关注",
+        "summary": "湖南省湘潭市湘潭县白石镇玉竹走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557128"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "猫爪草",
+        "spec": "家种水洗货价格",
+        "location": "安徽阜南",
+        "price": "42 元/kg",
+        "tag": "坚挺",
+        "summary": "安徽省阜阳市阜南县苗集镇猫爪草行情坚挺运行",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557147"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "猫人参",
+        "spec": "统货",
+        "location": "陕西镇坪",
+        "price": "10 元/kg",
+        "tag": "关注",
+        "summary": "陕西省安康市镇坪县钟宝镇猫人参走动不快",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557132"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "猪苓",
+        "spec": "统货",
+        "location": "陕西宝鸡",
+        "price": "115 元/kg",
+        "tag": "关注",
+        "summary": "陕西省宝鸡市眉县横渠镇猪苓有商询价",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557137"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "淫羊藿根",
+        "spec": "滚筒货价格",
+        "location": "湖北十堰",
+        "price": "35 元/kg",
+        "tag": "坚挺",
+        "summary": "湖北省十堰市房县淫羊藿根价格坚挺",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557142"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "杜仲",
+        "spec": "板皮",
+        "location": "陕西镇坪",
+        "price": "15 元/kg",
+        "tag": "关注",
+        "summary": "陕西省安康市镇坪县钟宝镇杜仲价格波动不大",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557148"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "木蝴蝶",
+        "spec": "缅甸货",
+        "location": "云南德宏州瑞丽",
+        "price": "31 元/kg",
+        "tag": "关注",
+        "summary": "云南省德宏州瑞丽市口岸木蝴蝶按需走动",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557149"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "岗梅根",
+        "spec": "阴枝交易价",
+        "location": "江西黎川",
+        "price": "5.3 元/kg",
+        "tag": "平稳",
+        "summary": "江西省抚州市黎川县岗梅根价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557124"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "夏天无",
+        "spec": "够含量货价格",
+        "location": "安徽阜南",
+        "price": "45 元/kg",
+        "tag": "关注",
+        "summary": "安徽省阜阳市阜南县苗集镇夏天无小批量交易为主",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557139"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "壳柏子",
+        "spec": "统货",
+        "location": "陕西蓝田曳湖镇",
+        "price": "24 元/kg",
+        "tag": "关注",
+        "summary": "陕西蓝田曳湖镇壳柏子少商寻货",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557134"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "吴茱萸",
+        "spec": "上扬，现过风机的净货",
+        "location": "湖南湘潭",
+        "price": "27 元/kg",
+        "tag": "上扬",
+        "summary": "湖南省湘潭市湘潭县白石镇吴茱萸价升",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557129"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "南五味子",
+        "spec": "包检净货",
+        "location": "陕西宝鸡",
+        "price": "32 元/kg",
+        "tag": "平稳",
+        "summary": "陕西省宝鸡市眉县横渠镇南五味子价稳",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557135"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "八角莲",
+        "spec": "毛货价格",
+        "location": "甘肃平凉",
+        "price": "65 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省平凉市华亭市八角莲有货源供应",
+        "source": "药通网",
+        "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557138"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "黄连",
+        "spec": "黄连片价格在",
+        "location": "湖北恩施州利川",
+        "price": "380 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州利川市黄连走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104780.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "黄柏",
+        "spec": "黄柏丝价格在",
+        "location": "湖北恩施州鹤峰",
+        "price": "65 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州鹤峰县黄柏走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104778.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "麦冬",
+        "spec": "统货",
+        "location": "四川三台",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "四川省绵阳市三台县3月13号川麦冬行情阐述",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104781.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "麦冬",
+        "spec": "价格相比昨日回调",
+        "location": "2026年3月13日 四",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "2026年3月13日 四川三台麦冬进入大量产新阶段",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104784.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "鹿衔草",
+        "spec": "本地鹿衔草毛草报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "15 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗鹿衔草行情与前期保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104824.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "香加皮",
+        "spec": "产地根部统货价格为",
+        "location": "甘肃",
+        "price": "12 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳地区香加皮处于平缓走动",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104850.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "防风",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市防风产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104832.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "防风",
+        "spec": "本地家种4年生的关防风报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "55 元/kg",
+        "tag": "关注",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗防风有货源供应",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104829.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "金银花",
+        "spec": "黄白一级过色选",
+        "location": "山东平邑",
+        "price": "95 元/kg",
+        "tag": "关注",
+        "summary": "山东省临沂市平邑县金银花行情走快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104838.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "酸枣仁",
+        "spec": "98货价格",
+        "location": "河北内丘",
+        "price": "470 元/kg",
+        "tag": "平稳",
+        "summary": "河北省邢台市内丘县酸枣仁走动正常",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104822.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "赤芍",
+        "spec": "本地家种赤芍报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "28 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗赤芍行情在平稳中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104831.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "蒲公英",
+        "spec": "产地售价",
+        "location": "甘肃正宁",
+        "price": "6 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县蒲公英行情与年前基本持平",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104848.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "茵陈",
+        "spec": "产地统货售价",
+        "location": "甘肃",
+        "price": "6.4 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区茵陈行情不温不火",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104847.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "苍术",
+        "spec": "本地家种苍术报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "27 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗苍术行情表现坚挺",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104830.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "穿心莲",
+        "spec": "全草价格",
+        "location": "广西贵港市桥圩镇穿心莲行",
+        "price": "4.5 元/kg",
+        "tag": "平稳",
+        "summary": "广西贵港市桥圩镇穿心莲行情保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104796.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "百合",
+        "spec": "精选特级价格为",
+        "location": "湖南龙牙百合近期走货畅快",
+        "price": "135 元/kg",
+        "tag": "走快",
+        "summary": "湖南产地龙牙百合近期走货畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104841.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "白鲜皮",
+        "spec": "本地白鲜皮85%的货价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "125 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗白鲜皮行情平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104825.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "玄参",
+        "spec": "鲜货报价在",
+        "location": "河南许昌",
+        "price": "1 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市玄参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104834.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "淫羊藿",
+        "spec": "本地淫羊藿报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "85 元/kg",
+        "tag": "上扬",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗淫羊藿行情继续上扬",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104827.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "泽泻",
+        "spec": "统货",
+        "location": "广西贵港市桥圩镇泽泻产新",
+        "price": "待补充",
+        "tag": "产新",
+        "summary": "广西贵港市桥圩镇泽泻产新上市货少",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104793.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "柴胡",
+        "spec": "本地所产的药厂货要价",
+        "location": "甘肃",
+        "price": "58 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区柴胡行情暂时平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104846.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "板蓝根",
+        "spec": "本地板蓝根统货报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "9 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗板蓝根货源正常购销中",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104823.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "广藿香",
+        "spec": "统条价格",
+        "location": "广西贵港市桥圩镇广藿香行",
+        "price": "7.5 元/kg",
+        "tag": "关注",
+        "summary": "广西贵港市桥圩镇广藿香行情好于去年",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104795.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "巴戟天",
+        "spec": "统货",
+        "location": "广东肇庆",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "广东省肇庆市高要区巴戟天鲜货开始抢时采挖",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104839.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "山麦冬",
+        "spec": "近期价格在",
+        "location": "湖北襄阳",
+        "price": "11 元/kg",
+        "tag": "产新",
+        "summary": "湖北省襄阳市山麦冬产新中 价格下滑",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104774.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "女贞子",
+        "spec": "统货",
+        "location": "河南桐柏",
+        "price": "1.6 元/kg",
+        "tag": "关注",
+        "summary": "河南省南阳市桐柏县女贞子货源充足",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104750.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "地黄",
+        "spec": "地黄（三级）价格为",
+        "location": "河南武陟",
+        "price": "11 元/kg",
+        "tag": "走快",
+        "summary": "河南省焦作市武陟县 地黄 走势畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104820.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "土大黄",
+        "spec": "统货价格在",
+        "location": "甘肃正宁",
+        "price": "5.5 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县土大黄延续年前价格",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104849.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "升麻",
+        "spec": "坚挺，现本地光升麻报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "72 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗升麻行情在坚挺中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104826.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "全蝎",
+        "spec": "3到5厘米统货价格在",
+        "location": "河南洛阳",
+        "price": "1400 元/kg",
+        "tag": "平稳",
+        "summary": "河南省洛阳市老城区全蝎走势平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104751.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "仙鹤草",
+        "spec": "片子",
+        "location": "河南桐柏",
+        "price": "8 元/kg",
+        "tag": "上扬",
+        "summary": "河南省南阳市桐柏县仙鹤草价格上浮",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104749.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "丹参",
+        "spec": "本地所产的售价",
+        "location": "甘肃",
+        "price": "10 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区丹参行情基本稳定",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104845.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "丹参",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市丹参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104833.html"
+      },
+      {
+        "date": "2026-03-12",
+        "herb": "丹参",
+        "spec": "产地干货精品货",
+        "location": "山东平邑",
+        "price": "16.5 元/kg",
+        "tag": "走快",
+        "summary": "山东省临沂市平邑县丹参产地近期走货快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104837.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "黄连",
+        "spec": "黄连片价格在",
+        "location": "湖北恩施州利川",
+        "price": "380 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州利川市黄连走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104780.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "黄柏",
+        "spec": "黄柏丝价格在",
+        "location": "湖北恩施州鹤峰",
+        "price": "65 元/kg",
+        "tag": "走快",
+        "summary": "湖北省恩施州鹤峰县黄柏走动畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104778.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "麦冬",
+        "spec": "统货",
+        "location": "四川三台",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "四川省绵阳市三台县3月13号川麦冬行情阐述",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104781.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "麦冬",
+        "spec": "价格相比昨日回调",
+        "location": "2026年3月13日 四",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "2026年3月13日 四川三台麦冬进入大量产新阶段",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104784.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "鹿衔草",
+        "spec": "本地鹿衔草毛草报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "15 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗鹿衔草行情与前期保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104824.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "香加皮",
+        "spec": "产地根部统货价格为",
+        "location": "甘肃",
+        "price": "12 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳地区香加皮处于平缓走动",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104850.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "防风",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市防风产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104832.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "防风",
+        "spec": "本地家种4年生的关防风报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "55 元/kg",
+        "tag": "关注",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗防风有货源供应",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104829.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "金银花",
+        "spec": "黄白一级过色选",
+        "location": "山东平邑",
+        "price": "95 元/kg",
+        "tag": "关注",
+        "summary": "山东省临沂市平邑县金银花行情走快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104838.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "酸枣仁",
+        "spec": "98货价格",
+        "location": "河北内丘",
+        "price": "470 元/kg",
+        "tag": "平稳",
+        "summary": "河北省邢台市内丘县酸枣仁走动正常",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104822.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "赤芍",
+        "spec": "本地家种赤芍报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "28 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗赤芍行情在平稳中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104831.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "蒲公英",
+        "spec": "产地售价",
+        "location": "甘肃正宁",
+        "price": "6 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县蒲公英行情与年前基本持平",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104848.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "茵陈",
+        "spec": "产地统货售价",
+        "location": "甘肃",
+        "price": "6.4 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区茵陈行情不温不火",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104847.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "苍术",
+        "spec": "本地家种苍术报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "27 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗苍术行情表现坚挺",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104830.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "穿心莲",
+        "spec": "全草价格",
+        "location": "广西贵港市桥圩镇穿心莲行",
+        "price": "4.5 元/kg",
+        "tag": "平稳",
+        "summary": "广西贵港市桥圩镇穿心莲行情保持平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104796.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "百合",
+        "spec": "精选特级价格为",
+        "location": "湖南龙牙百合近期走货畅快",
+        "price": "135 元/kg",
+        "tag": "走快",
+        "summary": "湖南产地龙牙百合近期走货畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104841.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "白鲜皮",
+        "spec": "本地白鲜皮85%的货价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "125 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗白鲜皮行情平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104825.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "玄参",
+        "spec": "鲜货报价在",
+        "location": "河南许昌",
+        "price": "1 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市玄参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104834.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "淫羊藿",
+        "spec": "本地淫羊藿报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "85 元/kg",
+        "tag": "上扬",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗淫羊藿行情继续上扬",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104827.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "泽泻",
+        "spec": "统货",
+        "location": "广西贵港市桥圩镇泽泻产新",
+        "price": "待补充",
+        "tag": "产新",
+        "summary": "广西贵港市桥圩镇泽泻产新上市货少",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104793.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "柴胡",
+        "spec": "本地所产的药厂货要价",
+        "location": "甘肃",
+        "price": "58 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区柴胡行情暂时平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104846.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "板蓝根",
+        "spec": "本地板蓝根统货报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "9 元/kg",
+        "tag": "平稳",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗板蓝根货源正常购销中",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104823.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "广藿香",
+        "spec": "统条价格",
+        "location": "广西贵港市桥圩镇广藿香行",
+        "price": "7.5 元/kg",
+        "tag": "关注",
+        "summary": "广西贵港市桥圩镇广藿香行情好于去年",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104795.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "巴戟天",
+        "spec": "统货",
+        "location": "广东肇庆",
+        "price": "待补充",
+        "tag": "关注",
+        "summary": "广东省肇庆市高要区巴戟天鲜货开始抢时采挖",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104839.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "山麦冬",
+        "spec": "近期价格在",
+        "location": "湖北襄阳",
+        "price": "11 元/kg",
+        "tag": "产新",
+        "summary": "湖北省襄阳市山麦冬产新中 价格下滑",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104774.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "女贞子",
+        "spec": "统货",
+        "location": "河南桐柏",
+        "price": "1.6 元/kg",
+        "tag": "关注",
+        "summary": "河南省南阳市桐柏县女贞子货源充足",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104750.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "地黄",
+        "spec": "地黄（三级）价格为",
+        "location": "河南武陟",
+        "price": "11 元/kg",
+        "tag": "走快",
+        "summary": "河南省焦作市武陟县 地黄 走势畅快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104820.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "土大黄",
+        "spec": "统货价格在",
+        "location": "甘肃正宁",
+        "price": "5.5 元/kg",
+        "tag": "关注",
+        "summary": "甘肃省庆阳市正宁县土大黄延续年前价格",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104849.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "升麻",
+        "spec": "坚挺，现本地光升麻报价",
+        "location": "内蒙古呼伦贝尔市鄂伦春旗",
+        "price": "72 元/kg",
+        "tag": "坚挺",
+        "summary": "内蒙古呼伦贝尔市鄂伦春旗升麻行情在坚挺中运行",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104826.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "全蝎",
+        "spec": "3到5厘米统货价格在",
+        "location": "河南洛阳",
+        "price": "1400 元/kg",
+        "tag": "平稳",
+        "summary": "河南省洛阳市老城区全蝎走势平稳",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104751.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "仙鹤草",
+        "spec": "片子",
+        "location": "河南桐柏",
+        "price": "8 元/kg",
+        "tag": "上扬",
+        "summary": "河南省南阳市桐柏县仙鹤草价格上浮",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104749.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "丹参",
+        "spec": "本地所产的售价",
+        "location": "甘肃",
+        "price": "10 元/kg",
+        "tag": "平稳",
+        "summary": "甘肃省庆阳地区丹参行情基本稳定",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104845.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "丹参",
+        "spec": "产区鲜货价格在",
+        "location": "河南许昌",
+        "price": "3 元/kg",
+        "tag": "产新",
+        "summary": "河南省许昌市禹州市丹参产新继续",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104833.html"
+      },
+      {
+        "date": "2026-03-11",
+        "herb": "丹参",
+        "spec": "产地干货精品货",
+        "location": "山东平邑",
+        "price": "16.5 元/kg",
+        "tag": "走快",
+        "summary": "山东省临沂市平邑县丹参产地近期走货快",
+        "source": "中药材天地网",
+        "url": "https://www.zyctd.com/zixun/201/1104837.html"
+      }
     ],
-    "values": [
-      40,
-      71,
-      89
-    ],
-    "peak": 89
+    "empty_text": "当前还没有产地行情数据。"
   },
-  "signals": [
-    {
-      "name": "黄连",
-      "tag": "关注",
-      "desc": "湖北利川 · 335 元/kg · 3月13日湖北省利川市汪营镇黄连市场交易"
-    },
-    {
-      "name": "马兜铃",
-      "tag": "走快",
-      "desc": "山东日照 · 12 元/kg · 山东省日照市莒县棋山镇马兜铃按需走销"
-    },
-    {
-      "name": "金银花",
-      "tag": "走快",
-      "desc": "河北邢台巨鹿县 · 103 元/kg · 河北邢台巨鹿县金银花走动良好"
-    },
-    {
-      "name": "金樱子",
-      "tag": "平稳",
-      "desc": "湖南永州零陵区邮亭圩 · 13.5 元/kg · 湖南永州零陵区邮亭圩金樱子价稳"
-    },
-    {
-      "name": "连翘",
-      "tag": "关注",
-      "desc": "河南洛阳市栾川县 · 43 元/kg · 河南洛阳市栾川县连翘多商寻货"
-    }
-  ],
-  "markets": [
-    {
-      "name": "亳州",
-      "desc": "近3日 1 条 · 最新 白术 待补充",
-      "score": 17,
-      "metric": "1 条"
-    },
-    {
-      "name": "安国",
-      "desc": "近3日 6 条 · 最新 荆芥穗 55 元/kg",
-      "score": 100,
-      "metric": "6 条"
-    },
-    {
-      "name": "成都",
-      "desc": "当前还没有整理到该市场的真实记录",
-      "score": 0,
-      "metric": "0 条"
-    },
-    {
-      "name": "玉林",
-      "desc": "近3日 3 条 · 最新 天冬 48 元/kg",
-      "score": 50,
-      "metric": "3 条"
-    }
-  ],
-  "origins": [
-    {
-      "name": "内蒙古呼伦贝尔市鄂伦春旗",
-      "meta": "近3日更新 24 条 · 重点品种 升麻 / 板蓝根 / 淫羊藿",
-      "hot": "覆盖 3 天 · 最新 03-13"
-    },
-    {
-      "name": "甘肃",
-      "meta": "近3日更新 12 条 · 重点品种 丹参 / 柴胡 / 茵陈",
-      "hot": "覆盖 3 天 · 最新 03-13"
-    },
-    {
-      "name": "河南许昌",
-      "meta": "近3日更新 9 条 · 重点品种 丹参 / 玄参 / 防风",
-      "hot": "覆盖 3 天 · 最新 03-13"
-    },
-    {
-      "name": "甘肃正宁",
-      "meta": "近3日更新 9 条 · 重点品种 土大黄 / 蒲公英 / 丹参",
-      "hot": "覆盖 3 天 · 最新 03-13"
-    }
-  ],
-  "market_updates": [
-    {
-      "name": "亳州",
-      "desc": "白术 · 3月13日安徽省亳州市辛集白术交易市场",
-      "value": "待补充"
-    },
-    {
-      "name": "安国",
-      "desc": "荆芥穗 · 河北省安国市荆芥穗行情有所上扬",
-      "value": "55 元/kg"
-    },
-    {
-      "name": "成都",
-      "desc": "等待补充该市场的最新行情与报价",
-      "value": "待补录"
-    },
-    {
-      "name": "玉林",
-      "desc": "天冬 · 广西玉林市福绵区近期天冬走货畅快",
-      "value": "48 元/kg"
-    }
-  ],
-  "hotspots": [
-    {
-      "name": "行业政策",
-      "desc": "待补充药政、标准、追溯、产新及天气等政策信息。",
-      "value": "待录入"
-    },
-    {
-      "name": "行业新闻",
-      "desc": "待补充重点会议、企业动态、市场联动与区域资讯。",
-      "value": "待录入"
-    },
-    {
-      "name": "专题快讯",
-      "desc": "待补充与重点品种相关的专题整理和深度观察。",
-      "value": "待录入"
-    }
-  ],
-  "table_rows": [
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "黄连",
-      "place": "湖北利川",
-      "price": "335 元/kg",
-      "summary": "3月13日湖北省利川市汪营镇黄连市场交易"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "黄连",
-      "place": "四川什邡",
-      "price": "310 元/kg",
-      "summary": "四川省什邡市冰川镇黄连走动尚可"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "马兜铃",
-      "place": "山东日照",
-      "price": "12 元/kg",
-      "summary": "山东省日照市莒县棋山镇马兜铃按需走销"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "金银花",
-      "place": "河北邢台巨鹿县",
-      "price": "103 元/kg",
-      "summary": "河北邢台巨鹿县金银花走动良好"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "金樱子",
-      "place": "湖南永州零陵区邮亭圩",
-      "price": "13.5 元/kg",
-      "summary": "湖南永州零陵区邮亭圩金樱子价稳"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "金樱子",
-      "place": "江西黎川",
-      "price": "8.5 元/kg",
-      "summary": "江西省抚州市黎川县金樱子价稳"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "连翘",
-      "place": "河南洛阳市栾川县",
-      "price": "43 元/kg",
-      "summary": "河南洛阳市栾川县连翘多商寻货"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "连翘",
-      "place": "山西陵川",
-      "price": "43 元/kg",
-      "summary": "山西晋城市陵川县连翘走动顺畅"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "赤芍",
-      "place": "内蒙古呼伦贝尔塔温敖宝镇",
-      "price": "28 元/kg",
-      "summary": "内蒙古呼伦贝尔塔温敖宝镇赤芍开始少量交易"
-    },
-    {
-      "date": "03-13",
-      "type": "产地",
-      "herb": "蝉蜕",
-      "place": "山西陵川",
-      "price": "630 元/kg",
-      "summary": "山西晋城市陵川县蝉蜕行情稳中有升"
-    }
-  ],
-  "modules": [
-    {
-      "title": "产地行情录入",
-      "desc": "先持续补产区报价、行情标签和摘要，这是首页最核心的数据层。",
-      "priority": "P1"
-    },
-    {
-      "title": "四大市场页",
-      "desc": "围绕亳州、安国、成都、玉林拆出专页，做市场动态和重点品种。",
-      "priority": "P1"
-    },
-    {
-      "title": "行业热点流",
-      "desc": "单独录政策、新闻、标准和专题快讯，不再用涨跌榜思路替代。",
-      "priority": "P1"
-    },
-    {
-      "title": "品种专题",
-      "desc": "对丹参、黄连、当归等重点品种做专题页，沉淀长期价值。",
-      "priority": "P2"
-    }
-  ],
+  "markets": {
+    "total": 10,
+    "covered_count": 3,
+    "groups": [
+      {
+        "name": "亳州",
+        "count": 1,
+        "latest_date": "2026-03-13",
+        "items": [
+          {
+            "date": "2026-03-13",
+            "herb": "白术",
+            "spec": "统货",
+            "price": "待补充",
+            "tag": "关注",
+            "summary": "3月13日安徽省亳州市辛集白术交易市场",
+            "source": "药通网",
+            "url": "https://www.yt1998.com/ytw/second/marketMgr/detail.jsp?acid=557183"
+          }
+        ]
+      },
+      {
+        "name": "安国",
+        "count": 6,
+        "latest_date": "2026-03-13",
+        "items": [
+          {
+            "date": "2026-03-13",
+            "herb": "荆芥穗",
+            "spec": "本地手剪穗好统货报价",
+            "price": "55 元/kg",
+            "tag": "上扬",
+            "summary": "河北省安国市荆芥穗行情有所上扬",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104843.html"
+          },
+          {
+            "date": "2026-03-13",
+            "herb": "荆芥",
+            "spec": "本地荆芥药厂咀子报价",
+            "price": "3.5 元/kg",
+            "tag": "关注",
+            "summary": "河北省安国市荆芥行情与前期相差不大",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104844.html"
+          },
+          {
+            "date": "2026-03-12",
+            "herb": "荆芥穗",
+            "spec": "本地手剪穗好统货报价",
+            "price": "55 元/kg",
+            "tag": "上扬",
+            "summary": "河北省安国市荆芥穗行情有所上扬",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104843.html"
+          },
+          {
+            "date": "2026-03-12",
+            "herb": "荆芥",
+            "spec": "本地荆芥药厂咀子报价",
+            "price": "3.5 元/kg",
+            "tag": "关注",
+            "summary": "河北省安国市荆芥行情与前期相差不大",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104844.html"
+          },
+          {
+            "date": "2026-03-11",
+            "herb": "荆芥穗",
+            "spec": "本地手剪穗好统货报价",
+            "price": "55 元/kg",
+            "tag": "上扬",
+            "summary": "河北省安国市荆芥穗行情有所上扬",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104843.html"
+          },
+          {
+            "date": "2026-03-11",
+            "herb": "荆芥",
+            "spec": "本地荆芥药厂咀子报价",
+            "price": "3.5 元/kg",
+            "tag": "关注",
+            "summary": "河北省安国市荆芥行情与前期相差不大",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104844.html"
+          }
+        ]
+      },
+      {
+        "name": "成都",
+        "count": 0,
+        "latest_date": "",
+        "items": []
+      },
+      {
+        "name": "玉林",
+        "count": 3,
+        "latest_date": "2026-03-13",
+        "items": [
+          {
+            "date": "2026-03-13",
+            "herb": "天冬",
+            "spec": "统个",
+            "price": "48 元/kg",
+            "tag": "走快",
+            "summary": "广西玉林市福绵区近期天冬走货畅快",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104840.html"
+          },
+          {
+            "date": "2026-03-12",
+            "herb": "天冬",
+            "spec": "统个",
+            "price": "48 元/kg",
+            "tag": "走快",
+            "summary": "广西玉林市福绵区近期天冬走货畅快",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104840.html"
+          },
+          {
+            "date": "2026-03-11",
+            "herb": "天冬",
+            "spec": "统个",
+            "price": "48 元/kg",
+            "tag": "走快",
+            "summary": "广西玉林市福绵区近期天冬走货畅快",
+            "source": "中药材天地网",
+            "url": "https://www.zyctd.com/zixun/201/1104840.html"
+          }
+        ]
+      }
+    ],
+    "empty_text": "当前还没有四大市场数据。"
+  },
+  "hotspots": {
+    "total": 0,
+    "items": [],
+    "empty_text": "当前还没有行业热点，请在“行业热点”工作表里补充政策和新闻。"
+  },
   "footer": {
     "left": "当前地址：yaocaiquanguo-site.pages.dev",
-    "right": "当前已接入真实 Excel 数据源：中药材全国追踪_近3日整理_2026-03-13.xlsx"
+    "right": "当前读取的数据源：中药材全国追踪_近3日整理_2026-03-13.xlsx"
   }
 }

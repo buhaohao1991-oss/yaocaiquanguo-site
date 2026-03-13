@@ -101,11 +101,7 @@
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 18px;
-      padding: 22px 0 24px;
-      align-items: stretch;
+      padding: 22px 0 18px;
     }
 
     .hero-main,
@@ -123,7 +119,11 @@
 
     .hero-main {
       padding: 34px 34px 30px;
-      min-height: 360px;
+      min-height: 320px;
+    }
+
+    .hero-main--single {
+      width: 100%;
     }
 
     .hero-main::before,
@@ -227,6 +227,228 @@
       background: rgba(var(--accent-3-rgb), 0.08);
       color: #bfd6ff;
       font-size: 13px;
+    }
+
+    .section-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 14px;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .nav-pill:hover {
+      transform: translateY(-1px);
+      border-color: rgba(var(--accent-rgb), 0.44);
+      background: rgba(var(--accent-rgb), 0.08);
+    }
+
+    .section-panel {
+      margin-bottom: 18px;
+    }
+
+    .section-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 18px 22px 0;
+    }
+
+    .entry-list {
+      display: grid;
+      gap: 14px;
+      padding: 18px 22px 24px;
+    }
+
+    .entry-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .entry-date {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .entry-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .entry-tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #062019;
+      background: var(--accent);
+    }
+
+    .entry-price {
+      color: var(--accent-2);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .entry-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .entry-title {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .entry-spec {
+      color: var(--accent-3);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .entry-meta {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .entry-summary {
+      margin: 14px 0 0;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .entry-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .entry-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .entry-link:hover {
+      text-decoration: underline;
+    }
+
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px 24px;
+      flex-wrap: wrap;
+    }
+
+    .pager-info {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pager-button {
+      min-width: 110px;
+      padding: 11px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .pager-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(var(--accent-rgb), 0.44);
+    }
+
+    .pager-button:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    .market-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 18px 22px 0;
+    }
+
+    .market-tab {
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(var(--accent-3-rgb), 0.2);
+      background: rgba(var(--accent-3-rgb), 0.08);
+      color: #bfd6ff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .market-tab:hover {
+      transform: translateY(-1px);
+      border-color: rgba(var(--accent-3-rgb), 0.34);
+    }
+
+    .market-tab.active {
+      background: rgba(var(--accent-rgb), 0.14);
+      border-color: rgba(var(--accent-rgb), 0.42);
+      color: var(--text);
+    }
+
+    .market-summary {
+      padding: 16px 22px 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .empty-state {
+      padding: 20px 22px 24px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.9;
     }
 
     .hero-side {
@@ -716,25 +938,13 @@
     }
 
     @media (max-width: 920px) {
-      .hero,
-      .layout-two,
-      .heat-grid,
-      .board-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .origin-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-main,
-      .hero-side {
+      .hero-main {
         padding-left: 22px;
         padding-right: 22px;
+      }
+
+      .entry-title {
+        font-size: 20px;
       }
     }
 
@@ -755,29 +965,32 @@
         font-size: 16px;
       }
 
-      .stats,
-      .module-grid,
-      .mini-grid {
-        grid-template-columns: 1fr;
-      }
-
       .panel-head {
         padding: 20px 18px 16px;
       }
 
-      .chart-area,
-      .heat-list,
-      .origin-grid,
-      .module-grid,
-      .table-wrap,
-      .board-list,
-      .signal-list {
+      .entry-list,
+      .market-tabs,
+      .section-meta,
+      .pager {
         padding-left: 16px;
         padding-right: 16px;
       }
 
       .panel-title {
         font-size: 24px;
+      }
+
+      .entry-top,
+      .entry-title-row,
+      .entry-footer {
+        align-items: flex-start;
+      }
+
+      .nav-pill,
+      .market-tab {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -796,164 +1009,67 @@
     </header>
 
     <section class="hero">
-      <article class="hero-main">
+      <article class="hero-main hero-main--single">
         <div class="eyebrow" id="heroEyebrow">
           <span class="pulse"></span>
           中药材情报首页
         </div>
-        <h2 class="hero-title" id="heroTitle">先把产地行情、四大市场和行业热点，放到一个首页里。</h2>
-        <p class="hero-lead" id="heroLead">这版首页正在读取真实 Excel 数据，重点展示产地、市场和行业热点。</p>
+        <h2 class="hero-title" id="heroTitle">先把最有价值的信息做深，再做宽。</h2>
+        <p class="hero-lead" id="heroLead">首页当前只保留三个板块：产地行情、四大市场、行业热点。产地行情会完整收录你整理文档里的信息，并按时间顺序分页展示。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#quotes">查看行情摘录</a>
-          <a class="button" href="#modules">查看下一步结构</a>
+          <a class="button primary" href="#originSection">查看产地行情</a>
+          <a class="button" href="#marketSection">查看四大市场</a>
+          <a class="button" href="#hotspotSection">查看行业热点</a>
         </div>
         <div class="source-strip" id="sourceStrip"></div>
       </article>
-
-      <aside class="hero-side panel">
-        <div>
-          <div class="side-label">今日状态</div>
-          <div class="side-big" id="sideBig">真实数据加载中</div>
-        </div>
-        <div class="mini-grid">
-          <div class="mini-card">
-            <div class="mini-label">最新快照</div>
-            <div class="mini-value gold" id="latestDateValue">--</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">覆盖天数</div>
-            <div class="mini-value blue" id="daySpanValue">--</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">市场覆盖</div>
-            <div class="mini-value" id="marketCoverageValue">--</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">热点条数</div>
-            <div class="mini-value green" id="hotspotCountValue">--</div>
-          </div>
-        </div>
-        <p class="side-note" id="sideNote">当前这批数据以产地为主，行业热点正在等待补充。</p>
-      </aside>
     </section>
 
-    <section class="stats" id="stats"></section>
+    <nav class="section-nav">
+      <a class="nav-pill" href="#originSection">1. 产地行情</a>
+      <a class="nav-pill" href="#marketSection">2. 四大市场</a>
+      <a class="nav-pill" href="#hotspotSection">3. 行业热点</a>
+    </nav>
 
-    <section class="layout-two">
-      <article class="panel trend-panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">近三日更新节奏</h2>
-            <p class="panel-sub">先看每天整理到多少条真实记录，用采集节奏判断当前数据覆盖推进。</p>
-          </div>
-          <div class="chip">真实采样</div>
-        </div>
-        <div class="chart-area">
-          <div class="chart-frame">
-            <div class="chart-meta">
-              <span>柱状越高，表示当天整理到的新行情越多</span>
-              <span id="trendPeak">当前峰值：--</span>
-            </div>
-            <svg id="trendChart" viewBox="0 0 760 260" aria-label="近三日更新节奏图"></svg>
-            <div class="axis-row" id="axisRow"></div>
-          </div>
-        </div>
-      </article>
-
-      <aside class="panel signal-panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">最新产地行情</h2>
-            <p class="panel-sub">先把最新的产区报价和行情线索放右栏，方便第一眼筛选今天要看的品种。</p>
-          </div>
-          <div class="chip">产地优先</div>
-        </div>
-        <ul class="signal-list" id="signalList"></ul>
-      </aside>
-    </section>
-
-    <section class="heat-grid">
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">四大市场覆盖</h2>
-            <p class="panel-sub">这里只看亳州、安国、成都、玉林四大市场，缺哪个就直观看到哪个还没补齐。</p>
-          </div>
-          <div class="chip">四大市场</div>
-        </div>
-        <div class="heat-list" id="marketHeat"></div>
-      </article>
-
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">重点产地</h2>
-            <p class="panel-sub">这批数据目前以产地为主，所以首页主位先给产区密集更新和重点品种。</p>
-          </div>
-          <div class="chip">重点产区</div>
-        </div>
-        <div class="origin-grid" id="originHeat"></div>
-      </article>
-    </section>
-
-    <section class="board-grid">
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">市场最新动态</h2>
-            <p class="panel-sub">市场模块不做涨跌榜，直接展示四大市场各自最新的一条有效动态。</p>
-          </div>
-          <div class="chip">市场动态</div>
-        </div>
-        <ul class="board-list" id="marketUpdateList"></ul>
-      </article>
-
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">行业热点</h2>
-            <p class="panel-sub">政策、新闻、标准和专题快讯单独维护，不再和行情表混在一起。</p>
-          </div>
-          <div class="chip">热点流</div>
-        </div>
-        <ul class="board-list" id="hotspotList"></ul>
-      </article>
-    </section>
-
-    <section class="panel table-panel" id="quotes">
+    <section class="panel section-panel" id="originSection">
       <div class="panel-head">
         <div>
-          <h2 class="panel-title">近三日行情摘录</h2>
-          <p class="panel-sub">这里先放最近整理到的产地和市场记录，后面再往下拆详情页。</p>
+          <h2 class="panel-title">产地行情</h2>
+          <p class="panel-sub">完整收录文档里的产地记录，不做摘要式裁剪。按时间倒序显示，并支持分页浏览。</p>
         </div>
-        <div class="chip">最新摘录</div>
+        <div class="chip" id="originCountChip">0 条</div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>日期</th>
-              <th>类型</th>
-              <th>品种</th>
-              <th>地点</th>
-              <th>报价</th>
-              <th>摘要</th>
-            </tr>
-          </thead>
-          <tbody id="quoteRows"></tbody>
-        </table>
+      <div class="section-meta" id="originMeta"></div>
+      <div class="entry-list" id="originList"></div>
+      <div class="pager">
+        <button class="pager-button" id="originPrev">上一页</button>
+        <div class="pager-info" id="originPageInfo">第 1 页 / 共 1 页</div>
+        <button class="pager-button" id="originNext">下一页</button>
       </div>
     </section>
 
-    <section class="panel" id="modules">
+    <section class="panel section-panel" id="marketSection">
       <div class="panel-head">
         <div>
-          <h2 class="panel-title">下一步功能结构</h2>
-          <p class="panel-sub">下一阶段先把数据结构做稳，再逐步拆市场页、热点流和重点品种专题。</p>
+          <h2 class="panel-title">四大市场</h2>
+          <p class="panel-sub">只维护亳州、安国、成都、玉林。按市场分组展示全部记录，缺哪个市场会直接显示为空。</p>
         </div>
-        <div class="chip">开发顺序</div>
+        <div class="chip" id="marketCountChip">0/4</div>
       </div>
-      <div class="module-grid" id="moduleGrid"></div>
+      <div class="market-tabs" id="marketTabs"></div>
+      <div class="market-summary" id="marketSummary"></div>
+      <div class="entry-list" id="marketList"></div>
+    </section>
+
+    <section class="panel section-panel" id="hotspotSection">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">行业热点</h2>
+          <p class="panel-sub">政策、新闻、标准和专题快讯单独维护，不和行情信息混在一起。</p>
+        </div>
+        <div class="chip" id="hotspotCountChip">0 条</div>
+      </div>
+      <div class="entry-list" id="hotspotList"></div>
     </section>
 
     <footer class="footer">
@@ -963,175 +1079,149 @@
   </main>
 
   <script>
-    function renderStats(dashboard) {
-      const root = document.getElementById("stats");
-      root.innerHTML = dashboard.stats.map((item) => `
-        <article class="stat">
-          <div class="stat-label">${item.label}</div>
-          <div class="stat-value ${item.tone}">${item.value}</div>
-          <div class="stat-sub">${item.sub}</div>
-        </article>
-      `).join("");
+    const state = {
+      dashboard: null,
+      originPage: 1,
+      originPageSize: 12,
+      currentMarket: "亳州",
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
     function renderHero(dashboard) {
       document.getElementById("statusPill").textContent = dashboard.status;
-      document.getElementById("heroEyebrow").innerHTML = `<span class="pulse"></span>${dashboard.hero.eyebrow}`;
+      document.getElementById("heroEyebrow").innerHTML = `<span class="pulse"></span>${escapeHtml(dashboard.hero.eyebrow)}`;
       document.getElementById("heroTitle").textContent = dashboard.hero.title;
       document.getElementById("heroLead").textContent = dashboard.hero.lead;
-      document.getElementById("sideBig").textContent = dashboard.hero.side_big;
-      document.getElementById("sideNote").textContent = dashboard.hero.side_note;
-
-      const metrics = dashboard.side_metrics || [];
-      document.getElementById("latestDateValue").textContent = metrics[0]?.value || "--";
-      document.getElementById("daySpanValue").textContent = metrics[1]?.value || "--";
-      document.getElementById("marketCoverageValue").textContent = metrics[2]?.value || "--";
-      document.getElementById("hotspotCountValue").textContent = metrics[3]?.value || "--";
-
-      const strip = document.getElementById("sourceStrip");
-      strip.innerHTML = (dashboard.hero.source_strip || []).map((item) => `<span class="source-chip">${item}</span>`).join("");
-
       document.getElementById("footerLeft").textContent = dashboard.footer.left;
       document.getElementById("footerRight").textContent = dashboard.footer.right;
+
+      const strip = document.getElementById("sourceStrip");
+      strip.innerHTML = (dashboard.hero.source_strip || [])
+        .map((item) => `<span class="source-chip">${escapeHtml(item)}</span>`)
+        .join("");
     }
 
-    function renderTrend(dashboard) {
-      const svg = document.getElementById("trendChart");
-      const axis = document.getElementById("axisRow");
-      const labels = dashboard.trend.labels;
-      const values = dashboard.trend.values;
-      document.getElementById("trendPeak").textContent = `当前峰值：${dashboard.trend.peak}`;
+    function renderEntryCard(item, type) {
+      const title = type === "hotspot" ? item.title : item.herb;
+      const spec = type === "hotspot" ? (item.kind || "热点") : (item.spec || "待补充规格");
+      const locationLabel = type === "origin" ? "产地" : type === "market" ? "市场" : "关联";
+      const location = type === "origin" ? item.location : type === "market" ? item.market : (item.location || "未标注");
+      const price = type === "hotspot" ? "" : `<span class="entry-price">${escapeHtml(item.price)}</span>`;
+      const tag = type === "hotspot" ? escapeHtml(item.kind || "热点") : escapeHtml(item.tag || "关注");
+      const summary = item.summary ? `<p class="entry-summary">${escapeHtml(item.summary)}</p>` : "";
+      const sourceLine = `来源：${escapeHtml(item.source || "待补充")}`;
+      const metaText = item.date ? `${escapeHtml(item.date)} · ${locationLabel}：${escapeHtml(location)}` : `${locationLabel}：${escapeHtml(location)}`;
+      const related = type === "hotspot" && item.herb ? ` · 关联品种：${escapeHtml(item.herb)}` : "";
 
-      if (!labels.length || !values.length) {
-        svg.innerHTML = "";
-        axis.innerHTML = "";
+      return `
+        <article class="entry-card">
+          <div class="entry-top">
+            <span class="entry-date">${escapeHtml(item.date || "--")}</span>
+            <div class="entry-badges">
+              <span class="entry-tag">${tag}</span>
+              ${price}
+            </div>
+          </div>
+          <div class="entry-title-row">
+            <h3 class="entry-title">${escapeHtml(title || "待补充标题")}</h3>
+            <span class="entry-spec">${escapeHtml(spec)}</span>
+          </div>
+          <div class="entry-meta">${metaText}${related}</div>
+          ${summary}
+          <div class="entry-footer">
+            <span>${sourceLine}</span>
+            ${item.url ? `<a class="entry-link" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">查看来源</a>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderOriginSection(dashboard) {
+      const items = dashboard.origin.items || [];
+      const totalPages = Math.max(1, Math.ceil(items.length / state.originPageSize));
+      if (state.originPage > totalPages) {
+        state.originPage = totalPages;
+      }
+      const start = (state.originPage - 1) * state.originPageSize;
+      const pageItems = items.slice(start, start + state.originPageSize);
+
+      document.getElementById("originCountChip").textContent = `${dashboard.origin.total} 条`;
+      document.getElementById("originMeta").innerHTML = [
+        `<span class="source-chip">最新日期：${escapeHtml(dashboard.origin.latest_date || "--")}</span>`,
+        `<span class="source-chip">当前页：${pageItems.length} 条</span>`,
+        `<span class="source-chip">按时间倒序排列</span>`,
+      ].join("");
+
+      const root = document.getElementById("originList");
+      if (!items.length) {
+        root.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.origin.empty_text)}</div>`;
+      } else {
+        root.innerHTML = pageItems.map((item) => renderEntryCard(item, "origin")).join("");
+      }
+
+      document.getElementById("originPageInfo").textContent = `第 ${state.originPage} 页 / 共 ${totalPages} 页`;
+      document.getElementById("originPrev").disabled = state.originPage === 1;
+      document.getElementById("originNext").disabled = state.originPage === totalPages;
+    }
+
+    function renderMarketTabs(dashboard) {
+      const tabs = document.getElementById("marketTabs");
+      tabs.innerHTML = dashboard.markets.groups.map((group) => `
+        <button class="market-tab ${group.name === state.currentMarket ? "active" : ""}" data-market="${escapeHtml(group.name)}">
+          ${escapeHtml(group.name)} (${group.count})
+        </button>
+      `).join("");
+
+      tabs.querySelectorAll(".market-tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.currentMarket = button.dataset.market;
+          renderMarketSection(state.dashboard);
+        });
+      });
+    }
+
+    function renderMarketSection(dashboard) {
+      const groups = dashboard.markets.groups || [];
+      if (!groups.find((group) => group.name === state.currentMarket) && groups.length) {
+        state.currentMarket = groups[0].name;
+      }
+
+      document.getElementById("marketCountChip").textContent = `${dashboard.markets.covered_count}/4`;
+      renderMarketTabs(dashboard);
+
+      const currentGroup = groups.find((group) => group.name === state.currentMarket);
+      const summary = document.getElementById("marketSummary");
+      const list = document.getElementById("marketList");
+
+      if (!currentGroup || !currentGroup.items.length) {
+        summary.textContent = `${state.currentMarket} 当前还没有整理到真实记录。`;
+        list.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.markets.empty_text)}</div>`;
         return;
       }
 
-      const width = 760;
-      const height = 260;
-      const paddingX = 28;
-      const top = 18;
-      const bottom = 210;
-      const min = Math.min(...values) - 5;
-      const max = Math.max(...values) + 4;
-      const stepX = values.length > 1 ? (width - paddingX * 2) / (values.length - 1) : 0;
-
-      const points = values.map((value, index) => {
-        const x = paddingX + index * stepX;
-        const y = bottom - ((value - min) / (max - min || 1)) * (bottom - top);
-        return { x, y, value };
-      });
-
-      const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
-      const areaPath = `${linePath} L ${points[points.length - 1].x} ${bottom} L ${points[0].x} ${bottom} Z`;
-      const grid = [0, 1, 2, 3].map((row) => {
-        const y = top + ((bottom - top) / 3) * row;
-        return `<line x1="${paddingX}" y1="${y}" x2="${width - paddingX}" y2="${y}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 8" />`;
-      }).join("");
-
-      const dots = points.map((point) => `
-        <circle cx="${point.x}" cy="${point.y}" r="5" fill="#58d6b4"></circle>
-        <circle cx="${point.x}" cy="${point.y}" r="12" fill="rgba(88,214,180,0.14)"></circle>
-      `).join("");
-
-      svg.innerHTML = `
-        <defs>
-          <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="rgba(88,214,180,0.32)" />
-            <stop offset="100%" stop-color="rgba(88,214,180,0.02)" />
-          </linearGradient>
-          <linearGradient id="lineStroke" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stop-color="#58d6b4" />
-            <stop offset="100%" stop-color="#ffc857" />
-          </linearGradient>
-        </defs>
-        ${grid}
-        <path d="${areaPath}" fill="url(#areaFill)"></path>
-        <path d="${linePath}" fill="none" stroke="url(#lineStroke)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
-        ${dots}
-      `;
-
-      axis.innerHTML = labels.map((label) => `<span>${label}</span>`).join("");
+      summary.textContent = `${currentGroup.name} 近三日共 ${currentGroup.count} 条记录，最新整理于 ${currentGroup.latest_date || "--"}。`;
+      list.innerHTML = currentGroup.items.map((item) => renderEntryCard({ ...item, market: currentGroup.name }, "market")).join("");
     }
 
-    function renderSignals(dashboard) {
-      const root = document.getElementById("signalList");
-      root.innerHTML = dashboard.signals.map((item) => `
-        <li>
-          <div class="signal-top">
-            <div class="signal-name">${item.name}</div>
-            <span class="signal-tag">${item.tag}</span>
-          </div>
-          <div class="signal-desc">${item.desc}</div>
-        </li>
-      `).join("");
-    }
+    function renderHotspotSection(dashboard) {
+      const items = dashboard.hotspots.items || [];
+      document.getElementById("hotspotCountChip").textContent = `${dashboard.hotspots.total} 条`;
+      const root = document.getElementById("hotspotList");
 
-    function renderMarkets(dashboard) {
-      const root = document.getElementById("marketHeat");
-      root.innerHTML = dashboard.markets.map((item, index) => `
-        <div class="heat-row">
-          <div class="heat-index">${index + 1}</div>
-          <div class="heat-copy">
-            <div class="heat-name">${item.name}</div>
-            <div class="heat-desc">${item.desc}</div>
-          </div>
-          <div class="heat-metric">${item.metric}</div>
-          <div class="bar">
-            <div class="bar-fill" style="width:${item.score}%"></div>
-          </div>
-        </div>
-      `).join("");
-    }
+      if (!items.length) {
+        root.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.hotspots.empty_text)}</div>`;
+        return;
+      }
 
-    function renderOrigins(dashboard) {
-      const root = document.getElementById("originHeat");
-      root.innerHTML = dashboard.origins.map((item) => `
-        <article class="origin-card">
-          <div class="origin-name">${item.name}</div>
-          <div class="origin-meta">${item.meta}</div>
-          <div class="origin-hot">${item.hot}</div>
-        </article>
-      `).join("");
-    }
-
-    function renderBoard(listId, items, tone) {
-      const root = document.getElementById(listId);
-      root.innerHTML = items.map((item) => `
-        <li>
-          <div>
-            <div class="board-name">${item.name}</div>
-            <div class="board-desc">${item.desc}</div>
-          </div>
-          <div class="board-value ${tone}">${item.value}</div>
-        </li>
-      `).join("");
-    }
-
-    function renderQuotes(dashboard) {
-      const root = document.getElementById("quoteRows");
-      root.innerHTML = dashboard.table_rows.map((item) => `
-        <tr>
-          <td>${item.date}</td>
-          <td>${item.type}</td>
-          <td class="table-strong">${item.herb}</td>
-          <td>${item.place}</td>
-          <td>${item.price}</td>
-          <td>${item.summary}</td>
-        </tr>
-      `).join("");
-    }
-
-    function renderModules(dashboard) {
-      const root = document.getElementById("moduleGrid");
-      root.innerHTML = dashboard.modules.map((item) => `
-        <div class="module-card">
-          <h3>${item.title}</h3>
-          <p>${item.desc}</p>
-          <span class="module-priority">${item.priority}</span>
-        </div>
-      `).join("");
+      root.innerHTML = items.map((item) => renderEntryCard(item, "hotspot")).join("");
     }
 
     async function loadDashboard() {
@@ -1140,22 +1230,35 @@
         if (!response.ok) {
           throw new Error(`Failed to load dashboard data: ${response.status}`);
         }
-        const dashboard = await response.json();
-        renderHero(dashboard);
-        renderStats(dashboard);
-        renderTrend(dashboard);
-        renderSignals(dashboard);
-        renderMarkets(dashboard);
-        renderOrigins(dashboard);
-        renderBoard("marketUpdateList", dashboard.market_updates, "gold");
-        renderBoard("hotspotList", dashboard.hotspots, "blue");
-        renderQuotes(dashboard);
-        renderModules(dashboard);
+
+        state.dashboard = await response.json();
+        state.currentMarket =
+          state.dashboard.markets.groups.find((group) => group.count > 0)?.name ||
+          state.dashboard.markets.groups[0]?.name ||
+          "亳州";
+        renderHero(state.dashboard);
+        renderOriginSection(state.dashboard);
+        renderMarketSection(state.dashboard);
+        renderHotspotSection(state.dashboard);
+
+        document.getElementById("originPrev").addEventListener("click", () => {
+          if (state.originPage > 1) {
+            state.originPage -= 1;
+            renderOriginSection(state.dashboard);
+          }
+        });
+
+        document.getElementById("originNext").addEventListener("click", () => {
+          const totalPages = Math.max(1, Math.ceil((state.dashboard.origin.items || []).length / state.originPageSize));
+          if (state.originPage < totalPages) {
+            state.originPage += 1;
+            renderOriginSection(state.dashboard);
+          }
+        });
       } catch (error) {
         console.error(error);
         document.getElementById("statusPill").textContent = "数据加载失败";
-        document.getElementById("sideBig").textContent = "请重新生成数据";
-        document.getElementById("sideNote").textContent = "当前没有读到 dashboard.json，请检查数据文件是否存在。";
+        document.getElementById("originList").innerHTML = '<div class="empty-state">当前没有读到 dashboard.json，请检查数据文件是否存在。</div>';
       }
     }
 
