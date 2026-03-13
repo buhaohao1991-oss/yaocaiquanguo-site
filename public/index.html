@@ -789,62 +789,51 @@
         <div class="brand-mark">药</div>
         <div>
           <h1>中药材全国追踪</h1>
-          <p>价格、市场、产区与趋势的中药材数据看板</p>
+          <p>产地行情、四大市场与行业热点的中药材情报看板</p>
         </div>
       </div>
-      <div class="status-pill">演示数据版 · 可继续接入真实数据</div>
+      <div class="status-pill" id="statusPill">真实数据加载中</div>
     </header>
 
     <section class="hero">
       <article class="hero-main">
-        <div class="eyebrow">
+        <div class="eyebrow" id="heroEyebrow">
           <span class="pulse"></span>
-          中药材行情首页 Demo
+          中药材情报首页
         </div>
-        <h2 class="hero-title">把价格、市场、产区和趋势，放到一张图里。</h2>
-        <p class="hero-lead">
-          这个版本已经不是纯占位页，而是一个可以继续往下做的首页原型。
-          它先用演示数据跑通结构，后面你只要把真实数据接进来，
-          就能逐步变成一个真正的中药材全国行情站。
-        </p>
+        <h2 class="hero-title" id="heroTitle">先把产地行情、四大市场和行业热点，放到一个首页里。</h2>
+        <p class="hero-lead" id="heroLead">这版首页正在读取真实 Excel 数据，重点展示产地、市场和行业热点。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#quotes">查看报价样例</a>
-          <a class="button" href="#modules">查看功能结构</a>
+          <a class="button primary" href="#quotes">查看行情摘录</a>
+          <a class="button" href="#modules">查看下一步结构</a>
         </div>
-        <div class="source-strip">
-          <span class="source-chip">来源规划：药通网</span>
-          <span class="source-chip">来源规划：中药材天地网</span>
-          <span class="source-chip">人工核验：首批重点品种</span>
-        </div>
+        <div class="source-strip" id="sourceStrip"></div>
       </article>
 
       <aside class="hero-side panel">
         <div>
           <div class="side-label">今日状态</div>
-          <div class="side-big">价格监测已跑通</div>
+          <div class="side-big" id="sideBig">真实数据加载中</div>
         </div>
         <div class="mini-grid">
           <div class="mini-card">
             <div class="mini-label">最新快照</div>
-            <div class="mini-value gold">03-13</div>
+            <div class="mini-value gold" id="latestDateValue">--</div>
           </div>
           <div class="mini-card">
-            <div class="mini-label">当前阶段</div>
-            <div class="mini-value blue">MVP</div>
+            <div class="mini-label">覆盖天数</div>
+            <div class="mini-value blue" id="daySpanValue">--</div>
           </div>
           <div class="mini-card">
-            <div class="mini-label">首批市场</div>
-            <div class="mini-value">4</div>
+            <div class="mini-label">市场覆盖</div>
+            <div class="mini-value" id="marketCoverageValue">--</div>
           </div>
           <div class="mini-card">
-            <div class="mini-label">首批品种</div>
-            <div class="mini-value green">12</div>
+            <div class="mini-label">热点条数</div>
+            <div class="mini-value green" id="hotspotCountValue">--</div>
           </div>
         </div>
-        <p class="side-note">
-          现在最适合继续做的方向，是先把“涨跌榜、市场热度、品种报价表”接上真实数据。
-          地图和详情页可以放在第二步。
-        </p>
+        <p class="side-note" id="sideNote">当前这批数据以产地为主，行业热点正在等待补充。</p>
       </aside>
     </section>
 
@@ -854,18 +843,18 @@
       <article class="panel trend-panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">七日行情指数</h2>
-            <p class="panel-sub">用首页趋势模块承接“整体热度、报价活跃度、价格波动”的第一视觉焦点。</p>
+            <h2 class="panel-title">近三日更新节奏</h2>
+            <p class="panel-sub">先看每天整理到多少条真实记录，用采集节奏判断当前数据覆盖推进。</p>
           </div>
-          <div class="chip">首页主图</div>
+          <div class="chip">真实采样</div>
         </div>
         <div class="chart-area">
           <div class="chart-frame">
             <div class="chart-meta">
-              <span>指数越高，表示报价活跃度和波动热度越高</span>
-              <span>当前峰值：86</span>
+              <span>柱状越高，表示当天整理到的新行情越多</span>
+              <span id="trendPeak">当前峰值：--</span>
             </div>
-            <svg id="trendChart" viewBox="0 0 760 260" aria-label="七日行情指数图"></svg>
+            <svg id="trendChart" viewBox="0 0 760 260" aria-label="近三日更新节奏图"></svg>
             <div class="axis-row" id="axisRow"></div>
           </div>
         </div>
@@ -874,10 +863,10 @@
       <aside class="panel signal-panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">今日信号</h2>
-            <p class="panel-sub">把最值得注意的品种和事件，压缩到首页右栏，方便第一眼判断当天行情。</p>
+            <h2 class="panel-title">最新产地行情</h2>
+            <p class="panel-sub">先把最新的产区报价和行情线索放右栏，方便第一眼筛选今天要看的品种。</p>
           </div>
-          <div class="chip">P1</div>
+          <div class="chip">产地优先</div>
         </div>
         <ul class="signal-list" id="signalList"></ul>
       </aside>
@@ -887,10 +876,10 @@
       <article class="panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">市场热度</h2>
-            <p class="panel-sub">先把四大市场做起来，后续再扩到更多区域市场与地方集散地。</p>
+            <h2 class="panel-title">四大市场覆盖</h2>
+            <p class="panel-sub">这里只看亳州、安国、成都、玉林四大市场，缺哪个就直观看到哪个还没补齐。</p>
           </div>
-          <div class="chip">重点市场</div>
+          <div class="chip">四大市场</div>
         </div>
         <div class="heat-list" id="marketHeat"></div>
       </article>
@@ -898,8 +887,8 @@
       <article class="panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">产区热区</h2>
-            <p class="panel-sub">第二个高价值模块是产区，尤其适合展示省份、县域和道地药材的热度。</p>
+            <h2 class="panel-title">重点产地</h2>
+            <p class="panel-sub">这批数据目前以产地为主，所以首页主位先给产区密集更新和重点品种。</p>
           </div>
           <div class="chip">重点产区</div>
         </div>
@@ -911,45 +900,44 @@
       <article class="panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">今日涨幅榜</h2>
-            <p class="panel-sub">这是用户最容易理解，也最容易传播的首页模块。</p>
+            <h2 class="panel-title">市场最新动态</h2>
+            <p class="panel-sub">市场模块不做涨跌榜，直接展示四大市场各自最新的一条有效动态。</p>
           </div>
-          <div class="chip">涨价</div>
+          <div class="chip">市场动态</div>
         </div>
-        <ul class="board-list" id="gainerList"></ul>
+        <ul class="board-list" id="marketUpdateList"></ul>
       </article>
 
       <article class="panel">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">今日跌幅榜</h2>
-            <p class="panel-sub">涨跌榜一起出现，页面会更完整，也更像真正的行情产品。</p>
+            <h2 class="panel-title">行业热点</h2>
+            <p class="panel-sub">政策、新闻、标准和专题快讯单独维护，不再和行情表混在一起。</p>
           </div>
-          <div class="chip">跌价</div>
+          <div class="chip">热点流</div>
         </div>
-        <ul class="board-list" id="loserList"></ul>
+        <ul class="board-list" id="hotspotList"></ul>
       </article>
     </section>
 
     <section class="panel table-panel" id="quotes">
       <div class="panel-head">
         <div>
-          <h2 class="panel-title">重点报价样例</h2>
-          <p class="panel-sub">接下来最值得做的，就是把这张报价表连到真实数据源上。</p>
+          <h2 class="panel-title">近三日行情摘录</h2>
+          <p class="panel-sub">这里先放最近整理到的产地和市场记录，后面再往下拆详情页。</p>
         </div>
-        <div class="chip">表格入口</div>
+        <div class="chip">最新摘录</div>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
+              <th>日期</th>
+              <th>类型</th>
               <th>品种</th>
-              <th>规格</th>
-              <th>市场</th>
-              <th>今日价</th>
-              <th>昨日价</th>
-              <th>涨跌幅</th>
-              <th>来源</th>
+              <th>地点</th>
+              <th>报价</th>
+              <th>摘要</th>
             </tr>
           </thead>
           <tbody id="quoteRows"></tbody>
@@ -961,105 +949,21 @@
       <div class="panel-head">
         <div>
           <h2 class="panel-title">下一步功能结构</h2>
-          <p class="panel-sub">你现在已经有一个能打开的网站了，下一阶段就是把首页拆成真正的业务模块。</p>
+          <p class="panel-sub">下一阶段先把数据结构做稳，再逐步拆市场页、热点流和重点品种专题。</p>
         </div>
         <div class="chip">开发顺序</div>
       </div>
-      <div class="module-grid">
-        <div class="module-card">
-          <h3>报价接入</h3>
-          <p>先让首页表格和涨跌榜吃到真实数据，这是最关键的一步。</p>
-          <span class="module-priority">P1</span>
-        </div>
-        <div class="module-card">
-          <h3>市场页</h3>
-          <p>按亳州、安国、玉林、成都拆出市场页面，看活跃品种与主流报价。</p>
-          <span class="module-priority">P1</span>
-        </div>
-        <div class="module-card">
-          <h3>品种详情页</h3>
-          <p>某个药材的历史走势、规格差异、产区和近期快讯。</p>
-          <span class="module-priority">P2</span>
-        </div>
-        <div class="module-card">
-          <h3>产区地图</h3>
-          <p>把产区热区和道地产区做成地图，后续会成为最有辨识度的模块。</p>
-          <span class="module-priority">P2</span>
-        </div>
-      </div>
+      <div class="module-grid" id="moduleGrid"></div>
     </section>
 
     <footer class="footer">
-      <div>当前地址：<strong>yaocaiquanguo.pages.dev</strong></div>
-      <div>当前页面为演示数据版，我已经把结构搭好了，下一步可以继续把真实数据接进来。</div>
+      <div id="footerLeft">当前地址：<strong>yaocaiquanguo-site.pages.dev</strong></div>
+      <div id="footerRight">当前页面正在读取真实 Excel 数据。</div>
     </footer>
   </main>
 
   <script>
-    const dashboard = {
-      stats: [
-        { label: "监测报价", value: "126", sub: "今日采样条数", tone: "green" },
-        { label: "上涨品种", value: "18", sub: "日内上调", tone: "gold" },
-        { label: "下跌品种", value: "7", sub: "日内回落", tone: "red" },
-        { label: "重点市场", value: "4", sub: "亳州 / 安国 / 玉林 / 成都", tone: "blue" },
-        { label: "产区覆盖", value: "12", sub: "甘肃 / 云南 / 广西等", tone: "green" }
-      ],
-      trend: {
-        labels: ["03-07", "03-08", "03-09", "03-10", "03-11", "03-12", "03-13"],
-        values: [62, 66, 71, 69, 78, 81, 86]
-      },
-      signals: [
-        {
-          name: "当归走强",
-          tag: "热度上升",
-          desc: "甘肃统货报价继续抬升，亳州市场询价频次明显增加。"
-        },
-        {
-          name: "白芷平稳",
-          tag: "波动较小",
-          desc: "主流市场报价区间变化不大，短期更适合观察成交量。"
-        },
-        {
-          name: "黄芪关注度高",
-          tag: "产区联动",
-          desc: "产区与市场同步升温，适合作为首页重点跟踪品种。"
-        }
-      ],
-      markets: [
-        { name: "亳州市场", desc: "重点监测品种 28 个", score: 92 },
-        { name: "安国市场", desc: "日内调价品种 14 个", score: 84 },
-        { name: "玉林市场", desc: "南方品种活跃度较高", score: 78 },
-        { name: "成都市场", desc: "根茎类品种波动偏明显", score: 73 }
-      ],
-      origins: [
-        { name: "甘肃岷县", meta: "当归、黄芪、党参核心产区", hot: "热度指数 91" },
-        { name: "云南文山", meta: "三七关注度高，价格讨论活跃", hot: "热度指数 86" },
-        { name: "广西玉林周边", meta: "交易流通热度高，南货活跃", hot: "热度指数 79" },
-        { name: "安徽亳州周边", meta: "市场联动强，适合做热区展示", hot: "热度指数 77" }
-      ],
-      gainers: [
-        { name: "当归", desc: "甘肃统货 · 亳州市场", value: "+6.8%" },
-        { name: "黄芪", desc: "条芪 · 安国市场", value: "+4.9%" },
-        { name: "党参", desc: "中条 · 成都市场", value: "+3.6%" },
-        { name: "三七", desc: "120头 · 玉林市场", value: "+3.2%" }
-      ],
-      losers: [
-        { name: "白芷", desc: "统货 · 亳州市场", value: "-2.6%" },
-        { name: "桔梗", desc: "饮片料 · 安国市场", value: "-1.9%" },
-        { name: "苍术", desc: "统货 · 玉林市场", value: "-1.4%" },
-        { name: "山药", desc: "怀山药片 · 成都市场", value: "-1.1%" }
-      ],
-      quotes: [
-        { herb: "当归", spec: "甘肃统货", market: "亳州", today: "62 元/kg", yesterday: "58 元/kg", change: "+6.8%", source: "人工整理演示" },
-        { herb: "黄芪", spec: "条芪", market: "安国", today: "39 元/kg", yesterday: "37.2 元/kg", change: "+4.9%", source: "人工整理演示" },
-        { herb: "党参", spec: "中条", market: "成都", today: "91 元/kg", yesterday: "87.8 元/kg", change: "+3.6%", source: "人工整理演示" },
-        { herb: "三七", spec: "120头", market: "玉林", today: "134 元/kg", yesterday: "129.8 元/kg", change: "+3.2%", source: "人工整理演示" },
-        { herb: "白芷", spec: "统货", market: "亳州", today: "25 元/kg", yesterday: "25.7 元/kg", change: "-2.6%", source: "人工整理演示" },
-        { herb: "桔梗", spec: "饮片料", market: "安国", today: "36 元/kg", yesterday: "36.7 元/kg", change: "-1.9%", source: "人工整理演示" }
-      ]
-    };
-
-    function renderStats() {
+    function renderStats(dashboard) {
       const root = document.getElementById("stats");
       root.innerHTML = dashboard.stats.map((item) => `
         <article class="stat">
@@ -1070,11 +974,40 @@
       `).join("");
     }
 
-    function renderTrend() {
+    function renderHero(dashboard) {
+      document.getElementById("statusPill").textContent = dashboard.status;
+      document.getElementById("heroEyebrow").innerHTML = `<span class="pulse"></span>${dashboard.hero.eyebrow}`;
+      document.getElementById("heroTitle").textContent = dashboard.hero.title;
+      document.getElementById("heroLead").textContent = dashboard.hero.lead;
+      document.getElementById("sideBig").textContent = dashboard.hero.side_big;
+      document.getElementById("sideNote").textContent = dashboard.hero.side_note;
+
+      const metrics = dashboard.side_metrics || [];
+      document.getElementById("latestDateValue").textContent = metrics[0]?.value || "--";
+      document.getElementById("daySpanValue").textContent = metrics[1]?.value || "--";
+      document.getElementById("marketCoverageValue").textContent = metrics[2]?.value || "--";
+      document.getElementById("hotspotCountValue").textContent = metrics[3]?.value || "--";
+
+      const strip = document.getElementById("sourceStrip");
+      strip.innerHTML = (dashboard.hero.source_strip || []).map((item) => `<span class="source-chip">${item}</span>`).join("");
+
+      document.getElementById("footerLeft").textContent = dashboard.footer.left;
+      document.getElementById("footerRight").textContent = dashboard.footer.right;
+    }
+
+    function renderTrend(dashboard) {
       const svg = document.getElementById("trendChart");
       const axis = document.getElementById("axisRow");
       const labels = dashboard.trend.labels;
       const values = dashboard.trend.values;
+      document.getElementById("trendPeak").textContent = `当前峰值：${dashboard.trend.peak}`;
+
+      if (!labels.length || !values.length) {
+        svg.innerHTML = "";
+        axis.innerHTML = "";
+        return;
+      }
+
       const width = 760;
       const height = 260;
       const paddingX = 28;
@@ -1082,17 +1015,16 @@
       const bottom = 210;
       const min = Math.min(...values) - 5;
       const max = Math.max(...values) + 4;
-      const stepX = (width - paddingX * 2) / (values.length - 1);
+      const stepX = values.length > 1 ? (width - paddingX * 2) / (values.length - 1) : 0;
 
       const points = values.map((value, index) => {
         const x = paddingX + index * stepX;
-        const y = bottom - ((value - min) / (max - min)) * (bottom - top);
+        const y = bottom - ((value - min) / (max - min || 1)) * (bottom - top);
         return { x, y, value };
       });
 
       const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
       const areaPath = `${linePath} L ${points[points.length - 1].x} ${bottom} L ${points[0].x} ${bottom} Z`;
-
       const grid = [0, 1, 2, 3].map((row) => {
         const y = top + ((bottom - top) / 3) * row;
         return `<line x1="${paddingX}" y1="${y}" x2="${width - paddingX}" y2="${y}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 8" />`;
@@ -1123,7 +1055,7 @@
       axis.innerHTML = labels.map((label) => `<span>${label}</span>`).join("");
     }
 
-    function renderSignals() {
+    function renderSignals(dashboard) {
       const root = document.getElementById("signalList");
       root.innerHTML = dashboard.signals.map((item) => `
         <li>
@@ -1136,7 +1068,7 @@
       `).join("");
     }
 
-    function renderMarkets() {
+    function renderMarkets(dashboard) {
       const root = document.getElementById("marketHeat");
       root.innerHTML = dashboard.markets.map((item, index) => `
         <div class="heat-row">
@@ -1145,7 +1077,7 @@
             <div class="heat-name">${item.name}</div>
             <div class="heat-desc">${item.desc}</div>
           </div>
-          <div class="heat-metric">${item.score}</div>
+          <div class="heat-metric">${item.metric}</div>
           <div class="bar">
             <div class="bar-fill" style="width:${item.score}%"></div>
           </div>
@@ -1153,7 +1085,7 @@
       `).join("");
     }
 
-    function renderOrigins() {
+    function renderOrigins(dashboard) {
       const root = document.getElementById("originHeat");
       root.innerHTML = dashboard.origins.map((item) => `
         <article class="origin-card">
@@ -1177,29 +1109,57 @@
       `).join("");
     }
 
-    function renderQuotes() {
+    function renderQuotes(dashboard) {
       const root = document.getElementById("quoteRows");
-      root.innerHTML = dashboard.quotes.map((item) => `
+      root.innerHTML = dashboard.table_rows.map((item) => `
         <tr>
+          <td>${item.date}</td>
+          <td>${item.type}</td>
           <td class="table-strong">${item.herb}</td>
-          <td>${item.spec}</td>
-          <td>${item.market}</td>
-          <td>${item.today}</td>
-          <td>${item.yesterday}</td>
-          <td class="${item.change.startsWith('-') ? 'red' : 'green'}">${item.change}</td>
-          <td>${item.source}</td>
+          <td>${item.place}</td>
+          <td>${item.price}</td>
+          <td>${item.summary}</td>
         </tr>
       `).join("");
     }
 
-    renderStats();
-    renderTrend();
-    renderSignals();
-    renderMarkets();
-    renderOrigins();
-    renderBoard("gainerList", dashboard.gainers, "green");
-    renderBoard("loserList", dashboard.losers, "red");
-    renderQuotes();
+    function renderModules(dashboard) {
+      const root = document.getElementById("moduleGrid");
+      root.innerHTML = dashboard.modules.map((item) => `
+        <div class="module-card">
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+          <span class="module-priority">${item.priority}</span>
+        </div>
+      `).join("");
+    }
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`./data/dashboard.json?v=${Date.now()}`);
+        if (!response.ok) {
+          throw new Error(`Failed to load dashboard data: ${response.status}`);
+        }
+        const dashboard = await response.json();
+        renderHero(dashboard);
+        renderStats(dashboard);
+        renderTrend(dashboard);
+        renderSignals(dashboard);
+        renderMarkets(dashboard);
+        renderOrigins(dashboard);
+        renderBoard("marketUpdateList", dashboard.market_updates, "gold");
+        renderBoard("hotspotList", dashboard.hotspots, "blue");
+        renderQuotes(dashboard);
+        renderModules(dashboard);
+      } catch (error) {
+        console.error(error);
+        document.getElementById("statusPill").textContent = "数据加载失败";
+        document.getElementById("sideBig").textContent = "请重新生成数据";
+        document.getElementById("sideNote").textContent = "当前没有读到 dashboard.json，请检查数据文件是否存在。";
+      }
+    }
+
+    loadDashboard();
   </script>
 </body>
 </html>
