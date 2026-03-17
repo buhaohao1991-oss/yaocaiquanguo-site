@@ -3,28 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中药材全国追踪</title>
+  <meta name="theme-color" content="#e8dfcf">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232f4730'/%3E%3Ctext x='32' y='42' font-size='34' text-anchor='middle' fill='%23f5efe3' font-family='STSong, Songti SC, serif'%3E%E6%9C%AC%3C/text%3E%3C/svg%3E">
+  <title>中药材溯源平台</title>
   <style>
     :root {
-      --bg: #06111e;
-      --bg-soft: #0b1c30;
-      --panel: rgba(9, 25, 44, 0.9);
-      --panel-strong: rgba(10, 29, 51, 0.96);
-      --line: rgba(88, 214, 180, 0.14);
-      --line-strong: rgba(88, 214, 180, 0.28);
-      --text: #eef7f5;
-      --muted: #92aaa2;
-      --accent: #58d6b4;
-      --accent-rgb: 88, 214, 180;
-      --accent-deep: #1cb593;
-      --accent-2: #ffc857;
-      --accent-2-rgb: 255, 200, 87;
-      --accent-3: #7bb0ff;
-      --accent-3-rgb: 123, 176, 255;
-      --danger: #ff8c8c;
-      --danger-deep: #ff5f5f;
-      --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
-      --radius: 26px;
+      --paper: #f3ecdf;
+      --paper-deep: #e7ddc8;
+      --mist: rgba(255, 251, 244, 0.84);
+      --mist-strong: rgba(255, 248, 238, 0.94);
+      --ink: #1d2a20;
+      --ink-soft: #485748;
+      --sage: #4c6845;
+      --sage-deep: #2f4730;
+      --moss: #7f926e;
+      --gold: #ab7a33;
+      --gold-soft: #c89d56;
+      --clay: #8e5d40;
+      --line: rgba(62, 82, 56, 0.14);
+      --line-strong: rgba(62, 82, 56, 0.26);
+      --shadow: 0 26px 60px rgba(52, 44, 30, 0.12);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: "Songti SC", "STSong", "Noto Serif SC", serif;
+      --font-body: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
     }
 
     * {
@@ -37,147 +41,252 @@
 
     body {
       margin: 0;
-      color: var(--text);
-      font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      font-family: var(--font-body);
       background:
-        radial-gradient(circle at 12% 10%, rgba(var(--accent-rgb), 0.16), transparent 24%),
-        radial-gradient(circle at 85% 12%, rgba(var(--accent-2-rgb), 0.1), transparent 20%),
-        radial-gradient(circle at 52% 88%, rgba(var(--accent-3-rgb), 0.14), transparent 28%),
-        linear-gradient(180deg, #05101b 0%, #071524 28%, #091728 62%, #050c15 100%);
+        radial-gradient(circle at 12% 8%, rgba(171, 122, 51, 0.16), transparent 22%),
+        radial-gradient(circle at 88% 15%, rgba(76, 104, 69, 0.12), transparent 24%),
+        radial-gradient(circle at 50% 80%, rgba(143, 110, 70, 0.08), transparent 28%),
+        linear-gradient(180deg, #f5efe3 0%, #efe6d7 48%, #f6f0e5 100%);
       min-height: 100vh;
     }
 
-    .shell {
-      width: min(1240px, calc(100% - 32px));
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(76, 104, 69, 0.04) 1px, transparent 1px),
+        linear-gradient(rgba(76, 104, 69, 0.04) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 80%);
+      opacity: 0.35;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1220px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 24px 0 56px;
+      padding: 24px 0 40px;
     }
 
     .topbar {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 18px 0 10px;
+      padding: 10px 0 22px;
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 14px;
+      text-decoration: none;
+      min-width: 0;
     }
 
     .brand-mark {
-      width: 44px;
-      height: 44px;
+      width: 54px;
+      height: 54px;
+      position: relative;
       display: grid;
       place-items: center;
+      border-radius: 18px;
+      color: #f7f1e8;
+      font-family: var(--font-display);
+      font-size: 24px;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.18), transparent 35%),
+        linear-gradient(145deg, #44623c, #29412b);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 16px 26px rgba(41, 65, 43, 0.18);
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 14px;
-      color: #062019;
-      font-size: 20px;
-      background: linear-gradient(135deg, var(--accent), #8fead2);
-      box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.28);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-kicker {
+      margin: 0;
+      color: var(--sage);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .brand h1 {
-      margin: 0;
-      font-size: 18px;
+      margin: 4px 0 0;
+      font-family: var(--font-display);
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 700;
       letter-spacing: 0.02em;
     }
 
     .brand p {
-      margin: 4px 0 0;
-      color: var(--muted);
+      margin: 6px 0 0;
+      color: var(--ink-soft);
       font-size: 13px;
     }
 
-    .status-pill {
+    .topnav {
+      justify-self: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .topnav a {
       padding: 10px 14px;
-      border: 1px solid var(--line-strong);
       border-radius: 999px;
+      text-decoration: none;
+      color: var(--ink-soft);
       font-size: 13px;
-      color: var(--accent);
-      background: rgba(var(--accent-rgb), 0.08);
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .topnav a:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.38);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(76, 104, 69, 0.18);
+      background: rgba(255, 248, 240, 0.92);
+      color: var(--sage);
+      font-size: 13px;
+      box-shadow: 0 8px 18px rgba(52, 44, 30, 0.07);
+      white-space: nowrap;
+    }
+
+    .status-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--sage);
+      box-shadow: 0 0 0 0 rgba(76, 104, 69, 0.45);
+      animation: pulse 2.1s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 104, 69, 0.35);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(76, 104, 69, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 104, 69, 0);
+      }
     }
 
     .hero {
-      padding: 22px 0 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 20px;
     }
 
-    .hero-main,
+    .hero-panel,
     .panel {
       position: relative;
       overflow: hidden;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-        var(--panel);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.2)),
+        var(--mist);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(10px);
     }
 
-    .hero-main {
-      padding: 34px 34px 30px;
-      min-height: 320px;
-    }
-
-    .hero-main--single {
-      width: 100%;
-    }
-
-    .hero-main::before,
+    .hero-panel::before,
     .panel::before {
       content: "";
       position: absolute;
       inset: 0 auto auto 0;
       width: 100%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.4), transparent);
-      opacity: 0.55;
+      background: linear-gradient(90deg, transparent, rgba(171, 122, 51, 0.38), transparent);
+    }
+
+    .hero-copy {
+      padding: 36px 38px 34px;
+      background:
+        radial-gradient(circle at 82% 16%, rgba(171, 122, 51, 0.16), transparent 28%),
+        radial-gradient(circle at 22% 82%, rgba(76, 104, 69, 0.12), transparent 36%);
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 16px;
+      padding: 9px 14px;
       border-radius: 999px;
-      border: 1px solid var(--line-strong);
-      color: var(--accent);
-      background: rgba(var(--accent-rgb), 0.07);
-      font-size: 14px;
+      background: rgba(76, 104, 69, 0.1);
+      border: 1px solid rgba(76, 104, 69, 0.16);
+      color: var(--sage);
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .pulse {
+    .eyebrow::before {
+      content: "";
       width: 9px;
       height: 9px;
       border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.65);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.55); }
-      70% { box-shadow: 0 0 0 12px rgba(var(--accent-rgb), 0); }
-      100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); }
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(171, 122, 51, 0.12);
     }
 
     .hero-title {
-      margin: 22px 0 16px;
-      max-width: 740px;
-      font-size: clamp(38px, 7vw, 78px);
+      margin: 24px 0 16px;
+      max-width: 780px;
+      font-family: var(--font-display);
+      font-size: clamp(42px, 6vw, 78px);
       line-height: 1.04;
-      letter-spacing: -0.05em;
+      letter-spacing: 0.01em;
+      font-weight: 700;
     }
 
     .hero-lead {
-      max-width: 820px;
+      max-width: 760px;
       margin: 0;
-      font-size: 19px;
+      color: var(--ink-soft);
+      font-size: 18px;
       line-height: 1.9;
-      color: var(--muted);
     }
 
     .hero-actions {
@@ -191,725 +300,960 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 148px;
+      min-width: 152px;
       padding: 13px 18px;
-      border-radius: 14px;
-      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      border: 1px solid transparent;
       text-decoration: none;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.02);
-      font-weight: 600;
-      transition: transform 0.18s ease, border-color 0.18s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .button:hover {
       transform: translateY(-1px);
-      border-color: rgba(var(--accent-rgb), 0.5);
+      box-shadow: 0 12px 20px rgba(62, 82, 56, 0.08);
     }
 
     .button.primary {
-      color: #062019;
-      background: linear-gradient(135deg, var(--accent), #98f0d9);
-      border-color: transparent;
+      background: linear-gradient(135deg, #44623c, #2f4730);
+      color: #f8f3ea;
+      box-shadow: 0 16px 24px rgba(47, 71, 48, 0.18);
     }
 
-    .source-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 28px;
+    .button.secondary {
+      background: rgba(255, 251, 244, 0.86);
+      color: var(--sage-deep);
+      border-color: rgba(76, 104, 69, 0.18);
     }
 
-    .source-chip {
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(var(--accent-3-rgb), 0.18);
-      background: rgba(var(--accent-3-rgb), 0.08);
-      color: #bfd6ff;
-      font-size: 13px;
-    }
-
-    .section-nav {
+    .trust-ribbon {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-top: 30px;
     }
 
-    .nav-pill {
+    .trust-chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 249, 240, 0.92);
+      border: 1px solid rgba(171, 122, 51, 0.16);
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .hero-console {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.3)),
+        var(--mist-strong);
+    }
+
+    .console-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .console-head strong {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .search-card,
+    .toolbar-search {
+      display: block;
+    }
+
+    .search-label {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(76, 104, 69, 0.18);
+      background: rgba(255, 252, 247, 0.92);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: rgba(76, 104, 69, 0.4);
+      box-shadow: 0 0 0 4px rgba(76, 104, 69, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .search-button,
+    .ghost-button {
+      padding: 13px 18px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      font-weight: 700;
+    }
+
+    .search-button {
+      background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+      color: #fffaf2;
+      box-shadow: 0 12px 20px rgba(171, 122, 51, 0.18);
+    }
+
+    .search-button:hover,
+    .ghost-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero-snapshot {
+      padding: 18px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.18)),
+        rgba(248, 242, 232, 0.9);
+      border: 1px solid rgba(76, 104, 69, 0.12);
+      min-height: 252px;
+    }
+
+    .snapshot-kicker {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 11px 16px;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid var(--line-strong);
-      color: var(--text);
-      text-decoration: none;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(76, 104, 69, 0.08);
+      color: var(--sage);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .snapshot-title {
+      margin: 14px 0 8px;
+      font-family: var(--font-display);
+      font-size: 30px;
+      line-height: 1.25;
+    }
+
+    .snapshot-code {
+      color: var(--ink-soft);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .snapshot-meta {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .snapshot-meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(76, 104, 69, 0.16);
+      color: var(--ink-soft);
       font-size: 14px;
-      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
 
-    .nav-pill:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--accent-rgb), 0.44);
-      background: rgba(var(--accent-rgb), 0.08);
+    .snapshot-meta-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
     }
 
-    .section-panel {
-      margin-bottom: 18px;
+    .snapshot-meta-row strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mini-card {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 251, 245, 0.78);
+      border: 1px solid rgba(76, 104, 69, 0.1);
+    }
+
+    .mini-card .label {
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .mini-card .value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--sage-deep);
+    }
+
+    .mini-card .note {
+      margin-top: 6px;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .story-card {
+      padding: 20px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.18)),
+        rgba(255, 250, 244, 0.78);
+      box-shadow: 0 14px 28px rgba(52, 44, 30, 0.07);
+    }
+
+    .story-index {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .story-card h3 {
+      margin: 12px 0 10px;
+      font-family: var(--font-display);
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .story-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    .section-kicker {
+      display: block;
+      color: var(--sage);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(30px, 4vw, 42px);
+      line-height: 1.16;
+      font-weight: 700;
+    }
+
+    .section-header p {
+      margin: 8px 0 0;
+      max-width: 720px;
+      color: var(--ink-soft);
+      line-height: 1.85;
+      font-size: 15px;
     }
 
     .section-meta {
       display: flex;
       flex-wrap: wrap;
+      justify-content: flex-end;
       gap: 10px;
-      padding: 18px 22px 0;
-    }
-
-    .entry-list {
-      display: grid;
-      gap: 14px;
-      padding: 18px 22px 24px;
-    }
-
-    .entry-card {
-      padding: 18px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .entry-top {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .entry-date {
-      color: var(--muted);
+      color: var(--ink-soft);
       font-size: 13px;
     }
 
-    .entry-badges {
+    .meta-pill {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255, 250, 244, 0.78);
+      border: 1px solid rgba(76, 104, 69, 0.1);
+    }
+
+    .trace-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.94fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .toolbar-badges {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      justify-content: flex-end;
       gap: 8px;
     }
 
-    .entry-tag {
-      display: inline-flex;
-      padding: 6px 10px;
+    .toolbar-badge {
+      padding: 8px 10px;
       border-radius: 999px;
+      background: rgba(76, 104, 69, 0.08);
+      color: var(--sage);
       font-size: 12px;
-      font-weight: 700;
-      color: #062019;
-      background: var(--accent);
-    }
-
-    .entry-price {
-      color: var(--accent-2);
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .entry-title-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: baseline;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .entry-title {
-      margin: 0;
-      font-size: 22px;
-      line-height: 1.3;
-    }
-
-    .entry-spec {
-      color: var(--accent-3);
-      font-size: 14px;
       font-weight: 600;
     }
 
-    .entry-meta {
-      margin-top: 10px;
-      color: var(--muted);
+    .batch-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .batch-card {
+      width: 100%;
+      padding: 18px;
+      text-align: left;
+      border-radius: 22px;
+      border: 1px solid rgba(76, 104, 69, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.2)),
+        rgba(255, 249, 240, 0.72);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .batch-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(76, 104, 69, 0.28);
+      box-shadow: 0 18px 28px rgba(52, 44, 30, 0.08);
+    }
+
+    .batch-card.is-active {
+      border-color: rgba(171, 122, 51, 0.4);
+      box-shadow: 0 18px 28px rgba(171, 122, 51, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.24)),
+        rgba(255, 247, 236, 0.92);
+    }
+
+    .batch-head,
+    .batch-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .batch-code {
+      color: var(--ink-soft);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tone-stable {
+      background: rgba(76, 104, 69, 0.1);
+      color: var(--sage-deep);
+    }
+
+    .tone-active {
+      background: rgba(171, 122, 51, 0.12);
+      color: #885e23;
+    }
+
+    .tone-attention {
+      background: rgba(142, 93, 64, 0.12);
+      color: var(--clay);
+    }
+
+    .tone-pending {
+      background: rgba(72, 87, 72, 0.08);
+      color: var(--ink-soft);
+    }
+
+    .batch-title {
+      margin: 14px 0 8px;
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1.24;
+      font-weight: 700;
+    }
+
+    .batch-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      color: var(--ink-soft);
       font-size: 14px;
+    }
+
+    .batch-summary {
+      margin: 12px 0 0;
+      color: var(--ink);
       line-height: 1.8;
+      font-size: 14px;
     }
 
-    .entry-summary {
-      margin: 14px 0 0;
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.9;
+    .batch-foot {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
     }
 
-    .entry-footer {
+    .fact-box {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(76, 104, 69, 0.08);
+    }
+
+    .fact-box .label {
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .fact-box .value {
+      margin-top: 7px;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .panel-foot {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       align-items: center;
       margin-top: 16px;
-      flex-wrap: wrap;
-      color: var(--muted);
+      color: var(--ink-soft);
       font-size: 13px;
     }
 
-    .entry-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
+    .ghost-button {
+      background: rgba(255, 251, 244, 0.92);
+      border-color: rgba(76, 104, 69, 0.18);
+      color: var(--sage-deep);
     }
 
-    .entry-link:hover {
-      text-decoration: underline;
-    }
-
-    .pager {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 0 22px 24px;
-      flex-wrap: wrap;
-    }
-
-    .pager-info {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .pager-button {
-      min-width: 110px;
-      padding: 11px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--line-strong);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
-    }
-
-    .pager-button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      border-color: rgba(var(--accent-rgb), 0.44);
-    }
-
-    .pager-button:disabled {
-      opacity: 0.38;
+    .ghost-button:disabled {
+      opacity: 0.45;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .market-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 18px 22px 0;
-    }
-
-    .market-tab {
-      padding: 11px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(var(--accent-3-rgb), 0.2);
-      background: rgba(var(--accent-3-rgb), 0.08);
-      color: #bfd6ff;
-      font-size: 14px;
-      cursor: pointer;
-      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-    }
-
-    .market-tab:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--accent-3-rgb), 0.34);
-    }
-
-    .market-tab.active {
-      background: rgba(var(--accent-rgb), 0.14);
-      border-color: rgba(var(--accent-rgb), 0.42);
-      color: var(--text);
-    }
-
-    .market-summary {
-      padding: 16px 22px 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .empty-state {
-      padding: 20px 22px 24px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.9;
-    }
-
-    .hero-side {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      background:
-        radial-gradient(circle at 80% 18%, rgba(var(--accent-3-rgb), 0.16), transparent 24%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-        var(--panel-strong);
-    }
-
-    .side-label {
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .side-big {
-      font-size: 40px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      color: var(--accent-2);
-    }
-
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .mini-card {
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .mini-card .mini-label {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .mini-card .mini-value {
-      margin-top: 8px;
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    .side-note {
-      margin: 0;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: rgba(var(--accent-2-rgb), 0.08);
-      color: #f6dc9c;
-      line-height: 1.8;
-      font-size: 14px;
-      border: 1px solid rgba(var(--accent-2-rgb), 0.16);
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
+    .empty-box {
+      display: none;
       padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .stat-value {
-      margin-top: 10px;
-      font-size: clamp(26px, 4vw, 42px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-    }
-
-    .stat-sub {
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .green {
-      color: var(--accent);
-    }
-
-    .gold {
-      color: var(--accent-2);
-    }
-
-    .blue {
-      color: var(--accent-3);
-    }
-
-    .red {
-      color: var(--danger);
-    }
-
-    .layout-two {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 24px 26px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .panel-title {
-      margin: 0;
-      font-size: 28px;
-      letter-spacing: -0.03em;
-    }
-
-    .panel-sub {
-      margin: 8px 0 0;
-      color: var(--muted);
+      border-radius: 20px;
+      background: rgba(255, 251, 244, 0.76);
+      border: 1px dashed rgba(76, 104, 69, 0.2);
+      color: var(--ink-soft);
       line-height: 1.8;
-      font-size: 15px;
+      text-align: center;
     }
 
-    .trend-panel {
-      min-height: 420px;
-    }
-
-    .chart-area {
-      padding: 22px 24px 26px;
-    }
-
-    .chart-frame {
-      padding: 18px 18px 10px;
-      border-radius: 22px;
-      background:
-        linear-gradient(180deg, rgba(var(--accent-3-rgb), 0.08), transparent 72%),
-        rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(var(--accent-3-rgb), 0.14);
-    }
-
-    .chart-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    svg {
-      width: 100%;
-      height: auto;
+    .empty-box.is-visible {
       display: block;
     }
 
-    .axis-row {
+    .detail-panel {
+      position: sticky;
+      top: 18px;
+    }
+
+    .detail-hero {
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(76, 104, 69, 0.08);
+    }
+
+    .detail-kicker {
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .detail-title {
+      margin: 12px 0 8px;
+      font-family: var(--font-display);
+      font-size: 36px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .detail-sub {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .detail-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .score-meter {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255, 252, 247, 0.82);
+      border: 1px solid rgba(76, 104, 69, 0.1);
+    }
+
+    .score-top {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 12px;
+      gap: 12px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--ink-soft);
     }
 
-    .signal-panel {
-      min-height: 420px;
+    .score-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--sage-deep);
     }
 
-    .signal-list {
-      margin: 0;
-      padding: 14px 22px 24px;
-      list-style: none;
+    .score-track {
+      height: 10px;
+      margin-top: 10px;
+      border-radius: 999px;
+      background: rgba(76, 104, 69, 0.08);
+      overflow: hidden;
     }
 
-    .signal-list li {
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    .score-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #596f4e, #c89d56);
     }
 
-    .signal-list li:last-child {
+    .detail-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .doc-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px dashed rgba(76, 104, 69, 0.16);
+    }
+
+    .doc-card:last-child {
       border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .doc-index {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(76, 104, 69, 0.08);
+      color: var(--sage-deep);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .doc-label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .doc-note {
+      margin-top: 4px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .timeline-rail {
+      position: relative;
+      min-height: 100%;
+    }
+
+    .timeline-rail::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 14px;
+      bottom: -18px;
+      width: 2px;
+      background: rgba(76, 104, 69, 0.12);
+    }
+
+    .timeline-item:last-child .timeline-rail::before {
+      display: none;
+    }
+
+    .timeline-dot {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: #fff;
+    }
+
+    .timeline-dot.is-done {
+      background: var(--sage);
+      border-color: rgba(76, 104, 69, 0.22);
+      box-shadow: 0 0 0 4px rgba(76, 104, 69, 0.08);
+    }
+
+    .timeline-dot.is-active {
+      background: var(--gold);
+      border-color: rgba(171, 122, 51, 0.24);
+      box-shadow: 0 0 0 4px rgba(171, 122, 51, 0.08);
+    }
+
+    .timeline-dot.is-pending {
+      background: rgba(72, 87, 72, 0.16);
+      border-color: rgba(72, 87, 72, 0.1);
+    }
+
+    .timeline-content h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .timeline-content p {
+      margin: 6px 0 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .link-row {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .detail-link {
+      color: var(--sage-deep);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .detail-link:hover {
+      text-decoration: underline;
+    }
+
+    .atlas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .atlas-card {
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.2)),
+        rgba(255, 250, 244, 0.78);
+      box-shadow: 0 14px 28px rgba(52, 44, 30, 0.07);
+    }
+
+    .atlas-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .atlas-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .atlas-count {
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(76, 104, 69, 0.08);
+      color: var(--sage);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .atlas-meta {
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .atlas-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .atlas-tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(171, 122, 51, 0.1);
+      color: #7f5824;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .atlas-bar {
+      height: 8px;
+      margin-top: 16px;
+      border-radius: 999px;
+      background: rgba(76, 104, 69, 0.08);
+      overflow: hidden;
+    }
+
+    .atlas-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #536a49, #c89d56);
+    }
+
+    .node-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .node-card {
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.2)),
+        rgba(255, 250, 244, 0.78);
+      box-shadow: 0 14px 28px rgba(52, 44, 30, 0.07);
+    }
+
+    .node-card h3 {
+      margin: 14px 0 6px;
+      font-family: var(--font-display);
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .node-headline {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .node-metric {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--sage-deep);
+      line-height: 1.1;
+      margin-top: 14px;
+    }
+
+    .node-copy {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .node-list {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .node-list li {
+      padding-top: 10px;
+      border-top: 1px dashed rgba(76, 104, 69, 0.16);
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .node-list strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .compliance-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .signal-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .signal-card {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(76, 104, 69, 0.12);
+      background: rgba(255, 250, 244, 0.72);
+    }
+
+    .signal-card h3 {
+      margin: 10px 0 8px;
+      font-size: 22px;
+      line-height: 1.3;
+      font-family: var(--font-display);
     }
 
     .signal-top {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .signal-name {
-      font-size: 17px;
-      font-weight: 600;
-    }
-
-    .signal-tag {
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #062019;
-      background: var(--accent);
-    }
-
-    .signal-desc {
-      margin-top: 8px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    .heat-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .heat-list {
-      display: grid;
-      gap: 14px;
-      padding: 20px 22px 24px;
-    }
-
-    .heat-row {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .heat-index {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .heat-copy {
-      min-width: 0;
-    }
-
-    .heat-name {
-      font-size: 17px;
-      font-weight: 600;
-    }
-
-    .heat-desc {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .heat-metric {
-      min-width: 70px;
-      text-align: right;
-      font-weight: 700;
-      color: var(--accent-2);
-      font-size: 15px;
-    }
-
-    .bar {
-      grid-column: 2 / span 2;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      overflow: hidden;
-      margin-top: -2px;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    }
-
-    .origin-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      padding: 20px 22px 24px;
-    }
-
-    .origin-card {
-      padding: 18px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(var(--accent-3-rgb), 0.12);
-    }
-
-    .origin-name {
-      font-size: 17px;
-      font-weight: 700;
-    }
-
-    .origin-meta {
-      margin-top: 8px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    .origin-hot {
-      margin-top: 14px;
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .board-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .board-list {
-      margin: 0;
-      padding: 14px 22px 24px;
-      list-style: none;
-    }
-
-    .board-list li {
-      display: grid;
-      grid-template-columns: 1fr auto;
       gap: 12px;
       align-items: center;
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      flex-wrap: wrap;
     }
 
-    .board-list li:last-child {
-      border-bottom: 0;
-    }
-
-    .board-name {
-      font-size: 17px;
-      font-weight: 600;
-    }
-
-    .board-desc {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .board-value {
-      font-size: 18px;
+    .signal-metric {
+      font-size: 28px;
+      line-height: 1.1;
       font-weight: 700;
+      color: var(--sage-deep);
     }
 
-    .table-panel {
-      margin-bottom: 18px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      padding: 8px 18px 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 860px;
-    }
-
-    th,
-    td {
-      padding: 14px 12px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    td {
-      font-size: 14px;
-    }
-
-    .table-strong {
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .chip {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      background: rgba(var(--accent-3-rgb), 0.1);
-      color: #bfd6ff;
-    }
-
-    .module-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      padding: 20px 22px 24px;
-    }
-
-    .module-card {
-      padding: 18px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .module-card h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .module-card p {
+    .signal-card p {
       margin: 0;
-      color: var(--muted);
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .requirement-card h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 32px;
+      line-height: 1.2;
+    }
+
+    .requirement-card p {
+      margin: 10px 0 0;
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.85;
+    }
+
+    .requirement-list {
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .requirement-list li {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 251, 244, 0.78);
+      border: 1px solid rgba(76, 104, 69, 0.1);
+      color: var(--ink);
       line-height: 1.8;
       font-size: 14px;
     }
 
-    .module-priority {
-      margin-top: 14px;
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #062019;
-      background: var(--accent);
+    .requirement-list strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--sage-deep);
     }
 
     .footer {
@@ -917,173 +1261,347 @@
       justify-content: space-between;
       gap: 16px;
       align-items: center;
-      padding: 22px 6px 0;
-      color: var(--muted);
-      font-size: 14px;
+      padding: 18px 4px 0;
+      color: var(--ink-soft);
+      font-size: 13px;
       flex-wrap: wrap;
     }
 
     .footer strong {
-      color: var(--text);
+      color: var(--ink);
     }
 
-    @media (max-width: 1160px) {
-      .stats {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-nav a {
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+
+    .footer-nav a:hover {
+      color: var(--sage-deep);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.65s ease forwards;
+    }
+
+    .reveal.delay-1 {
+      animation-delay: 0.08s;
+    }
+
+    .reveal.delay-2 {
+      animation-delay: 0.16s;
+    }
+
+    .reveal.delay-3 {
+      animation-delay: 0.24s;
+    }
+
+    @keyframes revealUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .hero,
+      .trace-layout,
+      .compliance-layout {
+        grid-template-columns: 1fr;
       }
 
-      .module-grid {
+      .story-grid,
+      .node-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-    }
 
-    @media (max-width: 920px) {
-      .hero-main {
-        padding-left: 22px;
-        padding-right: 22px;
+      .atlas-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .entry-title {
-        font-size: 20px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .shell {
-        width: min(100%, calc(100% - 20px));
+      .detail-panel {
+        position: static;
       }
 
       .topbar {
-        padding-top: 10px;
+        grid-template-columns: 1fr;
+      }
+
+      .topnav {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100%, calc(100% - 20px));
+        padding-top: 16px;
+      }
+
+      .hero-copy,
+      .hero-console,
+      .panel {
+        padding: 20px;
       }
 
       .hero-title {
         font-size: 42px;
       }
 
-      .hero-lead {
-        font-size: 16px;
+      .story-grid,
+      .atlas-grid,
+      .node-grid,
+      .mini-stats {
+        grid-template-columns: 1fr;
       }
 
-      .panel-head {
-        padding: 20px 18px 16px;
+      .toolbar,
+      .section-header {
+        grid-template-columns: 1fr;
+        display: grid;
       }
 
-      .entry-list,
-      .market-tabs,
-      .section-meta,
-      .pager {
-        padding-left: 16px;
-        padding-right: 16px;
+      .toolbar-badges,
+      .section-meta {
+        justify-content: flex-start;
       }
 
-      .panel-title {
-        font-size: 24px;
+      .batch-foot {
+        grid-template-columns: 1fr;
       }
 
-      .entry-top,
-      .entry-title-row,
-      .entry-footer {
-        align-items: flex-start;
+      .search-row {
+        grid-template-columns: 1fr;
       }
 
-      .nav-pill,
-      .market-tab {
+      .button,
+      .search-button,
+      .ghost-button {
         width: 100%;
-        justify-content: center;
+      }
+
+      .topnav {
+        width: 100%;
+      }
+
+      .topnav a {
+        flex: 1 1 calc(50% - 8px);
+        text-align: center;
+      }
+
+      .status-badge {
+        justify-self: start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
       }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">药</div>
-        <div>
-          <h1>中药材全国追踪</h1>
-          <p>产地行情、四大市场与行业热点的中药材情报看板</p>
+  <main class="page">
+    <header class="topbar reveal">
+      <a class="brand" href="#top">
+        <div class="brand-mark">本</div>
+        <div class="brand-copy">
+          <p class="brand-kicker">Bencao Trace</p>
+          <h1>中药材溯源平台</h1>
+          <p>围绕批次建档、产地归集、流通追踪与质检归档的中药材平台首页</p>
         </div>
-      </div>
-      <div class="status-pill" id="statusPill">真实数据加载中</div>
+      </a>
+      <nav class="topnav" aria-label="页面导航">
+        <a href="#traceDesk">批次查询台</a>
+        <a href="#originAtlas">产区档案</a>
+        <a href="#circulationSection">流通节点</a>
+        <a href="#complianceSection">合规监测</a>
+      </nav>
+      <div class="status-badge" id="statusBadge">正在同步数据</div>
     </header>
 
     <section class="hero">
-      <article class="hero-main hero-main--single">
-        <div class="eyebrow" id="heroEyebrow">
-          <span class="pulse"></span>
-          中药材情报首页
-        </div>
-        <h2 class="hero-title" id="heroTitle">先把最有价值的信息做深，再做宽。</h2>
-        <p class="hero-lead" id="heroLead">首页当前只保留三个板块：产地行情、四大市场、行业热点。产地行情会完整收录你整理文档里的信息，并按时间顺序分页展示。</p>
+      <article class="hero-panel hero-copy reveal delay-1">
+        <div class="eyebrow">中药材批次建档 / 流通追踪 / 质检归档 / 采购核验</div>
+        <h2 class="hero-title">让每一批药材都带着来路、证据与流向进入交易。</h2>
+        <p class="hero-lead">平台以批次号为核心，把产地、规格、来源、流通节点与凭证挂接在同一张档案里。首页不是行情大屏，而是给药企采购、饮片厂验收与供应链展示看的可追溯入口。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#originSection">查看产地行情</a>
-          <a class="button" href="#marketSection">查看四大市场</a>
-          <a class="button" href="#hotspotSection">查看行业热点</a>
+          <a class="button primary" href="#traceDesk">进入批次查询台</a>
+          <a class="button secondary" href="#originAtlas">查看产区档案</a>
         </div>
-        <div class="source-strip" id="sourceStrip"></div>
+        <div class="trust-ribbon" id="trustRibbon"></div>
+      </article>
+
+      <aside class="hero-panel hero-console reveal delay-2">
+        <div class="console-head">
+          <span>示范环境</span>
+          <strong id="consoleDate">最新同步中</strong>
+        </div>
+        <label class="search-card" for="heroSearch">
+          <span class="search-label">快速查询批次号、品种或产地</span>
+          <div class="search-row">
+            <input class="search-input" id="heroSearch" type="search" placeholder="例如：黄连、湖北利川、TCM-20260313-0001">
+            <button class="search-button" id="heroSearchButton" type="button">查询批次</button>
+          </div>
+        </label>
+        <div class="hero-snapshot" id="heroSnapshot"></div>
+        <div class="mini-stats" id="miniStats"></div>
+      </aside>
+    </section>
+
+    <section class="story-grid">
+      <article class="story-card reveal">
+        <div class="story-index">01 / 查询入口</div>
+        <h3>先查批次，再看行情</h3>
+        <p>首页优先服务“我手里这批货能不能追到来源、规格、节点和凭证”，不是把用户先带去浏览资讯。</p>
+      </article>
+      <article class="story-card reveal delay-1">
+        <div class="story-index">02 / 台账思路</div>
+        <h3>一批一档，一物一证</h3>
+        <p>每张卡片都对应一条批次线索，并能展开时间轴，查看产地建档、流通节点和当前缺失材料。</p>
+      </article>
+      <article class="story-card reveal delay-2">
+        <div class="story-index">03 / 产地视角</div>
+        <h3>产区档案持续沉淀</h3>
+        <p>把高频产地变成可复用档案，沉淀常见品种、更新频次和风险关注点，而不是一次性新闻。</p>
+      </article>
+      <article class="story-card reveal delay-3">
+        <div class="story-index">04 / 合规视角</div>
+        <h3>检测与凭证决定信任</h3>
+        <p>真正的溯源不是二维码外观，而是检测报告、来源凭证、流转节点和仓储记录能否被复核。</p>
       </article>
     </section>
 
-    <nav class="section-nav">
-      <a class="nav-pill" href="#originSection">1. 产地行情</a>
-      <a class="nav-pill" href="#marketSection">2. 四大市场</a>
-      <a class="nav-pill" href="#hotspotSection">3. 行业热点</a>
-    </nav>
-
-    <section class="panel section-panel" id="originSection">
-      <div class="panel-head">
+    <section class="section" id="traceDesk">
+      <div class="section-header reveal">
         <div>
-          <h2 class="panel-title">产地行情</h2>
-          <p class="panel-sub">完整收录文档里的产地记录，不做摘要式裁剪。按时间倒序显示，并支持分页浏览。</p>
+          <span class="section-kicker">Batch Ledger</span>
+          <h2>批次查询台</h2>
+          <p>下面的批次档案以当前已整理数据为基础重组，用来演示中药材溯源平台的首页形态。点击任一批次，可以查看其时间轴、节点挂接状态和待补充材料。</p>
         </div>
-        <div class="chip" id="originCountChip">0 条</div>
+        <div class="section-meta" id="queryMeta"></div>
       </div>
-      <div class="section-meta" id="originMeta"></div>
-      <div class="entry-list" id="originList"></div>
-      <div class="pager">
-        <button class="pager-button" id="originPrev">上一页</button>
-        <div class="pager-info" id="originPageInfo">第 1 页 / 共 1 页</div>
-        <button class="pager-button" id="originNext">下一页</button>
+
+      <div class="trace-layout">
+        <section class="panel reveal delay-1">
+          <div class="toolbar">
+            <label class="toolbar-search" for="deskSearch">
+              <span class="search-label">按品种、产地或批次号筛选</span>
+              <input class="search-input" id="deskSearch" type="search" placeholder="输入后会即时过滤批次台账">
+            </label>
+            <div class="toolbar-badges" id="ledgerBadges"></div>
+          </div>
+          <div class="batch-grid" id="batchLedger"></div>
+          <div class="empty-box" id="batchEmpty">当前没有匹配到批次，请换一个品种、产地或批次号试试。</div>
+          <div class="panel-foot">
+            <span id="batchFootnote">批次卡片支持点击查看详细链路</span>
+            <button class="ghost-button" id="loadMoreBatches" type="button">查看更多批次</button>
+          </div>
+        </section>
+
+        <aside class="panel detail-panel reveal delay-2" id="batchDetail"></aside>
       </div>
     </section>
 
-    <section class="panel section-panel" id="marketSection">
-      <div class="panel-head">
+    <section class="section" id="originAtlas">
+      <div class="section-header reveal">
         <div>
-          <h2 class="panel-title">四大市场</h2>
-          <p class="panel-sub">只维护亳州、安国、成都、玉林。按市场分组展示全部记录，缺哪个市场会直接显示为空。</p>
+          <span class="section-kicker">Origin Atlas</span>
+          <h2>产区档案</h2>
+          <p>把高频出现的产地整理成可复用档案卡，便于采购或品控从区域维度查看活跃度、主力品种与最近更新。</p>
         </div>
-        <div class="chip" id="marketCountChip">0/4</div>
+        <div class="section-meta" id="atlasMeta"></div>
       </div>
-      <div class="market-tabs" id="marketTabs"></div>
-      <div class="market-summary" id="marketSummary"></div>
-      <div class="entry-list" id="marketList"></div>
+      <div class="atlas-grid" id="originAtlasGrid"></div>
     </section>
 
-    <section class="panel section-panel" id="hotspotSection">
-      <div class="panel-head">
+    <section class="section" id="circulationSection">
+      <div class="section-header reveal">
         <div>
-          <h2 class="panel-title">行业热点</h2>
-          <p class="panel-sub">政策、新闻、标准和专题快讯单独维护，不和行情信息混在一起。</p>
+          <span class="section-kicker">Circulation Nodes</span>
+          <h2>流通节点</h2>
+          <p>用市场节点展示当前数据能追到哪里。后续如果接入仓储、加工厂和物流节点，这一块可以直接升级成完整流转地图。</p>
         </div>
-        <div class="chip" id="hotspotCountChip">0 条</div>
+        <div class="section-meta" id="circulationMeta"></div>
       </div>
-      <div class="entry-list" id="hotspotList"></div>
+      <div class="node-grid" id="circulationGrid"></div>
     </section>
 
-    <footer class="footer">
-      <div id="footerLeft">当前地址：<strong>yaocaiquanguo-site.pages.dev</strong></div>
-      <div id="footerRight">当前页面正在读取真实 Excel 数据。</div>
+    <section class="section" id="complianceSection">
+      <div class="section-header reveal">
+        <div>
+          <span class="section-kicker">Compliance Signals</span>
+          <h2>合规监测</h2>
+          <p>平台不只看有没有数据，还要看证据是否齐。这里把来源凭证、节点挂接、热点提醒和后续必备档案放在一起，方便你继续扩成真正的企业级溯源系统。</p>
+        </div>
+      </div>
+
+      <div class="compliance-layout">
+        <section class="panel reveal delay-1">
+          <div class="signal-grid" id="complianceList"></div>
+        </section>
+        <aside class="panel requirement-card reveal delay-2">
+          <h3>平台下一步应补齐的档案</h3>
+          <p>如果你要把这版设计继续做成可落地的溯源系统，建议第二阶段优先补下面这些真实业务字段，而不是先堆更多栏目。</p>
+          <ul class="requirement-list">
+            <li>
+              <strong>批次唯一编号与主体信息</strong>
+              基地、合作社、加工厂、仓库、采购方要能落到具体主体，不然链路只能算“线索”，还不是完整追溯。
+            </li>
+            <li>
+              <strong>质检报告与票据附件</strong>
+              农残、重金属、二氧化硫、水分、灰分等报告要能上传，最好支持 PDF、图片和机构信息。
+            </li>
+            <li>
+              <strong>采收加工与仓储记录</strong>
+              采收日期、初加工方式、仓储温湿度、出入库批次和复检结果，决定后续是否能做召回和品控。
+            </li>
+            <li>
+              <strong>扫码页与权限视图</strong>
+              同一批次要给采购、仓储、管理端和外部访客不同视图，这样既能展示可信度，也能控制敏感数据。
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      <div>
+        <strong>中药材溯源平台 Demo</strong>
+        <span id="footerSource">正在读取数据源</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="#top">回到顶部</a>
+        <a href="#traceDesk">批次查询台</a>
+        <a href="#originAtlas">产区档案</a>
+        <a href="#complianceSection">合规监测</a>
+      </nav>
     </footer>
   </main>
 
   <script>
     const state = {
       dashboard: null,
-      originPage: 1,
-      originPageSize: 12,
-      currentMarket: "亳州",
+      batches: [],
+      atlas: [],
+      circulation: [],
+      compliance: [],
+      query: "",
+      visibleCount: 8,
+      selectedId: null,
     };
 
     function escapeHtml(value) {
@@ -1091,137 +1609,668 @@
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/\"/g, "&quot;")
+        .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
     }
 
-    function renderHero(dashboard) {
-      document.getElementById("statusPill").textContent = dashboard.status;
-      document.getElementById("heroEyebrow").innerHTML = `<span class="pulse"></span>${escapeHtml(dashboard.hero.eyebrow)}`;
-      document.getElementById("heroTitle").textContent = dashboard.hero.title;
-      document.getElementById("heroLead").textContent = dashboard.hero.lead;
-      document.getElementById("footerLeft").textContent = dashboard.footer.left;
-      document.getElementById("footerRight").textContent = dashboard.footer.right;
-
-      const strip = document.getElementById("sourceStrip");
-      strip.innerHTML = (dashboard.hero.source_strip || [])
-        .map((item) => `<span class="source-chip">${escapeHtml(item)}</span>`)
-        .join("");
+    function normalizeText(value) {
+      return String(value ?? "").trim().toLowerCase();
     }
 
-    function renderEntryCard(item, type) {
-      const title = type === "hotspot" ? item.title : item.herb;
-      const spec = type === "hotspot" ? (item.kind || "热点") : (item.spec || "待补充规格");
-      const locationLabel = type === "origin" ? "产地" : type === "market" ? "市场" : "关联";
-      const location = type === "origin" ? item.location : type === "market" ? item.market : (item.location || "未标注");
-      const price = type === "hotspot" ? "" : `<span class="entry-price">${escapeHtml(item.price)}</span>`;
-      const tag = type === "hotspot" ? escapeHtml(item.kind || "热点") : escapeHtml(item.tag || "关注");
-      const summary = item.summary ? `<p class="entry-summary">${escapeHtml(item.summary)}</p>` : "";
-      const sourceLine = `来源：${escapeHtml(item.source || "待补充")}`;
-      const metaText = item.date ? `${escapeHtml(item.date)} · ${locationLabel}：${escapeHtml(location)}` : `${locationLabel}：${escapeHtml(location)}`;
-      const related = type === "hotspot" && item.herb ? ` · 关联品种：${escapeHtml(item.herb)}` : "";
-
-      return `
-        <article class="entry-card">
-          <div class="entry-top">
-            <span class="entry-date">${escapeHtml(item.date || "--")}</span>
-            <div class="entry-badges">
-              <span class="entry-tag">${tag}</span>
-              ${price}
-            </div>
-          </div>
-          <div class="entry-title-row">
-            <h3 class="entry-title">${escapeHtml(title || "待补充标题")}</h3>
-            <span class="entry-spec">${escapeHtml(spec)}</span>
-          </div>
-          <div class="entry-meta">${metaText}${related}</div>
-          ${summary}
-          <div class="entry-footer">
-            <span>${sourceLine}</span>
-            ${item.url ? `<a class="entry-link" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">查看来源</a>` : ""}
-          </div>
-        </article>
-      `;
-    }
-
-    function renderOriginSection(dashboard) {
-      const items = dashboard.origin.items || [];
-      const totalPages = Math.max(1, Math.ceil(items.length / state.originPageSize));
-      if (state.originPage > totalPages) {
-        state.originPage = totalPages;
+    function mapStatus(tag) {
+      const raw = String(tag || "关注");
+      if (["平稳"].includes(raw)) {
+        return {
+          tone: "stable",
+          label: "状态稳定",
+          detail: "当前公开记录显示供需节奏相对平稳，可继续补充质检与仓储材料。",
+        };
       }
-      const start = (state.originPage - 1) * state.originPageSize;
-      const pageItems = items.slice(start, start + state.originPageSize);
+      if (["走快", "产新"].includes(raw)) {
+        return {
+          tone: "active",
+          label: "流转活跃",
+          detail: "流通速度较快，适合重点补齐节点记录与批次归档。",
+        };
+      }
+      if (["上扬", "坚挺", "关注", "下滑"].includes(raw)) {
+        return {
+          tone: "attention",
+          label: "重点复核",
+          detail: "建议关注价格波动或市场关注度，同时完善检测与票据材料。",
+        };
+      }
+      return {
+        tone: "pending",
+        label: "待核验",
+        detail: "已有基础信息，建议继续补充主体、检测和流通节点。",
+      };
+    }
 
-      document.getElementById("originCountChip").textContent = `${dashboard.origin.total} 条`;
-      document.getElementById("originMeta").innerHTML = [
-        `<span class="source-chip">最新日期：${escapeHtml(dashboard.origin.latest_date || "--")}</span>`,
-        `<span class="source-chip">当前页：${pageItems.length} 条</span>`,
-        `<span class="source-chip">按时间倒序排列</span>`,
-      ].join("");
+    function buildBatchCode(item, index) {
+      const datePart = String(item.date || "").replace(/-/g, "") || "00000000";
+      return `TCM-${datePart}-${String(index + 1).padStart(4, "0")}`;
+    }
 
-      const root = document.getElementById("originList");
-      if (!items.length) {
-        root.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.origin.empty_text)}</div>`;
-      } else {
-        root.innerHTML = pageItems.map((item) => renderEntryCard(item, "origin")).join("");
+    function calculateIntegrity(item, relatedMarkets, alert) {
+      let score = 44;
+      if (item.location) score += 10;
+      if (item.spec) score += 8;
+      if (item.summary) score += 8;
+      if (item.source) score += 10;
+      if (item.url) score += 10;
+      if (relatedMarkets.length) score += Math.min(relatedMarkets.length * 5, 10);
+      if (alert) score += 4;
+      return Math.min(score, 96);
+    }
+
+    function flattenMarkets(groups) {
+      return (groups || []).flatMap((group) =>
+        (group.items || []).map((item) => ({
+          ...item,
+          market: group.name,
+        })),
+      );
+    }
+
+    function inferMarketLinks(item, marketItems, marketGroups, index) {
+      const exactMatches = marketItems.filter((marketItem) => marketItem.herb === item.herb).slice(0, 2);
+      if (exactMatches.length) {
+        return exactMatches;
       }
 
-      document.getElementById("originPageInfo").textContent = `第 ${state.originPage} 页 / 共 ${totalPages} 页`;
-      document.getElementById("originPrev").disabled = state.originPage === 1;
-      document.getElementById("originNext").disabled = state.originPage === totalPages;
+      const location = String(item.location || "");
+      const regionRules = [
+        { market: "安国", keywords: ["河北", "山西", "山东", "内蒙古", "北京", "天津", "辽宁", "吉林", "黑龙江"] },
+        { market: "亳州", keywords: ["安徽", "河南", "江苏", "浙江", "江西"] },
+        { market: "成都", keywords: ["四川", "重庆", "云南", "贵州", "甘肃", "青海", "西藏"] },
+        { market: "玉林", keywords: ["广西", "广东", "海南", "福建", "湖南", "湖北"] },
+      ];
+      const activeGroups = marketGroups.filter((group) => (group.count || 0) > 0);
+
+      for (const rule of regionRules) {
+        if (rule.keywords.some((keyword) => location.includes(keyword))) {
+          const matchedGroup = activeGroups.find((group) => group.name === rule.market);
+          if (matchedGroup) {
+            return [
+              {
+                market: matchedGroup.name,
+                summary: `依据区域流向，优先建议关联 ${matchedGroup.name} 市场节点`,
+              },
+            ];
+          }
+        }
+      }
+
+      if (!activeGroups.length) {
+        return [];
+      }
+
+      const fallback = activeGroups[index % activeGroups.length];
+      return [
+        {
+          market: fallback.name,
+          summary: `当前未找到同品种节点，已用 ${fallback.name} 市场作为示范流通节点`,
+        },
+      ];
     }
 
-    function renderMarketTabs(dashboard) {
-      const tabs = document.getElementById("marketTabs");
-      tabs.innerHTML = dashboard.markets.groups.map((group) => `
-        <button class="market-tab ${group.name === state.currentMarket ? "active" : ""}" data-market="${escapeHtml(group.name)}">
-          ${escapeHtml(group.name)} (${group.count})
-        </button>
-      `).join("");
+    function buildBatches(dashboard) {
+      const origins = dashboard.origin?.items || [];
+      const marketGroups = dashboard.markets?.groups || [];
+      const marketItems = flattenMarkets(marketGroups);
+      const hotspots = dashboard.hotspots?.items || [];
 
-      tabs.querySelectorAll(".market-tab").forEach((button) => {
-        button.addEventListener("click", () => {
-          state.currentMarket = button.dataset.market;
-          renderMarketSection(state.dashboard);
-        });
+      return origins.map((item, index) => {
+        const relatedMarkets = inferMarketLinks(item, marketItems, marketGroups, index);
+        const relatedHotspot = hotspots.find((hotspot) => hotspot.herb && hotspot.herb === item.herb) || null;
+        const status = mapStatus(item.tag);
+        const score = calculateIntegrity(item, relatedMarkets, relatedHotspot);
+
+        const documents = [
+          {
+            label: "产地建档",
+            note: item.location || "待补充产地信息",
+            tone: "done",
+          },
+          {
+            label: "来源凭证",
+            note: item.url ? "已挂接公开来源链接" : "待上传来源截图或原始凭证",
+            tone: item.url ? "done" : "pending",
+          },
+          {
+            label: "流通节点",
+            note: relatedMarkets.length ? relatedMarkets.map((entry) => `${entry.market}市场`).join(" / ") : "尚未关联公开流通节点",
+            tone: relatedMarkets.length ? "active" : "pending",
+          },
+          {
+            label: "质检归档",
+            note: relatedHotspot ? "已有政策/热点提醒，建议补充专项证明" : "待上传检测报告与复核记录",
+            tone: relatedHotspot ? "active" : "pending",
+          },
+        ];
+
+        const checkpoints = [
+          {
+            title: "产地建档",
+            text: `${item.location || "待补充产地"} · ${item.date || "--"}`,
+            tone: "done",
+          },
+          {
+            title: "采收/初加工",
+            text: item.spec || "待补充规格、加工工艺或采收说明",
+            tone: "done",
+          },
+          {
+            title: "流通验视",
+            text: relatedMarkets.length
+              ? `已关联 ${relatedMarkets.map((entry) => entry.market).join("、")} 等公开市场节点`
+              : "当前未接入公开市场、仓储或物流节点",
+            tone: relatedMarkets.length ? "active" : "pending",
+          },
+          {
+            title: "质检与归档",
+            text: relatedHotspot
+              ? `${relatedHotspot.title || relatedHotspot.summary}，建议补充对应检测报告和佐证文件`
+              : item.url
+                ? "来源记录已关联，建议补齐检测报告、票据和仓储复核信息"
+                : "尚未上传来源凭证和检测文件，当前为演示级档案",
+            tone: relatedHotspot || item.url ? "active" : "pending",
+          },
+        ];
+
+        return {
+          id: `batch-${index + 1}`,
+          code: buildBatchCode(item, index),
+          herb: item.herb || "待补充品种",
+          spec: item.spec || "待补充规格",
+          location: item.location || "待补充产地",
+          date: item.date || "--",
+          price: item.price || "待补充",
+          source: item.source || "待补充来源",
+          url: item.url || "",
+          summary: item.summary || "暂无摘要说明",
+          statusTone: status.tone,
+          statusLabel: status.label,
+          statusText: status.detail,
+          score,
+          documents,
+          checkpoints,
+          relatedMarkets,
+          relatedHotspot,
+        };
       });
     }
 
-    function renderMarketSection(dashboard) {
-      const groups = dashboard.markets.groups || [];
-      if (!groups.find((group) => group.name === state.currentMarket) && groups.length) {
-        state.currentMarket = groups[0].name;
-      }
+    function buildAtlas(batches) {
+      const map = new Map();
 
-      document.getElementById("marketCountChip").textContent = `${dashboard.markets.covered_count}/4`;
-      renderMarketTabs(dashboard);
+      batches.forEach((batch) => {
+        const key = batch.location;
+        if (!map.has(key)) {
+          map.set(key, {
+            location: key,
+            count: 0,
+            latestDate: batch.date,
+            herbs: new Set(),
+            topStatus: 0,
+          });
+        }
 
-      const currentGroup = groups.find((group) => group.name === state.currentMarket);
-      const summary = document.getElementById("marketSummary");
-      const list = document.getElementById("marketList");
+        const record = map.get(key);
+        record.count += 1;
+        record.herbs.add(batch.herb);
+        if (batch.date > record.latestDate) {
+          record.latestDate = batch.date;
+        }
+      });
 
-      if (!currentGroup || !currentGroup.items.length) {
-        summary.textContent = `${state.currentMarket} 当前还没有整理到真实记录。`;
-        list.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.markets.empty_text)}</div>`;
-        return;
-      }
+      const maxCount = Math.max(...Array.from(map.values()).map((item) => item.count), 1);
 
-      summary.textContent = `${currentGroup.name} 近三日共 ${currentGroup.count} 条记录，最新整理于 ${currentGroup.latest_date || "--"}。`;
-      list.innerHTML = currentGroup.items.map((item) => renderEntryCard({ ...item, market: currentGroup.name }, "market")).join("");
+      return Array.from(map.values())
+        .sort((a, b) => b.count - a.count || b.latestDate.localeCompare(a.latestDate))
+        .slice(0, 6)
+        .map((item) => ({
+          location: item.location,
+          count: item.count,
+          latestDate: item.latestDate,
+          herbs: Array.from(item.herbs).slice(0, 4),
+          width: Math.max(22, Math.round((item.count / maxCount) * 100)),
+        }));
     }
 
-    function renderHotspotSection(dashboard) {
-      const items = dashboard.hotspots.items || [];
-      document.getElementById("hotspotCountChip").textContent = `${dashboard.hotspots.total} 条`;
-      const root = document.getElementById("hotspotList");
+    function buildCirculation(dashboard) {
+      return (dashboard.markets?.groups || []).map((group) => ({
+        name: group.name,
+        count: group.count || 0,
+        latestDate: group.latest_date || "--",
+        items: (group.items || []).slice(0, 3),
+      }));
+    }
 
-      if (!items.length) {
-        root.innerHTML = `<div class="empty-state">${escapeHtml(dashboard.hotspots.empty_text)}</div>`;
+    function buildCompliance(dashboard, batches) {
+      const total = Math.max(batches.length, 1);
+      const linkedSource = batches.filter((batch) => batch.url).length;
+      const linkedMarkets = batches.filter((batch) => batch.relatedMarkets.length).length;
+      const averageScore = Math.round(batches.reduce((sum, batch) => sum + batch.score, 0) / total);
+      const hotspots = dashboard.hotspots?.items || [];
+
+      return [
+        {
+          title: "来源凭证挂接率",
+          metric: `${Math.round((linkedSource / total) * 100)}%`,
+          tag: "凭证",
+          text: `${linkedSource}/${batches.length} 条批次线索已经挂接来源链接。下一步建议支持截图、PDF 和附件归档。`,
+        },
+        {
+          title: "流通节点关联率",
+          metric: `${Math.round((linkedMarkets / total) * 100)}%`,
+          tag: "节点",
+          text: `${linkedMarkets} 条批次可追到公开市场节点。后续可继续接入仓储、物流和企业内流转节点。`,
+        },
+        {
+          title: "档案完整度均值",
+          metric: `${averageScore}分`,
+          tag: "完整度",
+          text: "这个分数基于产地、来源、流通节点和说明信息自动估算，用来提示哪些批次更值得先补材料。",
+        },
+        {
+          title: "政策与热点提醒",
+          metric: `${hotspots.length} 条`,
+          tag: "监测",
+          text: hotspots.length
+            ? `当前已接入 ${hotspots.length} 条行业热点，可继续扩展为标准、抽检和风险通报。`
+            : "当前还没有热点数据，建议后续接入政策标准、抽检通告与质量安全提醒。",
+        },
+      ];
+    }
+
+    function renderStatusPill(label, tone) {
+      return `<span class="status-pill tone-${escapeHtml(tone)}">${escapeHtml(label)}</span>`;
+    }
+
+    function renderHero(dashboard, summaryBatch) {
+      const meta = dashboard.meta || {};
+      document.getElementById("statusBadge").textContent = `最新同步 ${meta.latest_date || "--"}`;
+      document.getElementById("consoleDate").textContent = meta.generated_at ? `生成于 ${meta.generated_at}` : "演示数据已加载";
+      document.getElementById("footerSource").textContent = dashboard.footer?.right || meta.source_file || "";
+
+      const trustRibbon = [
+        `已整理批次线索 ${dashboard.origin?.total || 0} 条`,
+        `覆盖产区 ${new Set((dashboard.origin?.items || []).map((item) => item.location)).size} 个`,
+        `已接入市场 ${dashboard.markets?.covered_count || 0} 个`,
+        `来源网站 ${meta.source_count || 0} 个`,
+      ];
+
+      document.getElementById("trustRibbon").innerHTML = trustRibbon
+        .map((item) => `<span class="trust-chip">${escapeHtml(item)}</span>`)
+        .join("");
+
+      renderHeroSnapshot(summaryBatch);
+      document.getElementById("miniStats").innerHTML = [
+        {
+          label: "建档批次",
+          value: dashboard.origin?.total || 0,
+          note: "当前以整理数据重组为示范批次档案",
+        },
+        {
+          label: "已挂节点",
+          value: state.batches.filter((batch) => batch.relatedMarkets.length).length,
+          note: "可追到公开市场流通节点的批次数",
+        },
+        {
+          label: "来源凭证",
+          value: state.batches.filter((batch) => batch.url).length,
+          note: "已挂接公开来源链接的批次数量",
+        },
+        {
+          label: "最新日期",
+          value: meta.latest_date || "--",
+          note: "页面会以这一天作为最近同步时间展示",
+        },
+      ]
+        .map(
+          (item) => `
+            <article class="mini-card">
+              <div class="label">${escapeHtml(item.label)}</div>
+              <div class="value">${escapeHtml(item.value)}</div>
+              <div class="note">${escapeHtml(item.note)}</div>
+            </article>
+          `,
+        )
+        .join("");
+    }
+
+    function renderHeroSnapshot(batch) {
+      const root = document.getElementById("heroSnapshot");
+      if (!batch) {
+        root.innerHTML = "<p class='detail-sub'>当前还没有可展示的批次数据。</p>";
         return;
       }
 
-      root.innerHTML = items.map((item) => renderEntryCard(item, "hotspot")).join("");
+      root.innerHTML = `
+        <div class="snapshot-kicker">当前焦点批次</div>
+        <h3 class="snapshot-title">${escapeHtml(batch.herb)}</h3>
+        <div class="snapshot-code">${escapeHtml(batch.code)}</div>
+        <div class="snapshot-meta">
+          <div class="snapshot-meta-row"><span>产地</span><strong>${escapeHtml(batch.location)}</strong></div>
+          <div class="snapshot-meta-row"><span>规格</span><strong>${escapeHtml(batch.spec)}</strong></div>
+          <div class="snapshot-meta-row"><span>当前状态</span><strong>${escapeHtml(batch.statusLabel)}</strong></div>
+          <div class="snapshot-meta-row"><span>链路完整度</span><strong>${escapeHtml(batch.score)} 分</strong></div>
+        </div>
+      `;
+    }
+
+    function getFilteredBatches() {
+      const query = normalizeText(state.query);
+      if (!query) {
+        return state.batches;
+      }
+
+      return state.batches.filter((batch) => {
+        const haystack = normalizeText(
+          [batch.code, batch.herb, batch.location, batch.spec, batch.summary, batch.source].join(" "),
+        );
+        return haystack.includes(query);
+      });
+    }
+
+    function ensureSelectedBatch(filtered) {
+      if (!filtered.length) {
+        state.selectedId = null;
+        return null;
+      }
+
+      const exists = filtered.find((item) => item.id === state.selectedId);
+      if (exists) {
+        return exists;
+      }
+
+      state.selectedId = filtered[0].id;
+      return filtered[0];
+    }
+
+    function renderQueryMeta(filtered) {
+      const total = state.batches.length;
+      const linked = filtered.filter((batch) => batch.relatedMarkets.length).length;
+      const withSource = filtered.filter((batch) => batch.url).length;
+
+      document.getElementById("queryMeta").innerHTML = `
+        <span class="meta-pill">筛选结果 ${escapeHtml(filtered.length)} / ${escapeHtml(total)} 条</span>
+        <span class="meta-pill">已挂节点 ${escapeHtml(linked)} 条</span>
+        <span class="meta-pill">已挂凭证 ${escapeHtml(withSource)} 条</span>
+      `;
+      document.getElementById("ledgerBadges").innerHTML = [
+        `查询词：${state.query || "全部批次"}`,
+        `当前展示：${Math.min(state.visibleCount, filtered.length)} 条`,
+      ]
+        .map((item) => `<span class="toolbar-badge">${escapeHtml(item)}</span>`)
+        .join("");
+    }
+
+    function renderBatchCard(batch, active) {
+      return `
+        <button class="batch-card ${active ? "is-active" : ""}" type="button" data-batch-id="${escapeHtml(batch.id)}">
+          <div class="batch-head">
+            <span class="batch-code">${escapeHtml(batch.code)}</span>
+            ${renderStatusPill(batch.statusLabel, batch.statusTone)}
+          </div>
+          <h3 class="batch-title">${escapeHtml(batch.herb)}</h3>
+          <div class="batch-meta">
+            <span>产地：${escapeHtml(batch.location)}</span>
+            <span>日期：${escapeHtml(batch.date)}</span>
+            <span>来源：${escapeHtml(batch.source)}</span>
+          </div>
+          <p class="batch-summary">${escapeHtml(batch.summary)}</p>
+          <div class="batch-foot">
+            <div class="fact-box">
+              <div class="label">规格</div>
+              <div class="value">${escapeHtml(batch.spec)}</div>
+            </div>
+            <div class="fact-box">
+              <div class="label">价格线索</div>
+              <div class="value">${escapeHtml(batch.price)}</div>
+            </div>
+            <div class="fact-box">
+              <div class="label">可追节点</div>
+              <div class="value">${escapeHtml(batch.relatedMarkets.length ? batch.relatedMarkets.map((entry) => entry.market).join(" / ") : "待接入")}</div>
+            </div>
+          </div>
+        </button>
+      `;
+    }
+
+    function renderBatchLedger() {
+      const filtered = getFilteredBatches();
+      const selected = ensureSelectedBatch(filtered);
+      renderQueryMeta(filtered);
+      renderHeroSnapshot(selected || state.batches[0] || null);
+
+      const visible = filtered.slice(0, state.visibleCount);
+      document.getElementById("batchLedger").innerHTML = visible
+        .map((batch) => renderBatchCard(batch, batch.id === state.selectedId))
+        .join("");
+
+      const empty = document.getElementById("batchEmpty");
+      empty.classList.toggle("is-visible", !filtered.length);
+
+      const button = document.getElementById("loadMoreBatches");
+      button.disabled = visible.length >= filtered.length;
+      button.textContent = visible.length >= filtered.length ? "已经到底了" : "查看更多批次";
+
+      document.getElementById("batchFootnote").textContent = filtered.length
+        ? `当前选中批次：${selected ? selected.code : "--"}`
+        : "暂无匹配结果";
+
+      renderBatchDetail(selected);
+    }
+
+    function timelineDotClass(tone) {
+      if (tone === "done") return "is-done";
+      if (tone === "active") return "is-active";
+      return "is-pending";
+    }
+
+    function renderBatchDetail(batch) {
+      const root = document.getElementById("batchDetail");
+      if (!batch) {
+        root.innerHTML = "<p class='detail-sub'>当前没有可展示的批次详情。</p>";
+        return;
+      }
+
+      root.innerHTML = `
+        <div class="detail-hero">
+          <div class="detail-kicker">Trace Detail</div>
+          <h3 class="detail-title">${escapeHtml(batch.herb)}</h3>
+          <p class="detail-sub">${escapeHtml(batch.summary)}</p>
+          <div class="detail-badges">
+            ${renderStatusPill(batch.statusLabel, batch.statusTone)}
+            <span class="status-pill tone-pending">${escapeHtml(batch.code)}</span>
+            <span class="status-pill tone-pending">${escapeHtml(batch.location)}</span>
+          </div>
+          <div class="score-meter">
+            <div class="score-top">
+              <span>档案完整度</span>
+              <span class="score-value">${escapeHtml(batch.score)} 分</span>
+            </div>
+            <div class="score-track">
+              <div class="score-fill" style="width:${escapeHtml(batch.score)}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          ${batch.documents
+            .map(
+              (item, index) => `
+                <div class="doc-card">
+                  <div class="doc-index">${String(index + 1).padStart(2, "0")}</div>
+                  <div>
+                    <div class="doc-label">${escapeHtml(item.label)}</div>
+                    <div class="doc-note">${escapeHtml(item.note)}</div>
+                  </div>
+                  ${renderStatusPill(item.tone === "done" ? "已接入" : item.tone === "active" ? "待补齐" : "缺材料", item.tone === "done" ? "stable" : item.tone === "active" ? "active" : "pending")}
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+
+        <div class="timeline">
+          ${batch.checkpoints
+            .map(
+              (item) => `
+                <div class="timeline-item">
+                  <div class="timeline-rail">
+                    <div class="timeline-dot ${timelineDotClass(item.tone)}"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <h3>${escapeHtml(item.title)}</h3>
+                    <p>${escapeHtml(item.text)}</p>
+                  </div>
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+
+        <div class="link-row">
+          <span>来源站点：${escapeHtml(batch.source)}</span>
+          ${batch.url ? `<a class="detail-link" href="${escapeHtml(batch.url)}" target="_blank" rel="noreferrer">查看原始来源</a>` : "<span>当前未挂接公开来源链接</span>"}
+        </div>
+      `;
+    }
+
+    function renderAtlas() {
+      const root = document.getElementById("originAtlasGrid");
+      document.getElementById("atlasMeta").innerHTML = `
+        <span class="meta-pill">高频产区 ${escapeHtml(state.atlas.length)} 个</span>
+        <span class="meta-pill">来自当前批次线索自动聚合</span>
+      `;
+
+      root.innerHTML = state.atlas
+        .map(
+          (item) => `
+            <article class="atlas-card reveal">
+              <div class="atlas-head">
+                <div class="atlas-name">${escapeHtml(item.location)}</div>
+                <div class="atlas-count">${escapeHtml(item.count)} 条线索</div>
+              </div>
+              <div class="atlas-meta">
+                最近更新：${escapeHtml(item.latestDate)}<br>
+                覆盖品种：${escapeHtml(item.herbs.join(" / "))}
+              </div>
+              <div class="atlas-tags">
+                ${item.herbs.map((herb) => `<span class="atlas-tag">${escapeHtml(herb)}</span>`).join("")}
+              </div>
+              <div class="atlas-bar">
+                <div class="atlas-fill" style="width:${escapeHtml(item.width)}%"></div>
+              </div>
+            </article>
+          `,
+        )
+        .join("");
+    }
+
+    function renderCirculation() {
+      const root = document.getElementById("circulationGrid");
+      document.getElementById("circulationMeta").innerHTML = `
+        <span class="meta-pill">已覆盖市场 ${escapeHtml(state.circulation.filter((item) => item.count > 0).length)} / ${escapeHtml(state.circulation.length)}</span>
+        <span class="meta-pill">后续可扩展到仓储与物流节点</span>
+      `;
+
+      root.innerHTML = state.circulation
+        .map(
+          (node) => `
+            <article class="node-card reveal">
+              <div class="node-headline">
+                <span>流通节点</span>
+                <span>${escapeHtml(node.latestDate)}</span>
+              </div>
+              <h3>${escapeHtml(node.name)}</h3>
+              <div class="node-metric">${escapeHtml(node.count)}</div>
+              <div class="node-copy">${node.count ? `当前可追到 ${node.count} 条公开节点记录，可作为后续流通环节的起点。` : "当前暂无公开记录接入，适合保留占位并等待后续节点数据。"} </div>
+              <ul class="node-list">
+                ${(node.items || [])
+                  .slice(0, 3)
+                  .map(
+                    (item) => `
+                      <li>
+                        <strong>${escapeHtml(item.herb || "待补充品种")}</strong>
+                        ${escapeHtml(item.summary || "暂无摘要")}
+                      </li>
+                    `,
+                  )
+                  .join("") || "<li><strong>待接入</strong>暂无与该市场关联的记录。</li>"}
+              </ul>
+            </article>
+          `,
+        )
+        .join("");
+    }
+
+    function renderCompliance() {
+      const root = document.getElementById("complianceList");
+      root.innerHTML = state.compliance
+        .map(
+          (item) => `
+            <article class="signal-card">
+              <div class="signal-top">
+                <span class="status-pill tone-pending">${escapeHtml(item.tag)}</span>
+                <div class="signal-metric">${escapeHtml(item.metric)}</div>
+              </div>
+              <h3>${escapeHtml(item.title)}</h3>
+              <p>${escapeHtml(item.text)}</p>
+            </article>
+          `,
+        )
+        .join("");
+    }
+
+    function syncSearchInputs() {
+      document.getElementById("heroSearch").value = state.query;
+      document.getElementById("deskSearch").value = state.query;
+    }
+
+    function applyQuery(value, scrollToLedger) {
+      state.query = value.trim();
+      state.visibleCount = 8;
+      syncSearchInputs();
+      renderBatchLedger();
+
+      if (scrollToLedger) {
+        document.getElementById("traceDesk").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function attachEvents() {
+      document.getElementById("heroSearchButton").addEventListener("click", () => {
+        applyQuery(document.getElementById("heroSearch").value, true);
+      });
+
+      document.getElementById("heroSearch").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          applyQuery(event.currentTarget.value, true);
+        }
+      });
+
+      document.getElementById("deskSearch").addEventListener("input", (event) => {
+        applyQuery(event.currentTarget.value, false);
+      });
+
+      document.getElementById("batchLedger").addEventListener("click", (event) => {
+        const card = event.target.closest("[data-batch-id]");
+        if (!card) {
+          return;
+        }
+        state.selectedId = card.dataset.batchId;
+        renderBatchLedger();
+      });
+
+      document.getElementById("loadMoreBatches").addEventListener("click", () => {
+        state.visibleCount += 6;
+        renderBatchLedger();
+      });
     }
 
     async function loadDashboard() {
@@ -1232,33 +2281,23 @@
         }
 
         state.dashboard = await response.json();
-        state.currentMarket =
-          state.dashboard.markets.groups.find((group) => group.count > 0)?.name ||
-          state.dashboard.markets.groups[0]?.name ||
-          "亳州";
-        renderHero(state.dashboard);
-        renderOriginSection(state.dashboard);
-        renderMarketSection(state.dashboard);
-        renderHotspotSection(state.dashboard);
+        state.batches = buildBatches(state.dashboard);
+        state.atlas = buildAtlas(state.batches);
+        state.circulation = buildCirculation(state.dashboard);
+        state.compliance = buildCompliance(state.dashboard, state.batches);
+        state.selectedId = state.batches[0]?.id || null;
 
-        document.getElementById("originPrev").addEventListener("click", () => {
-          if (state.originPage > 1) {
-            state.originPage -= 1;
-            renderOriginSection(state.dashboard);
-          }
-        });
-
-        document.getElementById("originNext").addEventListener("click", () => {
-          const totalPages = Math.max(1, Math.ceil((state.dashboard.origin.items || []).length / state.originPageSize));
-          if (state.originPage < totalPages) {
-            state.originPage += 1;
-            renderOriginSection(state.dashboard);
-          }
-        });
+        renderHero(state.dashboard, state.batches[0] || null);
+        renderBatchLedger();
+        renderAtlas();
+        renderCirculation();
+        renderCompliance();
+        attachEvents();
       } catch (error) {
         console.error(error);
-        document.getElementById("statusPill").textContent = "数据加载失败";
-        document.getElementById("originList").innerHTML = '<div class="empty-state">当前没有读到 dashboard.json，请检查数据文件是否存在。</div>';
+        document.getElementById("statusBadge").textContent = "数据加载失败";
+        document.getElementById("heroSnapshot").innerHTML = "<p class='detail-sub'>当前没有读取到数据文件，请检查 <code>public/data/dashboard.json</code> 是否存在。</p>";
+        document.getElementById("batchEmpty").classList.add("is-visible");
       }
     }
 
