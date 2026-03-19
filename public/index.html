@@ -3,32 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#16a34a">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2316a34a'/%3E%3Ctext x='32' y='42' font-size='34' text-anchor='middle' fill='white' font-family='Arial'%3E%E8%8D%AF%3C/text%3E%3C/svg%3E">
+  <meta name="theme-color" content="#1a9c54">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231a9c54'/%3E%3Ctext x='32' y='42' font-size='34' text-anchor='middle' fill='white' font-family='Arial'%3E%E8%8D%AF%3C/text%3E%3C/svg%3E">
   <title>中药材溯源平台</title>
   <style>
     :root {
-      --bg: #f3f5f7;
+      --bg: #f3f6f9;
+      --bg-soft: #eef2f7;
       --panel: #ffffff;
-      --panel-soft: #f8fafb;
-      --sidebar: #2f3542;
-      --sidebar-soft: #3b4252;
-      --text: #18212f;
+      --panel-soft: #f7fafc;
+      --sidebar: #313648;
+      --sidebar-deep: #282d3d;
+      --line: #e6ebf2;
+      --text: #182333;
       --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #16a34a;
-      --accent-soft: #dcfce7;
-      --accent-deep: #15803d;
+      --accent: #1a9c54;
+      --accent-deep: #11753d;
+      --accent-soft: #e7f8ee;
+      --info: #3b82f6;
+      --info-soft: #e8f1ff;
       --warn: #f59e0b;
-      --warn-soft: #fef3c7;
+      --warn-soft: #fff3d6;
       --danger: #ef4444;
-      --danger-soft: #fee2e2;
-      --info: #0ea5e9;
-      --info-soft: #e0f2fe;
+      --danger-soft: #fee8e8;
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
-      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --radius-sm: 10px;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
       --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
 
@@ -43,7 +46,9 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top right, rgba(26, 156, 84, 0.06), transparent 22%),
+        linear-gradient(180deg, #f6f8fb 0%, #f2f5f9 100%);
       color: var(--text);
       font-family: var(--font-body);
     }
@@ -63,44 +68,48 @@
     .app-shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
+      grid-template-columns: 256px minmax(0, 1fr);
     }
 
     .sidebar {
-      background: linear-gradient(180deg, var(--sidebar) 0%, #343b49 100%);
-      color: rgba(255, 255, 255, 0.92);
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
       position: sticky;
       top: 0;
       min-height: 100vh;
+      padding: 22px 16px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-deep) 100%);
+      color: rgba(255, 255, 255, 0.92);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 6px 8px 14px;
+      padding: 8px 10px 18px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .brand-mark {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 14px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #22c55e, #15803d);
+      background: linear-gradient(135deg, #21b764, #16894a);
+      color: #fff;
       font-size: 18px;
       font-weight: 700;
-      box-shadow: 0 12px 20px rgba(22, 163, 74, 0.2);
+      box-shadow: 0 14px 22px rgba(26, 156, 84, 0.24);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 19px;
+      font-size: 20px;
       line-height: 1.2;
       font-weight: 700;
     }
@@ -108,7 +117,16 @@
     .brand p {
       margin: 4px 0 0;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.68);
+      color: rgba(255, 255, 255, 0.66);
+      line-height: 1.7;
+    }
+
+    .nav-caption {
+      padding: 0 10px;
+      color: rgba(255, 255, 255, 0.44);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
     .nav-group {
@@ -119,143 +137,183 @@
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      color: rgba(255, 255, 255, 0.85);
-      transition: background 0.2s ease, transform 0.2s ease;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      color: rgba(255, 255, 255, 0.82);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
     }
 
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.08);
       transform: translateX(2px);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-item.is-active {
+      background: linear-gradient(135deg, rgba(26, 156, 84, 0.95), rgba(18, 127, 69, 0.95));
+      box-shadow: 0 12px 20px rgba(26, 156, 84, 0.18);
+      color: #fff;
     }
 
     .nav-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
       display: grid;
       place-items: center;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       font-size: 13px;
       font-weight: 700;
+      flex: 0 0 32px;
     }
 
-    .sidebar-note {
+    .nav-text {
+      display: grid;
+      gap: 2px;
+    }
+
+    .nav-text strong {
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .nav-text span {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.56);
+    }
+
+    .nav-item.is-active .nav-text span {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .sidebar-card {
       margin-top: auto;
-      padding: 14px;
-      border-radius: 16px;
+      padding: 16px;
+      border-radius: 18px;
       background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: rgba(255, 255, 255, 0.72);
       font-size: 12px;
       line-height: 1.8;
     }
 
+    .sidebar-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #fff;
+      font-size: 13px;
+    }
+
     .main {
-      padding: 20px;
+      padding: 22px;
     }
 
     .topbar {
       display: flex;
       justify-content: space-between;
       gap: 16px;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 18px;
       flex-wrap: wrap;
     }
 
-    .page-title h2 {
-      margin: 0;
-      font-size: 28px;
-      line-height: 1.2;
+    .headline {
+      display: grid;
+      gap: 8px;
     }
 
-    .page-title p {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .topbar-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .chip {
+    .headline-kicker {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 13px;
-      box-shadow: var(--shadow);
+      color: var(--accent-deep);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .chip-dot {
+    .headline-kicker::before {
+      content: "";
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--accent);
     }
 
-    .section {
-      margin-bottom: 18px;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-end;
-      padding: 22px 22px 16px;
-      border-bottom: 1px solid var(--line);
-      flex-wrap: wrap;
-    }
-
-    .card-header h3 {
+    .headline h2 {
       margin: 0;
-      font-size: 22px;
-      line-height: 1.2;
+      font-size: 30px;
+      line-height: 1.18;
+      font-weight: 700;
     }
 
-    .card-header p {
-      margin: 6px 0 0;
+    .headline p {
+      margin: 0;
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.8;
+      max-width: 760px;
     }
 
-    .card-body {
-      padding: 22px;
+    .topbar-side {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
     }
 
-    .stats-grid {
+    .top-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 999px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .chip-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(26, 156, 84, 0.34);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(26, 156, 84, 0.28);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(26, 156, 84, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(26, 156, 84, 0);
+      }
+    }
+
+    .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
+      margin-bottom: 18px;
     }
 
     .stat-card {
       padding: 20px;
-      border-radius: 20px;
+      border-radius: 22px;
       background: var(--panel);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-soft);
     }
 
     .stat-label {
@@ -265,7 +323,7 @@
 
     .stat-value {
       margin-top: 10px;
-      font-size: 36px;
+      font-size: 38px;
       line-height: 1;
       font-weight: 700;
       color: var(--accent-deep);
@@ -275,20 +333,433 @@
       margin-top: 8px;
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.7;
+      line-height: 1.8;
     }
 
-    .workspace-grid {
+    .layout-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 18px;
     }
 
-    .content-grid {
+    .board-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
       gap: 18px;
       align-items: start;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .ledger-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    .panel-title h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .panel-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .panel-body {
+      padding: 22px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .searchbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: min(440px, 100%);
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+    }
+
+    .searchbox input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .searchbox button,
+    .button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover,
+    .searchbox button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary,
+    .searchbox button {
+      background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+      color: #fff;
+      box-shadow: 0 12px 20px rgba(26, 156, 84, 0.18);
+    }
+
+    .button.secondary {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .button.ghost {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .panel-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meta-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    th,
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #fbfcfd;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #f9fcfb;
+    }
+
+    tbody tr.is-active {
+      background: #eefbf3;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table-name {
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .table-sub {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status.good {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+    }
+
+    .status.pending {
+      background: #eff2f6;
+      color: #5f6775;
+    }
+
+    .status.warn {
+      background: var(--warn-soft);
+      color: #b45309;
+    }
+
+    .status.info {
+      background: var(--info-soft);
+      color: #1d4ed8;
+    }
+
+    .status.danger {
+      background: var(--danger-soft);
+      color: #b91c1c;
+    }
+
+    .status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .mini-button-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-button {
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--panel-soft);
+      color: var(--muted);
+    }
+
+    .mini-button.primary {
+      background: var(--info-soft);
+      color: #2563eb;
+      border-color: #dbeafe;
+    }
+
+    .mini-button.ghost {
+      background: var(--panel-soft);
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .mini-button.danger {
+      background: var(--danger-soft);
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .detail-panel,
+    .base-detail-panel {
+      position: sticky;
+      top: 20px;
+    }
+
+    .detail-hero {
+      padding: 20px;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(26, 156, 84, 0.08), rgba(255, 255, 255, 1)),
+        #fff;
+      border: 1px solid #d8f2e2;
+      margin-bottom: 16px;
+    }
+
+    .detail-hero h4 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .detail-hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .detail-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-box {
+      padding: 14px;
+      border-radius: 16px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+    }
+
+    .metric-box .label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-box .value {
+      margin-top: 6px;
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .progress {
+      margin-bottom: 16px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      margin-top: 8px;
+      border-radius: 999px;
+      background: #e7edf4;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #27b968, #178b4b);
+    }
+
+    .subsection {
+      margin-bottom: 16px;
+    }
+
+    .subsection:last-child {
+      margin-bottom: 0;
+    }
+
+    .subsection h5 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .list-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      padding: 14px;
+      border-radius: 16px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+    }
+
+    .list-item strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .list-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .form-grid {
@@ -317,8 +788,8 @@
     .field textarea {
       width: 100%;
       padding: 12px 14px;
-      border-radius: var(--radius-md);
-      border: 1px solid #d9dde3;
+      border-radius: 14px;
+      border: 1px solid #dbe1ea;
       background: #fff;
       color: var(--text);
       outline: none;
@@ -326,18 +797,24 @@
     }
 
     .field textarea {
-      min-height: 92px;
+      min-height: 96px;
       resize: vertical;
     }
 
     .field input:focus,
     .field select:focus,
     .field textarea:focus {
-      border-color: rgba(22, 163, 74, 0.5);
-      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.08);
+      border-color: rgba(26, 156, 84, 0.42);
+      box-shadow: 0 0 0 4px rgba(26, 156, 84, 0.08);
     }
 
-    .form-actions {
+    .helper {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .form-footer {
       display: flex;
       justify-content: space-between;
       gap: 12px;
@@ -346,316 +823,85 @@
       margin-top: 16px;
     }
 
-    .helper {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .button {
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 18px;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      font-weight: 700;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-    }
-
-    .button.primary {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      color: #fff;
-      box-shadow: 0 12px 22px rgba(22, 163, 74, 0.18);
-    }
-
-    .button.secondary {
-      background: #f8fafc;
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    .upload-box {
-      padding: 18px;
+    .upload-hint {
+      padding: 16px;
       border-radius: 18px;
-      border: 1px dashed #b7c0cb;
-      background: var(--panel-soft);
+      background: linear-gradient(135deg, rgba(26, 156, 84, 0.04), rgba(59, 130, 246, 0.03));
+      border: 1px dashed #bfdcca;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.8;
-      text-align: center;
-      margin-bottom: 14px;
+      line-height: 1.9;
+      margin-bottom: 16px;
     }
 
-    .file-list,
-    .mini-list,
-    .timeline,
-    .doc-list {
+    .file-preview {
       display: grid;
-      gap: 10px;
-    }
-
-    .file-item,
-    .mini-item,
-    .doc-item,
-    .timeline-item {
-      padding: 14px;
-      border-radius: 16px;
-      background: var(--panel-soft);
-      border: 1px solid var(--line);
-    }
-
-    .mini-item strong,
-    .doc-item strong,
-    .timeline-item strong {
-      display: block;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .mini-item span,
-    .doc-item span,
-    .timeline-item span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .table-toolbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .search {
-      width: min(420px, 100%);
-    }
-
-    .search input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid #d9dde3;
-      background: #fff;
-      outline: none;
-    }
-
-    .search input:focus {
-      border-color: rgba(22, 163, 74, 0.5);
-      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.08);
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: #fff;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 860px;
-    }
-
-    th,
-    td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: middle;
-      font-size: 14px;
-    }
-
-    th {
-      background: #f8fafc;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    tbody tr {
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    tbody tr:hover {
-      background: #f8fcf9;
-    }
-
-    tbody tr.is-active {
-      background: #f0fdf4;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .status.good {
-      background: var(--accent-soft);
-      color: var(--accent-deep);
-    }
-
-    .status.pending {
-      background: #f3f4f6;
-      color: #4b5563;
-    }
-
-    .status.warn {
-      background: var(--warn-soft);
-      color: #b45309;
-    }
-
-    .status.info {
-      background: var(--info-soft);
-      color: #0369a1;
-    }
-
-    .status.danger {
-      background: var(--danger-soft);
-      color: #b91c1c;
-    }
-
-    .detail-panel {
-      position: sticky;
-      top: 20px;
-    }
-
-    .detail-hero {
-      padding: 20px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #f0fdf4, #ffffff);
-      border: 1px solid #d1fae5;
-      margin-bottom: 16px;
-    }
-
-    .detail-hero h4 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.2;
-    }
-
-    .detail-meta {
-      display: flex;
-      flex-wrap: wrap;
       gap: 8px;
-      margin-top: 10px;
+      margin: 12px 0 0;
     }
 
-    .detail-meta .chip {
-      box-shadow: none;
-      background: rgba(255, 255, 255, 0.84);
+    .file-preview:empty {
+      display: none;
     }
 
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .detail-box {
-      padding: 14px;
-      border-radius: 16px;
+    .file-preview-item {
+      padding: 10px 12px;
+      border-radius: 14px;
       background: var(--panel-soft);
       border: 1px solid var(--line);
-    }
-
-    .detail-box .label {
       color: var(--muted);
       font-size: 12px;
     }
 
-    .detail-box .value {
-      margin-top: 6px;
-      font-size: 15px;
-      line-height: 1.6;
-      font-weight: 700;
-    }
-
-    .progress {
-      margin-bottom: 16px;
-    }
-
-    .progress-top {
+    .table-footer {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       align-items: center;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .progress-bar {
-      height: 10px;
-      margin-top: 8px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #22c55e, #16a34a);
-      border-radius: 999px;
-    }
-
-    .sub-title {
-      margin: 0 0 12px;
-      font-size: 16px;
-      line-height: 1.2;
+      flex-wrap: wrap;
+      margin-top: 16px;
     }
 
     .empty {
       padding: 18px;
       border-radius: 16px;
+      border: 1px dashed #cfd7e3;
       background: var(--panel-soft);
-      border: 1px dashed #cbd5e1;
       color: var(--muted);
-      text-align: center;
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.9;
+      text-align: center;
     }
 
     .footer {
-      margin-top: 18px;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.8;
       text-align: center;
+      padding: 2px 0 4px;
     }
 
-    @media (max-width: 1160px) {
-      .stats-grid {
+    @media (max-width: 1240px) {
+      .summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .content-grid,
-      .workspace-grid {
+      .board-grid,
+      .ledger-grid {
         grid-template-columns: 1fr;
       }
 
+      .base-detail-panel,
       .detail-panel {
         position: static;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .workbench-grid,
+      .form-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -665,27 +911,75 @@
       }
 
       .sidebar {
-        min-height: auto;
         position: static;
+        min-height: auto;
       }
 
       .nav-group {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .form-grid,
-      .detail-grid,
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
       .main {
         padding: 14px;
       }
 
-      .card-header,
-      .card-body {
+      .panel-header,
+      .panel-body {
         padding: 18px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap table {
+        min-width: 0;
+      }
+
+      .table-wrap thead {
+        display: none;
+      }
+
+      .table-wrap tbody,
+      .table-wrap tr,
+      .table-wrap td {
+        display: block;
+        width: 100%;
+      }
+
+      .table-wrap tbody tr {
+        margin-bottom: 12px;
+        padding: 14px 14px 6px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .table-wrap td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--line);
+        text-align: right;
+      }
+
+      .table-wrap td:last-child {
+        border-bottom: 0;
+      }
+
+      .table-wrap td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-align: left;
+        flex: 0 0 84px;
+      }
+
+      .table-name,
+      .table-sub {
+        text-align: right;
       }
     }
 
@@ -694,8 +988,11 @@
         scroll-behavior: auto;
       }
 
-      * {
+      *,
+      *::before,
+      *::after {
         transition: none !important;
+        animation: none !important;
       }
     }
   </style>
@@ -707,219 +1004,295 @@
         <div class="brand-mark">药</div>
         <div>
           <h1>中药材溯源平台</h1>
-          <p>建档、上传、归档、查询</p>
+          <p>基地、批次、资料、质检一体化管理</p>
         </div>
       </div>
 
-      <nav class="nav-group" aria-label="侧边导航">
+      <div class="nav-caption">Trace Modules</div>
+      <nav class="nav-group" aria-label="平台导航">
         <a class="nav-item" href="#overview">
-          <span class="nav-icon">总</span>
-          <span>工作台概览</span>
+          <span class="nav-icon">首</span>
+          <span class="nav-text">
+            <strong>首页</strong>
+            <span>工作台总览</span>
+          </span>
+        </a>
+        <a class="nav-item is-active" href="#baseCenter">
+          <span class="nav-icon">基</span>
+          <span class="nav-text">
+            <strong>基地溯源</strong>
+            <span>基地档案与归集</span>
+          </span>
         </a>
         <a class="nav-item" href="#batchCreate">
-          <span class="nav-icon">档</span>
-          <span>批次建档</span>
+          <span class="nav-icon">批</span>
+          <span class="nav-text">
+            <strong>批次建档</strong>
+            <span>新增药材批次</span>
+          </span>
         </a>
         <a class="nav-item" href="#uploadDocs">
           <span class="nav-icon">传</span>
-          <span>资料上传</span>
+          <span class="nav-text">
+            <strong>资料归档</strong>
+            <span>上传票据与报告</span>
+          </span>
         </a>
-        <a class="nav-item" href="#traceQuery">
+        <a class="nav-item" href="#traceLedger">
           <span class="nav-icon">查</span>
-          <span>溯源查询</span>
+          <span class="nav-text">
+            <strong>溯源查询</strong>
+            <span>批次台账检索</span>
+          </span>
         </a>
-        <a class="nav-item" href="#detailSection">
+        <a class="nav-item" href="#batchDetailSection">
           <span class="nav-icon">质</span>
-          <span>质检归档</span>
+          <span class="nav-text">
+            <strong>质检归档</strong>
+            <span>当前批次详情</span>
+          </span>
         </a>
       </nav>
 
-      <div class="sidebar-note">
-        当前是前端演示版，已经支持批次建档和资料上传交互。
-        如果要把文件真正保存到服务器，还需要继续接后端和对象存储。
+      <div class="sidebar-card">
+        <strong>当前说明</strong>
+        这版重点参考了你给的“左侧导航 + 查询 + 表格管理”的结构，但把信息层级、留白、详情区和上传流程做得更完整。
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <div class="page-title">
-          <h2>溯源管理后台</h2>
-          <p>参考溯源平台后台结构，改成更简洁的实际操作界面，重点放在建档、上传、归档和查询。</p>
+        <div class="headline">
+          <div class="headline-kicker">Base Traceability Console</div>
+          <h2>基地溯源工作台</h2>
+          <p>先按基地看全局，再进入批次建档、资料上传和质检归档。这样既有你参考图里的管理结构，也保留了真正可操作的溯源流程。</p>
         </div>
-        <div class="topbar-actions">
-          <div class="chip">
-            <span class="chip-dot"></span>
-            <span id="syncChip">数据同步中</span>
+        <div class="topbar-side">
+          <div class="top-chip">
+            <span class="chip-pulse"></span>
+            <span id="syncChip">正在同步数据</span>
           </div>
-          <div class="chip" id="storageChip">本地演示上传已启用</div>
+          <div class="top-chip" id="storageChip">本地演示上传已启用</div>
         </div>
       </header>
 
-      <section class="section" id="overview">
-        <div class="stats-grid" id="statsGrid"></div>
-      </section>
+      <div class="layout-grid">
+        <section class="summary-grid" id="overview"></section>
 
-      <section class="section workspace-grid">
-        <article class="card" id="batchCreate">
-          <div class="card-header">
-            <div>
-              <h3>批次建档</h3>
-              <p>先把药材批次、产地、供应方和采收信息录入，再继续上传凭证与质检材料。</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <form id="batchForm">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="batchCode">批次号</label>
-                  <input id="batchCode" name="batchCode" type="text" placeholder="可留空，系统自动生成">
-                </div>
-                <div class="field">
-                  <label for="batchHerb">药材名称</label>
-                  <input id="batchHerb" name="batchHerb" type="text" placeholder="例如：黄芪" required>
-                </div>
-                <div class="field">
-                  <label for="batchOrigin">产地/基地</label>
-                  <input id="batchOrigin" name="batchOrigin" type="text" placeholder="例如：甘肃岷县" required>
-                </div>
-                <div class="field">
-                  <label for="batchSupplier">供应主体</label>
-                  <input id="batchSupplier" name="batchSupplier" type="text" placeholder="合作社 / 基地 / 供应商">
-                </div>
-                <div class="field">
-                  <label for="batchSpec">规格</label>
-                  <input id="batchSpec" name="batchSpec" type="text" placeholder="例如：统货 / 片 / 段">
-                </div>
-                <div class="field">
-                  <label for="batchDate">采收/建档日期</label>
-                  <input id="batchDate" name="batchDate" type="date">
-                </div>
-                <div class="field is-full">
-                  <label for="batchNote">批次说明</label>
-                  <textarea id="batchNote" name="batchNote" placeholder="补充本批次的采收、加工、仓储或交易说明"></textarea>
-                </div>
+        <section class="board-grid" id="baseCenter">
+          <article class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>基地档案中心</h3>
+                <p>按基地聚合批次、资料和最近更新，适合作为溯源平台的主入口。</p>
               </div>
-              <div class="form-actions">
-                <div class="helper">新建批次后，会自动出现在台账和资料上传下拉框里。</div>
-                <button class="button primary" type="submit">新建批次档案</button>
+              <div class="header-actions">
+                <label class="searchbox">
+                  <input id="baseSearch" type="search" placeholder="请输入基地名称 / 负责人 / 药材名称">
+                  <button type="button">搜索</button>
+                </label>
+                <button class="button primary" id="jumpCreateButton" type="button">新增档案</button>
               </div>
-            </form>
-          </div>
-        </article>
-
-        <article class="card" id="uploadDocs">
-          <div class="card-header">
-            <div>
-              <h3>资料上传</h3>
-              <p>把产地照片、合同票据、质检报告、入库单等材料挂到具体批次上。</p>
             </div>
-          </div>
-          <div class="card-body">
-            <div class="upload-box">
-              支持为单个批次挂接多份资料。
-              当前演示版会记录文件名、类型、备注和上传时间，用于展示上传流程。
-            </div>
-            <form id="documentForm">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="documentBatchId">所属批次</label>
-                  <select id="documentBatchId" name="documentBatchId" required></select>
-                </div>
-                <div class="field">
-                  <label for="documentType">资料类型</label>
-                  <select id="documentType" name="documentType" required>
-                    <option value="产地照片">产地照片</option>
-                    <option value="采购合同">采购合同</option>
-                    <option value="质检报告">质检报告</option>
-                    <option value="入库单">入库单</option>
-                    <option value="加工记录">加工记录</option>
-                    <option value="流通单据">流通单据</option>
-                    <option value="其他附件">其他附件</option>
-                  </select>
-                </div>
-                <div class="field is-full">
-                  <label for="documentFiles">选择文件</label>
-                  <input id="documentFiles" name="documentFiles" type="file" multiple required>
-                </div>
-                <div class="field is-full">
-                  <label for="documentNote">备注</label>
-                  <textarea id="documentNote" name="documentNote" placeholder="例如：2026 年第一批农残检测报告，由第三方机构出具"></textarea>
-                </div>
+            <div class="panel-body">
+              <div class="panel-meta" id="baseSummary"></div>
+              <div class="table-wrap" style="margin-top: 14px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>基地名称</th>
+                      <th>基地编号</th>
+                      <th>负责人</th>
+                      <th>关联品种</th>
+                      <th>批次数</th>
+                      <th>资料数</th>
+                      <th>最近更新</th>
+                      <th>状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="baseTableBody"></tbody>
+                </table>
               </div>
-              <div class="form-actions">
-                <div class="helper">建议优先上传：来源凭证、质检报告、入库单。</div>
-                <button class="button primary" type="submit">上传资料到批次</button>
+            </div>
+          </article>
+
+          <aside class="panel base-detail-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>基地详情</h3>
+                <p>查看当前基地的负责人、批次、资料与推荐操作。</p>
               </div>
-            </form>
-
-            <div style="margin-top: 18px;">
-              <h4 class="sub-title">最近上传</h4>
-              <div class="file-list" id="recentUploads"></div>
             </div>
-          </div>
-        </article>
-      </section>
+            <div class="panel-body" id="baseDetailPanel"></div>
+          </aside>
+        </section>
 
-      <section class="section content-grid">
-        <article class="card" id="traceQuery">
-          <div class="card-header">
-            <div>
-              <h3>批次台账与溯源查询</h3>
-              <p>按批次号、药材、产地或供应主体检索，点击任一批次可查看详情和已上传资料。</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="table-toolbar">
-              <div class="search">
-                <input id="ledgerSearch" type="search" placeholder="搜索批次号 / 药材名称 / 产地 / 供应主体">
+        <section class="workbench-grid">
+          <article class="panel" id="batchCreate">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>批次建档</h3>
+                <p>补齐药材名称、产地、供应主体和批次说明，形成可追踪的批次档案。</p>
               </div>
-              <div class="helper" id="ledgerSummary">共 0 条批次记录</div>
             </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>批次号</th>
-                    <th>药材名称</th>
-                    <th>产地/基地</th>
-                    <th>供应主体</th>
-                    <th>资料数</th>
-                    <th>状态</th>
-                    <th>质检</th>
-                    <th>日期</th>
-                  </tr>
-                </thead>
-                <tbody id="ledgerBody"></tbody>
-              </table>
+            <div class="panel-body">
+              <form id="batchForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="batchCode">批次号</label>
+                    <input id="batchCode" name="batchCode" type="text" placeholder="可留空，系统自动生成">
+                  </div>
+                  <div class="field">
+                    <label for="batchHerb">药材名称</label>
+                    <input id="batchHerb" name="batchHerb" type="text" placeholder="例如：黄芪" required>
+                  </div>
+                  <div class="field">
+                    <label for="batchOrigin">基地名称 / 产地</label>
+                    <input id="batchOrigin" name="batchOrigin" type="text" placeholder="例如：甘肃岷县示范基地" required>
+                  </div>
+                  <div class="field">
+                    <label for="batchSupplier">基地负责人 / 供应主体</label>
+                    <input id="batchSupplier" name="batchSupplier" type="text" placeholder="合作社 / 基地 / 负责人">
+                  </div>
+                  <div class="field">
+                    <label for="batchSpec">规格</label>
+                    <input id="batchSpec" name="batchSpec" type="text" placeholder="例如：统货 / 饮片 / 段">
+                  </div>
+                  <div class="field">
+                    <label for="batchDate">采收 / 建档日期</label>
+                    <input id="batchDate" name="batchDate" type="date">
+                  </div>
+                  <div class="field is-full">
+                    <label for="batchNote">批次说明</label>
+                    <textarea id="batchNote" name="batchNote" placeholder="补充采收、加工、仓储、运输或交易说明"></textarea>
+                  </div>
+                </div>
+                <div class="form-footer">
+                  <div class="helper">建档完成后，新批次会自动进入基地详情、批次台账和资料上传下拉框。</div>
+                  <button class="button primary" type="submit">新建批次档案</button>
+                </div>
+              </form>
             </div>
-            <div class="form-actions" style="margin-top: 14px;">
-              <div class="helper">台账默认显示最新批次，点击行可切换右侧详情。</div>
-              <button class="button secondary" id="loadMoreButton" type="button">查看更多</button>
-            </div>
-          </div>
-        </article>
+          </article>
 
-        <aside class="card detail-panel" id="detailSection">
-          <div class="card-header">
-            <div>
-              <h3>批次详情</h3>
-              <p>查看当前批次的建档信息、资料归集和溯源进度。</p>
+          <article class="panel" id="uploadDocs">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>资料归档</h3>
+                <p>把产地照片、采购合同、质检报告、入库单等资料挂到具体批次。</p>
+              </div>
             </div>
-          </div>
-          <div class="card-body" id="detailPanel"></div>
-        </aside>
-      </section>
+            <div class="panel-body">
+              <div class="upload-hint">
+                这版仍是前端演示上传，但流程已经是完整后台逻辑。
+                你上传后会看到：最近上传、批次状态、质检状态和详情区同步变化。
+              </div>
 
-      <footer class="footer">
-        页面当前读取 [public/data/dashboard.json] 作为演示数据源，并把你新建的批次与上传记录保存在当前浏览器本地。
-      </footer>
+              <form id="documentForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="documentBatchId">所属批次</label>
+                    <select id="documentBatchId" name="documentBatchId" required></select>
+                  </div>
+                  <div class="field">
+                    <label for="documentType">资料类型</label>
+                    <select id="documentType" name="documentType" required>
+                      <option value="产地照片">产地照片</option>
+                      <option value="采购合同">采购合同</option>
+                      <option value="质检报告">质检报告</option>
+                      <option value="入库单">入库单</option>
+                      <option value="加工记录">加工记录</option>
+                      <option value="流通单据">流通单据</option>
+                      <option value="其他附件">其他附件</option>
+                    </select>
+                  </div>
+                  <div class="field is-full">
+                    <label for="documentFiles">选择文件</label>
+                    <input id="documentFiles" name="documentFiles" type="file" multiple required>
+                    <div class="file-preview" id="filePreview"></div>
+                  </div>
+                  <div class="field is-full">
+                    <label for="documentNote">备注</label>
+                    <textarea id="documentNote" name="documentNote" placeholder="例如：2026 年第一批农残检测报告，由第三方机构出具"></textarea>
+                  </div>
+                </div>
+                <div class="form-footer">
+                  <div class="helper">建议优先上传：来源凭证、质检报告、入库单。</div>
+                  <button class="button primary" type="submit">上传资料到批次</button>
+                </div>
+              </form>
+
+              <div class="subsection" style="margin-top: 20px;">
+                <h5>最近上传</h5>
+                <div class="list-grid" id="recentUploads"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="ledger-grid" id="traceLedger">
+          <article class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>批次台账与溯源查询</h3>
+                <p>点击任一批次，可在右侧查看质检、归档进度、时间轴和已挂接资料。</p>
+              </div>
+              <div class="header-actions">
+                <label class="searchbox" style="min-width: min(420px, 100%);">
+                  <input id="ledgerSearch" type="search" placeholder="搜索批次号 / 药材 / 基地 / 负责人">
+                  <button type="button">查询</button>
+                </label>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="panel-meta" id="ledgerSummary"></div>
+              <div class="table-wrap" style="margin-top: 14px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>批次号</th>
+                      <th>药材名称</th>
+                      <th>所属基地</th>
+                      <th>负责人</th>
+                      <th>资料数</th>
+                      <th>归档状态</th>
+                      <th>质检状态</th>
+                      <th>日期</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ledgerBody"></tbody>
+                </table>
+              </div>
+              <div class="table-footer">
+                <div class="helper">台账默认展示最近批次，选中后会同步切换基地详情和右侧批次详情。</div>
+                <button class="button ghost" id="loadMoreButton" type="button">查看更多</button>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel detail-panel" id="batchDetailSection">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3>当前批次详情</h3>
+                <p>查看当前批次的归档情况、已挂资料和溯源节点建议。</p>
+              </div>
+            </div>
+            <div class="panel-body" id="detailPanel"></div>
+          </aside>
+        </section>
+
+        <footer class="footer">
+          当前页面读取 [public/data/dashboard.json] 作为演示数据，并把你新建的批次与上传记录保存在当前浏览器本地。
+        </footer>
+      </div>
     </main>
   </div>
 
   <script>
     const STORAGE_KEYS = {
-      batches: "trace_platform_custom_batches_v1",
-      documents: "trace_platform_custom_documents_v1",
+      batches: "trace_platform_custom_batches_v2",
+      documents: "trace_platform_custom_documents_v2",
     };
 
     const state = {
@@ -928,9 +1301,11 @@
       seedDocuments: [],
       customBatches: [],
       customDocuments: [],
+      selectedBaseId: null,
       selectedBatchId: null,
-      query: "",
-      visibleRows: 12,
+      baseQuery: "",
+      batchQuery: "",
+      visibleRows: 10,
     };
 
     function escapeHtml(value) {
@@ -953,6 +1328,16 @@
       return String(value ?? "").trim().toLowerCase();
     }
 
+    function hashText(value) {
+      const text = String(value || "");
+      let hash = 0;
+      for (let index = 0; index < text.length; index += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(index);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
     function readStorage(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
@@ -973,7 +1358,8 @@
     }
 
     function getAllDocuments() {
-      return [...state.customDocuments, ...state.seedDocuments];
+      return [...state.customDocuments, ...state.seedDocuments]
+        .sort((a, b) => String(b.uploadedAt).localeCompare(String(a.uploadedAt)));
     }
 
     function buildSeedCode(item, index) {
@@ -998,12 +1384,13 @@
     function buildSeedData(dashboard) {
       const origins = dashboard.origin?.items || [];
       const marketMap = getMarketMap(dashboard.markets?.groups || []);
-      const seedBatches = origins.slice(0, 24).map((item, index) => ({
+
+      const seedBatches = origins.slice(0, 30).map((item, index) => ({
         id: `seed-${index + 1}`,
         code: buildSeedCode(item, index),
         herb: item.herb || "待补充品种",
-        origin: item.location || "待补充产地",
-        supplier: item.source || "待补充来源",
+        origin: item.location || "待补充基地",
+        supplier: item.source || "待补充负责人",
         spec: item.spec || "待补充规格",
         date: formatDate(item.date),
         note: item.summary || "",
@@ -1020,7 +1407,7 @@
             batchId: batch.id,
             type: "来源记录",
             name: `${batch.herb}-来源记录`,
-            note: "系统从原始行情链接导入",
+            note: "系统从原始来源链接自动导入",
             uploadedAt: batch.date,
             source: "system",
           });
@@ -1031,7 +1418,7 @@
             batchId: batch.id,
             type: "流通单据",
             name: `${batch.marketNode}-节点记录`,
-            note: "根据已有市场数据自动挂接",
+            note: "根据现有市场数据自动挂接",
             uploadedAt: batch.date,
             source: "system",
           });
@@ -1050,30 +1437,28 @@
     }
 
     function getDocumentsForBatch(batchId) {
-      return getAllDocuments()
-        .filter((item) => item.batchId === batchId)
-        .sort((a, b) => String(b.uploadedAt).localeCompare(String(a.uploadedAt)));
+      return getAllDocuments().filter((item) => item.batchId === batchId);
     }
 
     function getBatchStatus(batch) {
       const docs = getDocumentsForBatch(batch.id);
       const hasQuality = docs.some((item) => item.type === "质检报告");
-      const hasCoreDoc = docs.some((item) => ["来源记录", "采购合同", "产地照片"].includes(item.type));
-      const hasFlowDoc = docs.some((item) => ["入库单", "加工记录", "流通单据"].includes(item.type));
+      const hasCore = docs.some((item) => ["来源记录", "采购合同", "产地照片"].includes(item.type));
+      const hasFlow = docs.some((item) => ["入库单", "加工记录", "流通单据"].includes(item.type));
 
       if (!docs.length) {
         return { label: "待上传资料", tone: "pending" };
       }
-      if (hasQuality && hasCoreDoc && hasFlowDoc) {
-        return { label: "已归档", tone: "good" };
+      if (hasCore && hasQuality && hasFlow) {
+        return { label: "档案完整", tone: "good" };
       }
       if (hasQuality) {
         return { label: "待补流转", tone: "warn" };
       }
-      if (hasCoreDoc) {
-        return { label: "待质检", tone: "info" };
+      if (hasCore) {
+        return { label: "待补质检", tone: "info" };
       }
-      return { label: "待整理", tone: "pending" };
+      return { label: "持续完善", tone: "pending" };
     }
 
     function getQualityStatus(batch) {
@@ -1098,8 +1483,105 @@
       return Math.max(score, docs.length ? 25 : 0);
     }
 
+    function getBaseId(origin) {
+      return `base-${hashText(origin || "unknown")}`;
+    }
+
+    function getBaseRecords() {
+      const groups = new Map();
+
+      getAllBatches().forEach((batch) => {
+        const key = batch.origin || "待补充基地";
+        if (!groups.has(key)) {
+          groups.set(key, {
+            id: getBaseId(key),
+            name: key,
+            code: `BASE-${String(hashText(key)).slice(0, 6)}`,
+            owners: new Map(),
+            herbs: new Set(),
+            batches: [],
+            docCount: 0,
+            latestDate: batch.date,
+          });
+        }
+
+        const record = groups.get(key);
+        record.batches.push(batch);
+        record.herbs.add(batch.herb);
+        record.docCount += getDocumentsForBatch(batch.id).length;
+        if (batch.supplier) {
+          const count = record.owners.get(batch.supplier) || 0;
+          record.owners.set(batch.supplier, count + 1);
+        }
+        if (String(batch.date) > String(record.latestDate)) {
+          record.latestDate = batch.date;
+        }
+      });
+
+      return Array.from(groups.values())
+        .map((record) => {
+          const sortedOwners = Array.from(record.owners.entries()).sort((a, b) => b[1] - a[1]);
+          const owner = sortedOwners[0]?.[0] || "待补负责人";
+          const avgCompletion = record.batches.length
+            ? Math.round(record.batches.reduce((sum, batch) => sum + getCompletion(batch), 0) / record.batches.length)
+            : 0;
+          const qualityDone = record.batches.filter((batch) => getQualityStatus(batch).tone === "good").length;
+          let status = { label: "待建资料", tone: "pending" };
+          if (record.docCount && avgCompletion >= 80) {
+            status = { label: "档案完整", tone: "good" };
+          } else if (record.docCount && qualityDone) {
+            status = { label: "持续完善", tone: "info" };
+          } else if (record.docCount) {
+            status = { label: "待补质检", tone: "warn" };
+          }
+
+          return {
+            id: record.id,
+            name: record.name,
+            code: record.code,
+            owner,
+            herbs: Array.from(record.herbs),
+            batchCount: record.batches.length,
+            docCount: record.docCount,
+            latestDate: record.latestDate,
+            status,
+            avgCompletion,
+            batches: record.batches.sort((a, b) => String(b.date).localeCompare(String(a.date))),
+          };
+        })
+        .sort((a, b) => String(b.latestDate).localeCompare(String(a.latestDate)) || b.batchCount - a.batchCount);
+    }
+
+    function getFilteredBases() {
+      const query = normalizeText(state.baseQuery);
+      const records = getBaseRecords();
+      if (!query) {
+        return records;
+      }
+
+      return records.filter((base) => {
+        const text = normalizeText([base.name, base.code, base.owner, base.herbs.join(" ")].join(" "));
+        return text.includes(query);
+      });
+    }
+
+    function ensureSelectedBase(records) {
+      if (!records.length) {
+        state.selectedBaseId = null;
+        return null;
+      }
+
+      const current = records.find((item) => item.id === state.selectedBaseId);
+      if (current) {
+        return current;
+      }
+
+      state.selectedBaseId = records[0].id;
+      return records[0];
+    }
+
     function getFilteredBatches() {
-      const query = normalizeText(state.query);
+      const query = normalizeText(state.batchQuery);
       const all = getAllBatches();
       if (!query) {
         return all;
@@ -1110,46 +1592,200 @@
       });
     }
 
+    function ensureSelectedBatch(records) {
+      if (!records.length) {
+        state.selectedBatchId = null;
+        return null;
+      }
+
+      const current = records.find((item) => item.id === state.selectedBatchId);
+      if (current) {
+        return current;
+      }
+
+      state.selectedBatchId = records[0].id;
+      return records[0];
+    }
+
+    function syncSelectionFromBatch(batch) {
+      if (!batch) {
+        return;
+      }
+      state.selectedBaseId = getBaseId(batch.origin);
+    }
+
     function renderStats() {
+      const bases = getBaseRecords();
       const batches = getAllBatches();
       const documents = getAllDocuments();
-      const archived = batches.filter((batch) => getBatchStatus(batch).tone === "good").length;
-      const pendingUpload = batches.filter((batch) => getBatchStatus(batch).tone === "pending").length;
+      const completeBases = bases.filter((base) => base.status.tone === "good").length;
       const waitingQuality = batches.filter((batch) => getQualityStatus(batch).tone !== "good").length;
+
       const cards = [
+        {
+          label: "基地数量",
+          value: bases.length,
+          note: "按基地聚合后的溯源档案数量",
+        },
         {
           label: "批次总数",
           value: batches.length,
-          note: "当前平台内可管理的全部批次档案",
+          note: "当前平台内可追踪的药材批次",
         },
         {
-          label: "已挂资料",
+          label: "归档资料",
           value: documents.length,
-          note: "包含系统导入资料和你手动上传的附件",
+          note: "系统导入资料 + 手动上传附件",
         },
         {
-          label: "待上传资料",
-          value: pendingUpload,
-          note: "还没有挂接任何核心附件的批次数量",
-        },
-        {
-          label: "已归档批次",
-          value: archived,
-          note: `仍有 ${waitingQuality} 条批次需要继续补充质检或流转材料`,
+          label: "待送检批次",
+          value: waitingQuality,
+          note: `其中 ${completeBases} 个基地的资料完整度较高`,
         },
       ];
 
-      document.getElementById("statsGrid").innerHTML = cards
-        .map(
-          (card) => `
-            <article class="stat-card">
-              <div class="stat-label">${escapeHtml(card.label)}</div>
-              <div class="stat-value">${escapeHtml(card.value)}</div>
-              <div class="stat-note">${escapeHtml(card.note)}</div>
-            </article>
-          `,
-        )
+      document.getElementById("overview").innerHTML = cards
+        .map((card) => `
+          <article class="stat-card">
+            <div class="stat-label">${escapeHtml(card.label)}</div>
+            <div class="stat-value">${escapeHtml(card.value)}</div>
+            <div class="stat-note">${escapeHtml(card.note)}</div>
+          </article>
+        `)
         .join("");
+    }
+
+    function renderBaseCenter() {
+      const records = getFilteredBases();
+      const selected = ensureSelectedBase(records);
+      const root = document.getElementById("baseTableBody");
+
+      document.getElementById("baseSummary").innerHTML = `
+        <span class="meta-pill">共 ${escapeHtml(records.length)} 个基地</span>
+        <span class="meta-pill">当前选中 ${escapeHtml(selected ? selected.name : "--")}</span>
+      `;
+
+      if (!records.length) {
+        root.innerHTML = `
+          <tr>
+            <td colspan="9">
+              <div class="empty">没有找到匹配的基地，请换个关键词试试。</div>
+            </td>
+          </tr>
+        `;
+        document.getElementById("baseDetailPanel").innerHTML = '<div class="empty">当前没有可展示的基地详情。</div>';
+        return;
+      }
+
+      root.innerHTML = records
+        .map((base) => `
+          <tr data-base-id="${escapeHtml(base.id)}" class="${base.id === state.selectedBaseId ? "is-active" : ""}">
+            <td data-label="基地名称">
+              <span class="table-name">${escapeHtml(base.name)}</span>
+              <span class="table-sub">${escapeHtml(base.herbs.slice(0, 3).join(" / ") || "待补充药材")}</span>
+            </td>
+            <td data-label="基地编号">${escapeHtml(base.code)}</td>
+            <td data-label="负责人">${escapeHtml(base.owner)}</td>
+            <td data-label="关联品种">${escapeHtml(base.herbs.slice(0, 4).join(" / "))}</td>
+            <td data-label="批次数">${escapeHtml(base.batchCount)}</td>
+            <td data-label="资料数">${escapeHtml(base.docCount)}</td>
+            <td data-label="最近更新">${escapeHtml(formatDate(base.latestDate))}</td>
+            <td data-label="状态"><span class="status ${escapeHtml(base.status.tone)}">${escapeHtml(base.status.label)}</span></td>
+            <td data-label="操作">
+              <div class="mini-button-group">
+                <span class="mini-button primary">详情</span>
+                <span class="mini-button ghost">定位</span>
+              </div>
+            </td>
+          </tr>
+        `)
+        .join("");
+
+      renderBaseDetail(selected);
+    }
+
+    function renderBaseDetail(base) {
+      const root = document.getElementById("baseDetailPanel");
+      if (!base) {
+        root.innerHTML = '<div class="empty">当前没有可展示的基地详情。</div>';
+        return;
+      }
+
+      const latestBatch = base.batches[0] || null;
+      root.innerHTML = `
+        <div class="detail-hero">
+          <h4>${escapeHtml(base.name)}</h4>
+          <p>当前基地下共有 ${escapeHtml(base.batchCount)} 个批次，已挂接 ${escapeHtml(base.docCount)} 份资料，适合作为对外展示或内部溯源的入口。</p>
+          <div class="detail-badges">
+            <span class="badge">${escapeHtml(base.code)}</span>
+            <span class="badge">${escapeHtml(base.owner)}</span>
+            <span class="status ${escapeHtml(base.status.tone)}">${escapeHtml(base.status.label)}</span>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="label">批次数量</div>
+            <div class="value">${escapeHtml(base.batchCount)} 个</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">资料数量</div>
+            <div class="value">${escapeHtml(base.docCount)} 份</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">最近更新</div>
+            <div class="value">${escapeHtml(formatDate(base.latestDate))}</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">主要药材</div>
+            <div class="value">${escapeHtml(base.herbs.slice(0, 2).join(" / "))}</div>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head">
+            <span>基地归档完整度</span>
+            <strong>${escapeHtml(base.avgCompletion)}%</strong>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${escapeHtml(base.avgCompletion)}%"></div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h5>推荐操作</h5>
+          <div class="action-row">
+            <button class="button primary" type="button" data-base-action="create">在该基地下新建批次</button>
+            <button class="button secondary" type="button" data-base-action="upload">给当前基地批次上传资料</button>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h5>最近批次</h5>
+          <div class="list-grid">
+            ${base.batches.slice(0, 4).map((batch) => `
+              <div class="list-item">
+                <strong>${escapeHtml(batch.herb)} · ${escapeHtml(batch.code)}</strong>
+                <span>${escapeHtml(formatDate(batch.date))} · ${escapeHtml(batch.supplier || "待补负责人")} · ${escapeHtml(getBatchStatus(batch).label)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h5>资料建议</h5>
+          <div class="list-grid">
+            <div class="list-item">
+              <strong>优先补齐来源凭证与产地图片</strong>
+              <span>这是基地对外展示可信度的第一层证据。</span>
+            </div>
+            <div class="list-item">
+              <strong>尽快为主力批次上传质检报告</strong>
+              <span>尤其是最近更新的批次，例如 ${escapeHtml(latestBatch ? latestBatch.herb : "当前批次")}。</span>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderBatchOptions() {
@@ -1164,6 +1800,18 @@
       }
     }
 
+    function renderFilePreview(files) {
+      const root = document.getElementById("filePreview");
+      if (!files.length) {
+        root.innerHTML = "";
+        return;
+      }
+
+      root.innerHTML = files
+        .map((file) => `<div class="file-preview-item">${escapeHtml(file.name)} · ${escapeHtml(Math.max(1, Math.round(file.size / 1024)))} KB</div>`)
+        .join("");
+    }
+
     function renderRecentUploads() {
       const root = document.getElementById("recentUploads");
       const recent = getAllDocuments().slice(0, 6);
@@ -1176,7 +1824,7 @@
         .map((item) => {
           const batch = getAllBatches().find((entry) => entry.id === item.batchId);
           return `
-            <div class="file-item">
+            <div class="list-item">
               <strong>${escapeHtml(item.name)}</strong>
               <span>${escapeHtml(item.type)} · ${escapeHtml(batch ? batch.code : "未知批次")} · ${escapeHtml(formatDate(item.uploadedAt))}</span>
             </div>
@@ -1186,10 +1834,30 @@
     }
 
     function renderLedger() {
-      const batches = getFilteredBatches();
-      const visible = batches.slice(0, state.visibleRows);
+      const records = getFilteredBatches();
+      const selected = ensureSelectedBatch(records);
+      if (selected) {
+        syncSelectionFromBatch(selected);
+      }
+
+      const visible = records.slice(0, state.visibleRows);
       const root = document.getElementById("ledgerBody");
-      document.getElementById("ledgerSummary").textContent = `共 ${batches.length} 条批次记录`;
+      document.getElementById("ledgerSummary").innerHTML = `
+        <span class="meta-pill">共 ${escapeHtml(records.length)} 条批次记录</span>
+        <span class="meta-pill">当前选中 ${escapeHtml(selected ? selected.code : "--")}</span>
+      `;
+
+      if (!records.length) {
+        root.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty">没有找到匹配的批次，请换个关键词再试。</div>
+            </td>
+          </tr>
+        `;
+        document.getElementById("detailPanel").innerHTML = '<div class="empty">当前没有可展示的批次详情。</div>';
+        return;
+      }
 
       root.innerHTML = visible
         .map((batch) => {
@@ -1198,50 +1866,30 @@
           const quality = getQualityStatus(batch);
           return `
             <tr data-batch-id="${escapeHtml(batch.id)}" class="${batch.id === state.selectedBatchId ? "is-active" : ""}">
-              <td>${escapeHtml(batch.code)}</td>
-              <td>${escapeHtml(batch.herb)}</td>
-              <td>${escapeHtml(batch.origin)}</td>
-              <td>${escapeHtml(batch.supplier || "待补充")}</td>
-              <td>${escapeHtml(docCount)}</td>
-              <td><span class="status ${escapeHtml(status.tone)}">${escapeHtml(status.label)}</span></td>
-              <td><span class="status ${escapeHtml(quality.tone)}">${escapeHtml(quality.label)}</span></td>
-              <td>${escapeHtml(formatDate(batch.date))}</td>
+              <td data-label="批次号">
+                <span class="table-name">${escapeHtml(batch.code)}</span>
+                <span class="table-sub">${escapeHtml(batch.spec || "待补规格")}</span>
+              </td>
+              <td data-label="药材名称">${escapeHtml(batch.herb)}</td>
+              <td data-label="所属基地">${escapeHtml(batch.origin)}</td>
+              <td data-label="负责人">${escapeHtml(batch.supplier || "待补负责人")}</td>
+              <td data-label="资料数">${escapeHtml(docCount)}</td>
+              <td data-label="归档状态"><span class="status ${escapeHtml(status.tone)}">${escapeHtml(status.label)}</span></td>
+              <td data-label="质检状态"><span class="status ${escapeHtml(quality.tone)}">${escapeHtml(quality.label)}</span></td>
+              <td data-label="日期">${escapeHtml(formatDate(batch.date))}</td>
             </tr>
           `;
         })
         .join("");
 
-      document.getElementById("loadMoreButton").disabled = visible.length >= batches.length;
-      document.getElementById("loadMoreButton").textContent = visible.length >= batches.length ? "已经到底了" : "查看更多";
+      document.getElementById("loadMoreButton").disabled = visible.length >= records.length;
+      document.getElementById("loadMoreButton").textContent = visible.length >= records.length ? "已经到底了" : "查看更多";
 
-      if (!batches.length) {
-        root.innerHTML = `
-          <tr>
-            <td colspan="8">
-              <div class="empty">没有找到匹配的批次，请换个关键词再试。</div>
-            </td>
-          </tr>
-        `;
-      }
+      renderBatchDetail(selected);
     }
 
-    function ensureSelectedBatch() {
-      const batches = getFilteredBatches();
-      if (!batches.length) {
-        state.selectedBatchId = null;
-        return null;
-      }
-      const current = batches.find((item) => item.id === state.selectedBatchId);
-      if (current) {
-        return current;
-      }
-      state.selectedBatchId = batches[0].id;
-      return batches[0];
-    }
-
-    function renderDetail() {
+    function renderBatchDetail(batch) {
       const root = document.getElementById("detailPanel");
-      const batch = ensureSelectedBatch();
       if (!batch) {
         root.innerHTML = '<div class="empty">当前没有可展示的批次详情。</div>';
         return;
@@ -1252,58 +1900,47 @@
       const quality = getQualityStatus(batch);
       const completion = getCompletion(batch);
 
-      const timelineItems = [
-        {
-          title: "批次建档",
-          note: `${formatDate(batch.date)} 已建立基础批次档案`,
-        },
-        {
-          title: "资料归集",
-          note: docs.length ? `当前已归集 ${docs.length} 份资料` : "当前还没有上传批次资料",
-        },
-        {
-          title: "质检状态",
-          note: quality.label,
-        },
-        {
-          title: "溯源可查",
-          note: status.tone === "good" ? "当前批次资料较完整，适合对外展示溯源链路" : "建议继续补充质检或流转材料后再对外查询",
-        },
+      const timeline = [
+        { title: "批次建档", note: `${formatDate(batch.date)} 已录入基础批次信息` },
+        { title: "资料归集", note: docs.length ? `当前已挂接 ${docs.length} 份资料` : "当前还没有上传资料" },
+        { title: "质检状态", note: quality.label },
+        { title: "流通节点", note: batch.marketNode || "当前还没有挂接流通节点" },
       ];
 
       root.innerHTML = `
         <div class="detail-hero">
           <h4>${escapeHtml(batch.herb)}</h4>
-          <div class="detail-meta">
-            <span class="chip">${escapeHtml(batch.code)}</span>
-            <span class="chip">${escapeHtml(batch.origin)}</span>
+          <p>${escapeHtml(batch.note || "当前没有填写批次说明，建议补充采收、加工、仓储和运输说明。")}</p>
+          <div class="detail-badges">
+            <span class="badge">${escapeHtml(batch.code)}</span>
+            <span class="badge">${escapeHtml(batch.origin)}</span>
             <span class="status ${escapeHtml(status.tone)}">${escapeHtml(status.label)}</span>
             <span class="status ${escapeHtml(quality.tone)}">${escapeHtml(quality.label)}</span>
           </div>
         </div>
 
-        <div class="detail-grid">
-          <div class="detail-box">
-            <div class="label">供应主体</div>
-            <div class="value">${escapeHtml(batch.supplier || "待补充")}</div>
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="label">负责人</div>
+            <div class="value">${escapeHtml(batch.supplier || "待补负责人")}</div>
           </div>
-          <div class="detail-box">
+          <div class="metric-box">
             <div class="label">规格</div>
-            <div class="value">${escapeHtml(batch.spec || "待补充")}</div>
+            <div class="value">${escapeHtml(batch.spec || "待补规格")}</div>
           </div>
-          <div class="detail-box">
+          <div class="metric-box">
             <div class="label">关联节点</div>
             <div class="value">${escapeHtml(batch.marketNode || "待补充")}</div>
           </div>
-          <div class="detail-box">
+          <div class="metric-box">
             <div class="label">资料数量</div>
             <div class="value">${escapeHtml(docs.length)} 份</div>
           </div>
         </div>
 
         <div class="progress">
-          <div class="progress-top">
-            <span>归档完整度</span>
+          <div class="progress-head">
+            <span>批次归档完整度</span>
             <strong>${escapeHtml(completion)}%</strong>
           </div>
           <div class="progress-bar">
@@ -1311,59 +1948,40 @@
           </div>
         </div>
 
-        <div style="margin-bottom: 16px;">
-          <h4 class="sub-title">批次说明</h4>
-          ${batch.note
-            ? `<div class="mini-item"><strong>${escapeHtml(batch.note)}</strong><span>如需更完整的追溯链路，建议继续补充采收、仓储、加工和质检材料。</span></div>`
-            : '<div class="empty">当前没有填写批次说明。</div>'}
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <h4 class="sub-title">已挂接资料</h4>
-          <div class="doc-list">
+        <div class="subsection">
+          <h5>已挂资料</h5>
+          <div class="list-grid">
             ${docs.length
-              ? docs
-                  .map(
-                    (item) => `
-                      <div class="doc-item">
-                        <strong>${escapeHtml(item.name)}</strong>
-                        <span>${escapeHtml(item.type)} · ${escapeHtml(formatDate(item.uploadedAt))} · ${escapeHtml(item.note || (item.source === "system" ? "系统导入资料" : "用户上传资料"))}</span>
-                      </div>
-                    `,
-                  )
-                  .join("")
-              : '<div class="empty">当前没有资料，请在左侧“资料上传”区域补充附件。</div>'}
+              ? docs.map((item) => `
+                  <div class="list-item">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <span>${escapeHtml(item.type)} · ${escapeHtml(formatDate(item.uploadedAt))} · ${escapeHtml(item.note || (item.source === "system" ? "系统导入资料" : "用户上传资料"))}</span>
+                  </div>
+                `).join("")
+              : '<div class="empty">当前没有资料，请在上方“资料归档”区域补充附件。</div>'}
           </div>
         </div>
 
-        <div>
-          <h4 class="sub-title">溯源时间轴</h4>
-          <div class="timeline">
-            ${timelineItems
-              .map(
-                (item) => `
-                  <div class="timeline-item">
-                    <strong>${escapeHtml(item.title)}</strong>
-                    <span>${escapeHtml(item.note)}</span>
-                  </div>
-                `,
-              )
-              .join("")}
+        <div class="subsection">
+          <h5>溯源时间轴</h5>
+          <div class="list-grid">
+            ${timeline.map((item) => `
+              <div class="list-item">
+                <strong>${escapeHtml(item.title)}</strong>
+                <span>${escapeHtml(item.note)}</span>
+              </div>
+            `).join("")}
           </div>
         </div>
       `;
     }
 
     function renderAll() {
-      const batch = ensureSelectedBatch();
-      if (!batch && getAllBatches().length) {
-        state.selectedBatchId = getAllBatches()[0].id;
-      }
       renderStats();
+      renderBaseCenter();
       renderBatchOptions();
       renderRecentUploads();
       renderLedger();
-      renderDetail();
     }
 
     function attachEvents() {
@@ -1386,11 +2004,16 @@
           date: String(form.get("batchDate") || "").trim() || new Date().toISOString().slice(0, 10),
           note: String(form.get("batchNote") || "").trim(),
           marketNode: "",
+          sourceUrl: "",
           imported: false,
         };
 
         state.customBatches.unshift(batch);
         state.selectedBatchId = batch.id;
+        state.selectedBaseId = getBaseId(batch.origin);
+        state.batchQuery = "";
+        state.baseQuery = "";
+        state.visibleRows = 10;
         saveStorage();
         event.currentTarget.reset();
         renderAll();
@@ -1420,15 +2043,44 @@
 
         state.customDocuments.unshift(...docs);
         state.selectedBatchId = batchId;
+        const batch = getAllBatches().find((item) => item.id === batchId);
+        if (batch) {
+          state.selectedBaseId = getBaseId(batch.origin);
+        }
         saveStorage();
         event.currentTarget.reset();
+        renderFilePreview([]);
         renderAll();
       });
 
+      document.getElementById("documentFiles").addEventListener("change", (event) => {
+        renderFilePreview(Array.from(event.currentTarget.files || []));
+      });
+
+      document.getElementById("baseSearch").addEventListener("input", (event) => {
+        state.baseQuery = event.currentTarget.value.trim();
+        renderBaseCenter();
+      });
+
       document.getElementById("ledgerSearch").addEventListener("input", (event) => {
-        state.query = event.currentTarget.value.trim();
-        state.visibleRows = 12;
-        renderAll();
+        state.batchQuery = event.currentTarget.value.trim();
+        state.visibleRows = 10;
+        renderLedger();
+        renderBaseCenter();
+      });
+
+      document.getElementById("baseTableBody").addEventListener("click", (event) => {
+        const row = event.target.closest("[data-base-id]");
+        if (!row) {
+          return;
+        }
+        state.selectedBaseId = row.dataset.baseId;
+        const base = getBaseRecords().find((item) => item.id === state.selectedBaseId);
+        if (base?.batches[0]) {
+          state.selectedBatchId = base.batches[0].id;
+        }
+        renderBaseCenter();
+        renderLedger();
       });
 
       document.getElementById("ledgerBody").addEventListener("click", (event) => {
@@ -1437,11 +2089,44 @@
           return;
         }
         state.selectedBatchId = row.dataset.batchId;
-        renderAll();
+        const batch = getAllBatches().find((item) => item.id === state.selectedBatchId);
+        if (batch) {
+          state.selectedBaseId = getBaseId(batch.origin);
+        }
+        renderBaseCenter();
+        renderLedger();
+      });
+
+      document.getElementById("baseDetailPanel").addEventListener("click", (event) => {
+        const action = event.target.closest("[data-base-action]");
+        if (!action) {
+          return;
+        }
+
+        const currentBase = getBaseRecords().find((item) => item.id === state.selectedBaseId);
+        if (currentBase?.batches[0]) {
+          state.selectedBatchId = currentBase.batches[0].id;
+        }
+
+        if (action.dataset.baseAction === "create") {
+          document.getElementById("batchCreate").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        if (action.dataset.baseAction === "upload") {
+          renderBatchOptions();
+          if (state.selectedBatchId) {
+            document.getElementById("documentBatchId").value = state.selectedBatchId;
+          }
+          document.getElementById("uploadDocs").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+
+      document.getElementById("jumpCreateButton").addEventListener("click", () => {
+        document.getElementById("batchCreate").scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
       document.getElementById("loadMoreButton").addEventListener("click", () => {
-        state.visibleRows += 12;
+        state.visibleRows += 10;
         renderLedger();
       });
     }
@@ -1452,6 +2137,7 @@
         if (!response.ok) {
           throw new Error(`Failed to load dashboard: ${response.status}`);
         }
+
         state.dashboard = await response.json();
         const { seedBatches, seedDocuments } = buildSeedData(state.dashboard);
         state.seedBatches = seedBatches;
@@ -1459,17 +2145,20 @@
         state.customBatches = readStorage(STORAGE_KEYS.batches, []);
         state.customDocuments = readStorage(STORAGE_KEYS.documents, []);
         state.selectedBatchId = getAllBatches()[0]?.id || null;
+        if (state.selectedBatchId) {
+          const firstBatch = getAllBatches().find((item) => item.id === state.selectedBatchId);
+          state.selectedBaseId = getBaseId(firstBatch?.origin);
+        }
 
-        const latestDate = state.dashboard.meta?.latest_date || "--";
-        document.getElementById("syncChip").textContent = `最新同步 ${latestDate}`;
+        document.getElementById("syncChip").textContent = `最新同步 ${state.dashboard.meta?.latest_date || "--"}`;
         renderAll();
         attachEvents();
       } catch (error) {
         console.error(error);
         document.getElementById("syncChip").textContent = "数据加载失败";
-        document.getElementById("statsGrid").innerHTML = `
-          <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-body">
+        document.getElementById("overview").innerHTML = `
+          <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-body">
               <div class="empty">当前没有读取到 <code>dashboard.json</code>，请检查数据文件是否存在。</div>
             </div>
           </div>
