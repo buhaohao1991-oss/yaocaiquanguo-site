@@ -747,9 +747,7 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
     title: config.title,
     kicker: config.kicker,
     subtitle: config.subtitle,
-    topActions: `
-      <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
-    `,
+    topActions: ``,
     body: `
       <section class="panel">
         <div class="panel-header">
@@ -822,7 +820,7 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
             <h2>${escapeHtml(title)}</h2>
             <p>${escapeHtml(subtitle)}</p>
           </div>
-          <div class="topbar-side">${topActions || ""}</div>
+          ${topActions ? `<div class="topbar-side">${topActions}</div>` : ""}
         </header>
         ${body}
       </main>
