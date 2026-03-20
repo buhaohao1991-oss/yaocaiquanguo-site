@@ -1,18 +1,18 @@
 :root {
-  --bg: #f4f6f3;
-  --bg-soft: #eef2ed;
+  --bg: #f4f5f1;
+  --bg-soft: #eef1eb;
   --panel: #ffffff;
-  --panel-soft: #f7f9f7;
-  --panel-muted: #f2f5f3;
-  --sidebar: #353c38;
-  --sidebar-deep: #2b312e;
-  --line: #dde4df;
-  --line-strong: #cfd8d2;
-  --text: #1c2430;
-  --muted: #64707d;
-  --accent: #1f9d5a;
-  --accent-deep: #176f41;
-  --accent-soft: #e7f5ec;
+  --panel-soft: #f7f8f4;
+  --panel-muted: #f2f4f0;
+  --sidebar: #313735;
+  --sidebar-deep: #242b29;
+  --line: #dbe2dc;
+  --line-strong: #ccd5cf;
+  --text: #1f2732;
+  --muted: #66727d;
+  --accent: #218b58;
+  --accent-deep: #185f3d;
+  --accent-soft: #e7f2eb;
   --info-soft: #e9f1ff;
   --warn-soft: #fff3dc;
   --danger-soft: #fee9e9;
@@ -37,8 +37,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top right, rgba(31, 157, 90, 0.06), transparent 24%),
-    linear-gradient(180deg, #f7f8f5 0%, #f2f4f1 100%);
+    radial-gradient(circle at top right, rgba(65, 128, 92, 0.07), transparent 24%),
+    linear-gradient(180deg, #f7f8f4 0%, #f2f4f0 100%);
   color: var(--text);
   font-family: var(--font-body);
 }
@@ -67,13 +67,14 @@ textarea {
   min-height: 100vh;
   padding: 24px 16px 18px;
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.12), transparent 24%),
+    radial-gradient(circle at 12% 0%, rgba(250, 252, 249, 0.1), transparent 24%),
+    radial-gradient(circle at 100% 100%, rgba(128, 151, 139, 0.12), transparent 38%),
     linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-deep) 100%);
-  color: rgba(247, 248, 244, 0.92);
+  color: rgba(245, 246, 241, 0.92);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(234, 239, 234, 0.06);
 }
 
 .brand {
@@ -85,12 +86,12 @@ textarea {
   padding: 12px 12px 13px;
   border-radius: 18px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
     rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(132, 207, 165, 0.12);
+  border: 1px solid rgba(180, 199, 188, 0.12);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 8px 18px rgba(10, 15, 22, 0.14);
+    0 10px 22px rgba(8, 13, 12, 0.16);
   overflow: hidden;
 }
 
@@ -101,7 +102,7 @@ textarea {
   width: 116px;
   height: 3px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(43, 197, 110, 0.8), rgba(43, 197, 110, 0));
+  background: linear-gradient(90deg, rgba(176, 197, 184, 0.9), rgba(176, 197, 184, 0));
 }
 
 .brand::after {
@@ -111,7 +112,7 @@ textarea {
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(43, 197, 110, 0.08), rgba(43, 197, 110, 0));
+  background: radial-gradient(circle, rgba(189, 208, 196, 0.11), rgba(189, 208, 196, 0));
   pointer-events: none;
 }
 
@@ -121,9 +122,9 @@ textarea {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
   box-shadow:
-    0 8px 16px rgba(19, 103, 60, 0.18),
+    0 8px 18px rgba(9, 14, 13, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
@@ -142,7 +143,7 @@ textarea {
   display: inline-flex;
   justify-self: start;
   align-items: center;
-  color: rgba(191, 223, 205, 0.78);
+  color: rgba(205, 216, 210, 0.74);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -169,16 +170,16 @@ textarea {
   min-height: 20px;
   padding: 0 7px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(240, 243, 239, 0.64);
   font-size: 10px;
   line-height: 1;
 }
 
 .nav-caption {
   padding: 4px 10px 2px;
-  color: rgba(238, 242, 235, 0.44);
+  color: rgba(232, 236, 230, 0.42);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -196,20 +197,22 @@ textarea {
   padding: 10px 11px;
   border-radius: 14px;
   border: 1px solid transparent;
-  color: rgba(244, 246, 242, 0.84);
+  color: rgba(244, 246, 241, 0.84);
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .nav-item:hover {
-  transform: translateX(2px);
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(1px);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
 .nav-item.is-active {
-  background: linear-gradient(135deg, rgba(205, 224, 214, 0.16), rgba(126, 150, 135, 0.12));
-  border-color: rgba(208, 226, 216, 0.16);
-  box-shadow: inset 0 0 0 1px rgba(224, 235, 229, 0.05);
+  background: linear-gradient(135deg, rgba(216, 225, 219, 0.14), rgba(118, 132, 124, 0.1));
+  border-color: rgba(214, 223, 217, 0.14);
+  box-shadow:
+    inset 0 0 0 1px rgba(231, 237, 233, 0.04),
+    0 12px 24px rgba(8, 13, 12, 0.12);
   color: #fff;
 }
 
@@ -220,8 +223,9 @@ textarea {
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(247, 248, 244, 0.94);
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(247, 248, 244, 0.92);
 }
 
 .nav-icon svg {
@@ -235,7 +239,7 @@ textarea {
 }
 
 .nav-item.is-active .nav-icon {
-  background: linear-gradient(135deg, rgba(153, 177, 161, 0.96), rgba(88, 106, 94, 0.98));
+  background: linear-gradient(135deg, rgba(183, 197, 188, 0.96), rgba(110, 124, 116, 0.98));
 }
 
 .nav-text {
@@ -249,7 +253,7 @@ textarea {
 }
 
 .nav-text span {
-  color: rgba(236, 240, 234, 0.54);
+  color: rgba(234, 238, 232, 0.54);
   font-size: 10px;
   line-height: 1.45;
 }
@@ -262,14 +266,16 @@ textarea {
   margin-top: auto;
   padding: 12px 13px 13px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.025)),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-foot-label {
   display: block;
   margin-bottom: 6px;
-  color: rgba(228, 236, 230, 0.72);
+  color: rgba(221, 229, 223, 0.72);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -284,7 +290,7 @@ textarea {
 
 .sidebar-foot p {
   margin: 6px 0 0;
-  color: rgba(242, 244, 240, 0.64);
+  color: rgba(240, 243, 239, 0.62);
   font-size: 11px;
   line-height: 1.6;
 }
@@ -297,7 +303,7 @@ textarea {
 }
 
 .home-main {
-  gap: 22px;
+  gap: 18px;
 }
 
 .module-main {
@@ -325,7 +331,7 @@ textarea {
 
 .home-hero {
   position: relative;
-  padding: 34px 34px 30px;
+  padding: 30px 30px 26px;
   border-radius: 28px;
   border: 1px solid rgba(214, 224, 217, 0.95);
   background:
@@ -363,8 +369,8 @@ textarea {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.24fr) minmax(320px, 0.76fr);
-  gap: 22px;
+  grid-template-columns: minmax(0, 1.34fr) minmax(300px, 0.66fr);
+  gap: 18px;
   align-items: start;
 }
 
@@ -414,12 +420,11 @@ textarea {
 
 .home-hero-panel {
   display: grid;
-  gap: 14px;
+  gap: 0;
   align-content: start;
 }
 
 .home-overview-card,
-.home-route-card,
 .home-intro-card,
 .home-summary-card {
   border: 1px solid rgba(216, 225, 219, 0.96);
@@ -429,8 +434,7 @@ textarea {
   box-shadow: var(--shadow-soft);
 }
 
-.home-overview-card,
-.home-route-card {
+.home-overview-card {
   border-radius: 22px;
   padding: 20px 20px 18px;
 }
@@ -477,59 +481,49 @@ textarea {
   line-height: 1.6;
 }
 
-.home-route-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.home-route-card::after {
-  content: "";
-  position: absolute;
-  inset: auto -26px -30px auto;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(31, 157, 90, 0.08), rgba(31, 157, 90, 0));
-  pointer-events: none;
-}
-
-.home-route-head {
+.home-route-strip {
   display: grid;
-  gap: 6px;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 18px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(216, 225, 219, 0.96);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 248, 0.98)),
+    #fff;
+  box-shadow: var(--shadow-soft);
 }
 
-.home-route-head span {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.home-route-head strong {
-  font-size: 22px;
-  line-height: 1.2;
-}
-
-.home-route-list {
-  position: relative;
-  z-index: 1;
-  margin-top: 16px;
+.home-route-strip-head {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
-.home-route-list span {
+.home-route-strip-head h3 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.16;
+}
+
+.home-route-strip-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.home-route-strip-list span {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  justify-content: center;
+  min-height: 42px;
   padding: 0 12px;
   border-radius: 14px;
-  background: rgba(245, 247, 245, 0.96);
+  background: linear-gradient(180deg, #ffffff, #f5f7f4);
   border: 1px solid #e2e9e3;
   color: var(--text);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .home-intro-grid {
@@ -1697,6 +1691,7 @@ body.has-photo-window {
   }
 
   .home-hero-layout,
+  .home-route-strip,
   .home-summary-card,
   .home-intro-grid,
   .form-grid,
@@ -1736,9 +1731,13 @@ body.has-photo-window {
   }
 
   .home-overview-card,
-  .home-route-card,
   .home-intro-card,
   .home-summary-card {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .home-route-strip {
     padding: 18px;
     border-radius: 20px;
   }
@@ -1756,13 +1755,13 @@ body.has-photo-window {
   }
 
   .home-intro-card h3,
-  .home-route-head strong,
+  .home-route-strip-head h3,
   .home-summary-copy h3 {
     font-size: 22px;
   }
 
   .home-overview-grid,
-  .home-route-list {
+  .home-route-strip-list {
     grid-template-columns: 1fr;
   }
 

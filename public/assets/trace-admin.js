@@ -777,21 +777,21 @@ function renderHomePage(shared, activeId) {
                   </article>
                 </div>
               </section>
-              <section class="home-route-card">
-                <div class="home-route-head">
-                  <span>核心链路</span>
-                  <strong>建档到仓储</strong>
-                </div>
-                <div class="home-route-list">
-                  <span>基地建档</span>
-                  <span>种苗来源</span>
-                  <span>农事留痕</span>
-                  <span>采收验收</span>
-                  <span>加工归档</span>
-                  <span>赋码入仓</span>
-                </div>
-              </section>
             </aside>
+          </div>
+        </section>
+        <section class="home-route-strip">
+          <div class="home-route-strip-head">
+            <span class="section-caption">核心链路</span>
+            <h3>从建档到入仓</h3>
+          </div>
+          <div class="home-route-strip-list">
+            <span>基地建档</span>
+            <span>种苗来源</span>
+            <span>农事留痕</span>
+            <span>采收验收</span>
+            <span>加工归档</span>
+            <span>赋码入仓</span>
           </div>
         </section>
         <section class="home-intro-grid">
