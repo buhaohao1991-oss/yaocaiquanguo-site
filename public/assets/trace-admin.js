@@ -60,6 +60,8 @@ const MODULE_CONFIGS = {
       { name: "herb", label: "主栽药材", placeholder: "例如：党参" },
       { name: "area", label: "基地面积（亩）", type: "number", placeholder: "例如：128" },
       { name: "address", label: "基地地址", placeholder: "例如：甘肃省定西市岷县" },
+      { name: "longitude", label: "经度", placeholder: "例如：104.037624", optional: true },
+      { name: "latitude", label: "纬度", placeholder: "例如：34.438215", optional: true },
       { name: "note", label: "归档说明", as: "textarea", full: true, placeholder: "补充基地认证、地图坐标或照片归档情况" }
     ],
     getRecords: (shared) => shared.baseRecords,
@@ -85,6 +87,8 @@ const MODULE_CONFIGS = {
     },
     createRecord: (values, shared) => {
       const index = shared.baseRecords.length + readCustomRecords("base-trace").length + 1;
+      const longitude = normalizeLongitude(values.longitude, index);
+      const latitude = normalizeLatitude(values.latitude, index);
       return {
         id: recordId("BASE", index),
         code: `JD202603${String(index).padStart(3, "0")}`,
@@ -93,6 +97,9 @@ const MODULE_CONFIGS = {
         herb: values.herb,
         area: `${values.area || "0"} 亩`,
         address: values.address,
+        longitude,
+        latitude,
+        coordinateText: `${longitude}, ${latitude}`,
         completion: 72,
         batchCount: 1,
         fileCount: 3,
@@ -116,6 +123,7 @@ const MODULE_CONFIGS = {
           { label: "当前阶段", value: record.stage }
         ],
         progress: { label: "档案完整度", value: `${record.completion}%`, percent: record.completion },
+        extra: renderBaseMap(record),
         sections: [
           { title: "归档材料", items: record.documents.map((item) => ({ title: item, desc: `${record.lastUpdate} 已归集` })) },
           { title: "最近动作", items: record.actions.map((item) => ({ title: item, desc: record.note })) }
@@ -820,9 +828,14 @@ function renderSidebar(activeId) {
           ${renderBrandMark()}
         </div>
         <div class="brand-copy">
-          <span class="brand-eyebrow">全流程溯源</span>
+          <span class="brand-eyebrow">全流程溯源平台</span>
           <h1>中药材溯源平台</h1>
-          <p>基地建档 · 批次流转 · 质检归档 · 仓储闭环</p>
+          <div class="brand-tags">
+            <span>建档</span>
+            <span>流转</span>
+            <span>质检</span>
+            <span>仓储</span>
+          </div>
         </div>
       </div>
       <div class="nav-caption">模块导航</div>
@@ -851,13 +864,17 @@ function renderBrandMark() {
           <stop offset="1" stop-color="#DDF5E6" />
         </linearGradient>
       </defs>
-      <rect x="10" y="10" width="68" height="68" rx="22" fill="url(#brandSeal)" />
-      <path d="M44 23V59" stroke="url(#brandStroke)" stroke-width="3.2" stroke-linecap="round" />
-      <path d="M44 31C37 24 29 24 25 31C33 34 39 34 44 31Z" fill="url(#brandStroke)" />
-      <path d="M44 31C51 24 59 24 63 31C55 34 49 34 44 31Z" fill="url(#brandStroke)" opacity="0.95" />
-      <path d="M44 46C37 39 31 40 27 47C34 50 40 50 44 46Z" fill="url(#brandStroke)" opacity="0.92" />
-      <path d="M44 46C51 39 57 40 61 47C54 50 48 50 44 46Z" fill="url(#brandStroke)" opacity="0.88" />
-      <path d="M28 61H60" stroke="rgba(255,255,255,0.42)" stroke-width="2" stroke-linecap="round" />
+      <rect x="10" y="10" width="68" height="68" rx="20" fill="url(#brandSeal)" />
+      <path d="M44 24V62" stroke="url(#brandStroke)" stroke-width="3" stroke-linecap="round" />
+      <path d="M44 24H58" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M30 43H44" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M44 62H58" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
+      <circle cx="44" cy="24" r="4" fill="url(#brandStroke)" />
+      <circle cx="44" cy="43" r="4" fill="url(#brandStroke)" opacity="0.94" />
+      <circle cx="44" cy="62" r="4" fill="url(#brandStroke)" opacity="0.88" />
+      <circle cx="60" cy="24" r="3.2" fill="url(#brandStroke)" opacity="0.82" />
+      <circle cx="28" cy="43" r="3.2" fill="url(#brandStroke)" opacity="0.78" />
+      <circle cx="60" cy="62" r="3.2" fill="url(#brandStroke)" opacity="0.74" />
     </svg>
   `;
 }
@@ -983,11 +1000,12 @@ function renderDialog(config) {
 function renderField(field) {
   const type = field.type || "text";
   const fieldClass = field.full ? "field is-full" : "field";
+  const required = field.optional ? "" : "required";
   if (field.as === "textarea") {
     return `
       <div class="${fieldClass}">
         <label>${escapeHtml(field.label)}</label>
-        <textarea name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" required></textarea>
+        <textarea name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${required}></textarea>
       </div>
     `;
   }
@@ -996,7 +1014,7 @@ function renderField(field) {
     return `
       <div class="${fieldClass}">
         <label>${escapeHtml(field.label)}</label>
-        <select name="${escapeAttribute(field.name)}" required>
+        <select name="${escapeAttribute(field.name)}" ${required}>
           <option value="">请选择</option>
           ${field.options.map((option) => `<option value="${escapeAttribute(option)}">${escapeHtml(option)}</option>`).join("")}
         </select>
@@ -1007,7 +1025,7 @@ function renderField(field) {
   return `
     <div class="${fieldClass}">
       <label>${escapeHtml(field.label)}</label>
-      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(type)}" placeholder="${escapeAttribute(field.placeholder || "")}" required>
+      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(type)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${required}>
     </div>
   `;
 }
@@ -1118,7 +1136,7 @@ function buildSharedData(dashboard) {
   };
 }
 
-function renderDetail(record, { summary, badges, metrics, progress, sections }) {
+function renderDetail(record, { summary, badges, metrics, progress, sections, extra = "" }) {
   return `
     <div class="detail-hero">
       <h4>${escapeHtml(detailTitle(record))}</h4>
@@ -1144,6 +1162,7 @@ function renderDetail(record, { summary, badges, metrics, progress, sections }) 
         <div class="progress-fill" style="width: ${clamp(progress.percent, 0, 100)}%;"></div>
       </div>
     </div>
+    ${extra}
     ${sections.map((section) => `
       <div class="subsection">
         <h5>${escapeHtml(section.title)}</h5>
@@ -1176,6 +1195,81 @@ function moduleFootnote(pageId) {
     "warehouse-management": "库存闭环"
   };
   return notes[pageId] || "进入页面";
+}
+
+function renderBaseMap(record) {
+  const map = buildBaseMapData(record);
+  return `
+    <div class="subsection">
+      <div class="trace-map-card">
+        <div class="trace-map-head">
+          <div>
+            <h5>基地地图</h5>
+            <p>${escapeHtml(record.address)}</p>
+          </div>
+          <span class="trace-map-code">${escapeHtml(record.code || "地图定位")}</span>
+        </div>
+        <div class="trace-map-canvas">
+          <svg viewBox="0 0 320 184" fill="none" aria-hidden="true">
+            <rect x="12" y="12" width="296" height="160" rx="18" class="trace-map-surface" />
+            <path d="M40 48H280" class="trace-map-grid" />
+            <path d="M40 82H280" class="trace-map-grid" />
+            <path d="M40 116H280" class="trace-map-grid" />
+            <path d="M40 150H280" class="trace-map-grid" />
+            <path d="M68 30V154" class="trace-map-grid" />
+            <path d="M122 30V154" class="trace-map-grid" />
+            <path d="M176 30V154" class="trace-map-grid" />
+            <path d="M230 30V154" class="trace-map-grid" />
+            <path d="M284 30V154" class="trace-map-grid" />
+            <path d="${escapeAttribute(map.routePath)}" class="trace-map-route" />
+            <path d="${escapeAttribute(map.plotPath)}" class="trace-map-plot" />
+            <circle cx="${escapeAttribute(map.x)}" cy="${escapeAttribute(map.y)}" r="11" class="trace-map-marker-ring" />
+            <circle cx="${escapeAttribute(map.x)}" cy="${escapeAttribute(map.y)}" r="5.5" class="trace-map-marker-core" />
+            <text x="${escapeAttribute(map.labelX)}" y="${escapeAttribute(map.labelY)}" class="trace-map-label">${escapeHtml(record.name)}</text>
+          </svg>
+        </div>
+        <div class="trace-map-meta">
+          <div class="trace-map-stat">
+            <span>定位坐标</span>
+            <strong>${escapeHtml(map.coordinateText)}</strong>
+          </div>
+          <div class="trace-map-stat">
+            <span>地块范围</span>
+            <strong>${escapeHtml(record.area)}</strong>
+          </div>
+          <a class="trace-map-link" href="${escapeAttribute(map.url)}" target="_blank" rel="noreferrer">查看地图</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildBaseMapData(record) {
+  const longitude = parseCoordinate(record.longitude, defaultLongitude(1), 73, 135);
+  const latitude = parseCoordinate(record.latitude, defaultLatitude(1), 18, 54);
+  const x = Math.round(46 + ((longitude - 73) / (135 - 73)) * 228);
+  const y = Math.round(150 - ((latitude - 18) / (54 - 18)) * 108);
+  const plotWidth = 34;
+  const plotHeight = 22;
+  const plotPath = [
+    `M ${x - plotWidth} ${y + 10}`,
+    `L ${x - 10} ${y - plotHeight}`,
+    `L ${x + plotWidth} ${y - 4}`,
+    `L ${x + 18} ${y + plotHeight}`,
+    `L ${x - 20} ${y + plotHeight + 8}`,
+    "Z"
+  ].join(" ");
+  const routePath = `M ${x - 72} ${y + 24} C ${x - 40} ${y + 8}, ${x - 20} ${y - 12}, ${x} ${y}`;
+  return {
+    x,
+    y,
+    labelX: clamp(x + 16, 42, 220),
+    labelY: clamp(y - 18, 30, 154),
+    plotPath,
+    routePath,
+    coordinateText: `${longitude.toFixed(6)}, ${latitude.toFixed(6)}`,
+    url: `https://www.openstreetmap.org/?mlat=${latitude.toFixed(6)}&mlon=${longitude.toFixed(6)}#map=13/${latitude.toFixed(6)}/${longitude.toFixed(6)}`
+  };
 }
 
 function readCustomRecords(pageId) {
@@ -1265,8 +1359,32 @@ function normalizeValues(values) {
   );
 }
 
+function normalizeLongitude(value, index) {
+  return parseCoordinate(value, defaultLongitude(index), 73, 135).toFixed(6);
+}
+
+function normalizeLatitude(value, index) {
+  return parseCoordinate(value, defaultLatitude(index), 18, 54).toFixed(6);
+}
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function parseCoordinate(value, fallback, min, max) {
+  const raw = Number(String(value ?? "").trim());
+  if (Number.isFinite(raw) && raw >= min && raw <= max) {
+    return raw;
+  }
+  return fallback;
+}
+
+function defaultLongitude(index) {
+  return 104.034 + (index % 7) * 0.0126;
+}
+
+function defaultLatitude(index) {
+  return 34.436 + (index % 7) * 0.0098;
 }
 
 function titleCell(title, subtitle) {
