@@ -683,13 +683,6 @@ function renderPage(root, pageId, dashboard, shared) {
 }
 
 function renderHomePage(dashboard, shared, activeId) {
-  const summaryCards = [
-    { label: "基地档案", value: String(getPageRecords("base-trace", shared).length), note: "每个基地单独页面" },
-    { label: "在链批次", value: String(getPageRecords("harvest-trace", shared).length + getPageRecords("processing-trace", shared).length), note: "采收与初加工批次合计" },
-    { label: "已绑定溯源码", value: formatNumber(sumNumbers(getPageRecords("trace-code-management", shared).map((record) => stripUnit(record.activated)))), note: "当前已激活的追溯码" },
-    { label: "仓库记录", value: String(getPageRecords("warehouse-management", shared).length), note: "库存与库位独立归档" }
-  ];
-
   const moduleCards = WORKFLOW_ITEMS.map((item) => {
     const count = getPageRecords(item.id, shared).length;
     return `
@@ -698,101 +691,39 @@ function renderHomePage(dashboard, shared, activeId) {
           <strong>${escapeHtml(item.title)}</strong>
           <span class="module-card-count">${count} 条</span>
         </div>
-        <p>${escapeHtml(item.subtitle)}，点击后进入独立页面查看台账、详情和新增表单。</p>
-        <div class="module-card-foot">
-          <span>${escapeHtml(moduleFootnote(item.id))}</span>
-          <span>进入页面</span>
-        </div>
+        <p>${escapeHtml(item.subtitle)}</p>
       </a>
     `;
   }).join("");
-
-  const activityItems = shared.activities.map((item) => `
-    <div class="list-item">
-      <strong>${escapeHtml(item.title)}</strong>
-      <span>${escapeHtml(item.desc)}</span>
-    </div>
-  `).join("");
-
-  const notices = [
-    "现在开始，左侧每个模块都会进入新的页面，不再共享一个长页面。",
-    "平台已清空所有预置记录，你录入的第一条数据就是流程起点。",
-    "流程顺序按：基地 -> 种子 -> 农事 -> 采收 -> 初加工 -> 药材 -> 赋码 -> 仓储。",
-    "新增内容会写进当前浏览器本地存储，刷新后依然存在，便于你继续测试。"
-  ];
 
   return shellLayout({
     activeId,
     dashboard,
     title: "中药材溯源平台",
     kicker: "TRACE CONSOLE",
-    subtitle: "首页只负责总览和入口，真正的建档、批次、资料、赋码、仓储都拆到各自页面里。",
+    subtitle: "首页只保留模块入口，录入时直接进入对应页面处理。",
     topActions: `
-      <a class="button primary" href="base-trace.html">进入基地溯源</a>
-      <a class="button secondary" href="trace-code-management.html">查看赋码台账</a>
+      <a class="button primary" href="base-trace.html">开始录入</a>
     `,
     body: `
-      <div class="page-stack">
-        ${renderSummaryGrid(summaryCards)}
-        ${renderWorkflowPanel("", "全链流程", "参考你给的溯源平台结构，把核心流程拆成可以逐页进入的后台模块。")}
-        <div class="home-grid">
-          <section class="panel">
-            <div class="panel-header">
-              <div class="panel-title">
-                <h3>模块工作台</h3>
-                <p>每个模块点击后都是新页面，页面里独立放台账、详情面板和新增动作。</p>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="module-card-grid">
-                ${moduleCards}
-              </div>
-            </div>
-          </section>
-          <aside class="detail-panel">
-            <section class="panel">
-              <div class="panel-header">
-                <div class="panel-title">
-                  <h3>最近动作</h3>
-                  <p>模拟真实溯源项目里常见的建档、巡田、采收和赋码推进节奏。</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="list-grid">
-                  ${activityItems || `<div class="empty">当前还没有任何预置动作。你可以从“基地溯源”开始新增第一条记录，后面的流程页再逐步补齐。</div>`}
-                </div>
-              </div>
-            </section>
-            <section class="panel" style="margin-top: 18px;">
-              <div class="panel-header">
-                <div class="panel-title">
-                  <h3>平台提醒</h3>
-                  <p>这版重点是版面、流程和独立页面结构，不是单页展示。</p>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="list-grid">
-                  ${notices.map((item) => `<div class="list-item"><strong>设计原则</strong><span>${escapeHtml(item)}</span></div>`).join("")}
-                </div>
-              </div>
-            </section>
-          </aside>
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h3>模块入口</h3>
+            <p>每个模块都是独立页面，只保留本模块自己的台账和录入内容。</p>
+          </div>
         </div>
-      </div>
+        <div class="panel-body">
+          <div class="module-card-grid">
+            ${moduleCards}
+          </div>
+        </div>
+      </section>
     `
   });
 }
 
 function renderModulePage(config, dashboard, shared, pageId, allRecords, filteredRecords, selectedRecord) {
-  const summaryHtml = renderSummaryGrid(config.summaryCards(allRecords));
-  const nextLink = config.nextPageId ? NAV_ITEMS.find((item) => item.id === config.nextPageId) : null;
-
-  const metaPills = [
-    `独立页面：${config.title}`,
-    `总记录：${allRecords.length} 条`,
-    `当前筛选：${filteredRecords.length} 条`
-  ];
-
   const tableContent = filteredRecords.length
     ? `
       <div class="table-wrap">
@@ -808,7 +739,7 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
         </table>
       </div>
     `
-    : `<div class="empty">没有找到符合条件的记录。你可以换个关键词，或者直接新增一条新的${escapeHtml(config.title)}记录。</div>`;
+    : `<div class="empty">${allRecords.length ? `没有找到符合条件的${escapeHtml(config.title)}记录。` : `当前还没有${escapeHtml(config.title)}记录，请先新增第一条数据。`}</div>`;
 
   return shellLayout({
     activeId: pageId,
@@ -818,30 +749,25 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
     subtitle: config.subtitle,
     topActions: `
       <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
-      ${nextLink ? `<a class="button secondary" href="${nextLink.href}">下一步：${escapeHtml(nextLink.title)}</a>` : `<a class="button secondary" href="index.html">返回首页</a>`}
     `,
     body: `
-      <div class="page-stack">
-        ${summaryHtml}
-        ${renderWorkflowPanel(pageId, `${config.title}流程页`, "参考你给的后台流程风格，当前模块会在流程条里高亮，进入其他模块会打开新的页面。")}
-        <section class="panel">
-          <div class="panel-header">
-            <div class="panel-title">
-              <h3>${escapeHtml(config.tableTitle)}</h3>
-              <p>${escapeHtml(config.tableSubtitle)}</p>
-            </div>
-            <div class="panel-actions">
-              <label class="searchbar">
-                <span>搜索</span>
-                <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-              </label>
-              <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
-            </div>
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h3>${escapeHtml(config.tableTitle)}</h3>
+            <p>${escapeHtml(config.tableSubtitle)}</p>
           </div>
-          <div class="panel-body">
-            <div class="meta-row">
-              ${metaPills.map((item) => `<span class="meta-pill">${escapeHtml(item)}</span>`).join("")}
-            </div>
+          <div class="panel-actions">
+            <label class="searchbar">
+              <span>搜索</span>
+              <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
+            </label>
+            <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          ${allRecords.length
+            ? `
             <div class="panel-layout">
               <div>
                 ${tableContent}
@@ -851,7 +777,7 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
                   <div class="panel-header">
                     <div class="panel-title">
                       <h3>当前详情</h3>
-                      <p>点击左侧台账任意记录，右侧详情会跟着切换。</p>
+                      <p>只显示当前模块这条记录的关键信息。</p>
                     </div>
                   </div>
                   <div class="panel-body">
@@ -860,9 +786,18 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
                 </section>
               </aside>
             </div>
-          </div>
-        </section>
-      </div>
+            `
+            : `
+            <div class="list-grid">
+              ${tableContent}
+              <div class="list-item">
+                <strong>当前模块说明</strong>
+                <span>这里只保留 ${escapeHtml(config.title)} 自己的录入、台账和详情。其他环节请从左侧进入对应页面处理。</span>
+              </div>
+            </div>
+            `}
+        </div>
+      </section>
       ${renderDialog(config)}
     `
   });
@@ -895,14 +830,9 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
             <h2>${escapeHtml(title)}</h2>
             <p>${escapeHtml(subtitle)}</p>
           </div>
-          <div class="topbar-side">
-            <span class="top-chip"><span class="chip-pulse"></span>${escapeHtml(dashboard.meta.latest_date || todayText())}</span>
-            <span class="top-chip">预置记录 ${escapeHtml(String(dashboard.meta.source_count || 0))} 条</span>
-            ${topActions || ""}
-          </div>
+          <div class="topbar-side">${topActions || ""}</div>
         </header>
         ${body}
-        <p class="footer">当前是空白流程测试版。系统不再预置演示记录，你新增的内容只会保存在当前浏览器本地，便于自己完整测试流程。</p>
       </main>
     </div>
   `;
@@ -1099,10 +1029,13 @@ function getPageRecords(pageId, shared) {
 }
 
 function pickSelectedRecord(filtered, allRecords, selectedId) {
-  if (selectedId) {
-    return filtered.find((record) => record.id === selectedId) || allRecords.find((record) => record.id === selectedId) || filtered[0] || allRecords[0] || null;
+  if (!filtered.length) {
+    return null;
   }
-  return filtered[0] || allRecords[0] || null;
+  if (selectedId) {
+    return filtered.find((record) => record.id === selectedId) || filtered[0] || null;
+  }
+  return filtered[0] || null;
 }
 
 function filterRecords(records, query, searchText) {
