@@ -693,7 +693,7 @@ async function loadDashboard() {
 function renderPage(root, pageId, dashboard, shared) {
   if (pageId === "home") {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage(pageId);
+    root.innerHTML = renderHomePage(shared, pageId);
     bindHome(root);
     return;
   }
@@ -701,7 +701,7 @@ function renderPage(root, pageId, dashboard, shared) {
   const config = MODULE_CONFIGS[pageId];
   if (!config) {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage("home");
+    root.innerHTML = renderHomePage(shared, "home");
     bindHome(root);
     return;
   }
@@ -714,19 +714,104 @@ function renderPage(root, pageId, dashboard, shared) {
   bindModule(root, config, dashboard, shared, pageId);
 }
 
-function renderHomePage(activeId) {
+function renderHomePage(shared, activeId) {
+  const baseCount = getPageRecords("base-trace", shared).length;
+  const batchCount = getPageRecords("trace-code-management", shared).length;
+  const warehouseCount = getPageRecords("warehouse-management", shared).length;
+  const totalCount = Object.keys(MODULE_CONFIGS).reduce((sum, pageId) => sum + getPageRecords(pageId, shared).length, 0);
+  const introCards = [
+    {
+      title: "统一建档",
+      body: "先归集基地主体、种苗来源与药材标准，后续所有批次记录都从统一档案继续补充。"
+    },
+    {
+      title: "过程留痕",
+      body: "农事、采收、初加工记录拆分在独立页面中，便于逐环节补录、查阅和核对。"
+    },
+    {
+      title: "闭环归档",
+      body: "赋码、仓储与质检信息单独管理，首页只负责介绍与导引，不堆叠业务明细。"
+    }
+  ];
+
   return `
     <div class="app-shell">
       ${renderSidebar(activeId)}
       <main class="main home-main">
         <section class="home-hero">
-          <div class="home-hero-copy">
-            <span class="section-caption">中药材全流程追溯</span>
-            <h2>中药材溯源平台</h2>
-            <p>围绕基地、批次、质检与仓储，统一进入各模块独立台账。</p>
-            <div class="home-actions">
-              <a class="button primary" href="base-trace.html">开始基地建档</a>
+          <div class="home-hero-layout">
+            <div class="home-hero-copy">
+              <span class="section-caption">中药材全流程追溯</span>
+              <h2>中药材溯源平台</h2>
+              <p>面向基地建档、批次流转、质量归档与仓储闭环的统一工作台。首页保留平台介绍与核心导引，具体业务继续在各模块独立页面中完成。</p>
+              <div class="home-actions">
+                <a class="button primary" href="base-trace.html">开始基地建档</a>
+                <a class="button secondary" href="herb-management.html">查看药材标准</a>
+              </div>
+              <div class="home-hero-points">
+                <span>基地建档</span>
+                <span>坐标定位</span>
+                <span>批次留痕</span>
+                <span>仓储闭环</span>
+              </div>
             </div>
+            <aside class="home-hero-panel">
+              <section class="home-overview-card">
+                <span class="home-overview-label">平台概览</span>
+                <div class="home-overview-grid">
+                  <article class="home-overview-metric">
+                    <strong>${baseCount}</strong>
+                    <span>基地档案</span>
+                  </article>
+                  <article class="home-overview-metric">
+                    <strong>${batchCount}</strong>
+                    <span>赋码批次</span>
+                  </article>
+                  <article class="home-overview-metric">
+                    <strong>${warehouseCount}</strong>
+                    <span>仓储记录</span>
+                  </article>
+                  <article class="home-overview-metric">
+                    <strong>${totalCount}</strong>
+                    <span>当前总记录</span>
+                  </article>
+                </div>
+              </section>
+              <section class="home-route-card">
+                <div class="home-route-head">
+                  <span>核心链路</span>
+                  <strong>建档到仓储</strong>
+                </div>
+                <div class="home-route-list">
+                  <span>基地建档</span>
+                  <span>种苗来源</span>
+                  <span>农事留痕</span>
+                  <span>采收验收</span>
+                  <span>加工归档</span>
+                  <span>赋码入仓</span>
+                </div>
+              </section>
+            </aside>
+          </div>
+        </section>
+        <section class="home-intro-grid">
+          ${introCards.map((card, index) => `
+            <article class="home-intro-card">
+              <span class="home-intro-index">${String(index + 1).padStart(2, "0")}</span>
+              <h3>${escapeHtml(card.title)}</h3>
+              <p>${escapeHtml(card.body)}</p>
+            </article>
+          `).join("")}
+        </section>
+        <section class="home-summary-card">
+          <div class="home-summary-copy">
+            <span class="section-caption">平台说明</span>
+            <h3>首页负责导引，台账负责录入</h3>
+            <p>当前首页不再堆放模块列表，而是用更简洁的方式说明平台定位与追溯链路。录入、查询和补录动作仍然在左侧各模块页中分别完成。</p>
+          </div>
+          <div class="home-summary-actions">
+            <a class="button ghost" href="farming-trace.html">查看农事记录</a>
+            <a class="button ghost" href="warehouse-management.html">查看仓库管理</a>
           </div>
         </section>
       </main>
