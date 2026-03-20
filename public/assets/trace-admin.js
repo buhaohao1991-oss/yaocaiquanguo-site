@@ -53,6 +53,9 @@ const TRACE_MAP_CONFIG_DEFAULTS = {
   detailZoom: 11,
   searchZoom: 15
 };
+const BASE_TRACE_MAX_PHOTOS = 6;
+const BASE_TRACE_PHOTO_MAX_EDGE = 1440;
+const BASE_TRACE_PHOTO_QUALITY = 0.84;
 const TRACE_MAP_RUNTIME = {
   sdkPromise: null
 };
@@ -74,8 +77,7 @@ const MODULE_CONFIGS = {
       { name: "area", label: "基地面积（亩）", type: "number", placeholder: "例如：128" },
       { name: "address", label: "基地地址", placeholder: "例如：甘肃省定西市岷县" },
       { name: "longitude", label: "经度", placeholder: "例如：104.037624", optional: true },
-      { name: "latitude", label: "纬度", placeholder: "例如：34.438215", optional: true },
-      { name: "note", label: "归档说明", as: "textarea", full: true, placeholder: "补充基地认证、地图坐标或照片归档情况" }
+      { name: "latitude", label: "纬度", placeholder: "例如：34.438215", optional: true }
     ],
     getRecords: (shared) => shared.baseRecords,
     searchText: (record) => [record.name, record.manager, record.address, record.herb, record.code].join(" "),
@@ -102,6 +104,13 @@ const MODULE_CONFIGS = {
       const index = shared.baseRecords.length + readCustomRecords("base-trace").length + 1;
       const longitude = normalizeOptionalLongitude(values.longitude, index);
       const latitude = normalizeOptionalLatitude(values.latitude, index);
+      const photos = normalizeTracePhotoList(values.photos);
+      const photoCount = photos.length;
+      const documents = [
+        "基地信息表",
+        "卫星定位图",
+        photoCount ? `基地照片（${photoCount}张）` : "基地照片（待补充）"
+      ];
       return {
         id: recordId("BASE", index),
         code: `JD202603${String(index).padStart(3, "0")}`,
@@ -115,13 +124,15 @@ const MODULE_CONFIGS = {
         coordinateText: formatCoordinateText(longitude, latitude),
         completion: 72,
         batchCount: 1,
-        fileCount: 3,
+        fileCount: 2 + photoCount,
         stage: "建档完成",
         statusLabel: "已建档",
         statusTone: "good",
         lastUpdate: todayText(),
-        note: values.note || "由平台新增基地建档",
-        documents: ["基地信息表", "地块定位图", "现场照片"],
+        note: photoCount ? `已上传 ${photoCount} 张基地照片` : "待补充基地照片",
+        photos,
+        photoCount,
+        documents,
         actions: [`${todayText()} 新建基地档案`, `${todayText()} 生成基地编号`, `${todayText()} 等待种苗关联`]
       };
     },
@@ -136,10 +147,10 @@ const MODULE_CONFIGS = {
           { label: "当前阶段", value: record.stage }
         ],
         progress: { label: "档案完整度", value: `${record.completion}%`, percent: record.completion },
-        extra: renderBaseMap(record),
+        extra: `${renderBaseMap(record)}${renderBasePhotos(record)}`,
         sections: [
           { title: "归档材料", items: record.documents.map((item) => ({ title: item, desc: `${record.lastUpdate} 已归集` })) },
-          { title: "最近动作", items: record.actions.map((item) => ({ title: item, desc: record.note })) }
+          { title: "最近动作", items: record.actions.map((item) => ({ title: item, desc: baseTraceActionNote(record) })) }
         ]
       })
   },
@@ -1012,8 +1023,7 @@ function renderDialog(config, pageId) {
 }
 
 function renderTraceMapDialogBody(config, pageId) {
-  const noteField = config.fields.find((field) => field.name === "note");
-  const mainFields = config.fields.filter((field) => field.name !== "note");
+  const mainFields = config.fields;
   return `
       <div class="dialog-map-layout">
         <div class="dialog-form-column">
@@ -1025,20 +1035,56 @@ function renderTraceMapDialogBody(config, pageId) {
               ${mainFields.map((field) => renderField(field, pageId)).join("")}
             </div>
           </section>
-        ${noteField ? `
-          <section class="dialog-section dialog-section-note">
-            <div class="dialog-section-head">
-              <h5>归档说明</h5>
-            </div>
-            <div class="form-grid form-grid-note">
-              ${renderField({ ...noteField, full: true }, pageId)}
-            </div>
-          </section>
-        ` : ""}
+          ${renderBasePhotoSection()}
       </div>
       <aside class="dialog-map-column">
         ${renderBaseMapEditor()}
       </aside>
+    </div>
+  `;
+}
+
+function renderBasePhotoSection() {
+  return `
+    <section class="dialog-section dialog-section-photo">
+      <div class="dialog-section-head dialog-section-head-actions">
+        <h5>基地照片</h5>
+        <div class="photo-section-actions">
+          <span class="photo-count-pill" data-photo-count>0 张</span>
+          <button class="button ghost button-inline" type="button" data-open-photo-window>增加照片</button>
+        </div>
+      </div>
+      <input type="hidden" name="photos" value="[]" data-photo-store>
+      <div class="photo-strip" data-photo-grid>
+        <div class="photo-empty">暂未添加照片</div>
+      </div>
+      ${renderBasePhotoWindow()}
+    </section>
+  `;
+}
+
+function renderBasePhotoWindow() {
+  return `
+    <div class="photo-window-shell" data-photo-window hidden>
+      <div class="photo-window-backdrop" data-close-photo-window></div>
+      <div class="photo-window-panel" role="dialog" aria-modal="true" aria-label="基地照片">
+        <div class="photo-window-header">
+          <h5>基地照片</h5>
+          <button class="dialog-close" type="button" data-close-photo-window aria-label="关闭">✕</button>
+        </div>
+        <div class="photo-window-body">
+          <label class="button secondary photo-picker-button">
+            选择照片
+            <input type="file" accept="image/*" multiple hidden data-photo-input>
+          </label>
+          <div class="photo-window-grid" data-photo-dialog-grid>
+            <div class="photo-empty">暂未添加照片</div>
+          </div>
+        </div>
+        <div class="photo-window-foot">
+          <button class="button primary" type="button" data-close-photo-window>完成</button>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -1110,6 +1156,10 @@ function renderBaseMapEditor() {
       <div class="map-editor-head">
         <h5>卫星定位</h5>
       </div>
+      <div class="map-toolbar">
+        <input class="map-search-input" type="search" placeholder="搜索地址或地名" data-map-search-input ${mapReady ? "" : "disabled"}>
+        <button class="button secondary map-search-button" type="button" data-map-search ${mapReady ? "" : "disabled"}>搜索</button>
+      </div>
       <div class="trace-live-map" data-trace-map-editor-canvas>
         <div class="trace-live-map-state" data-trace-map-editor-empty>${emptyMessage}</div>
       </div>
@@ -1172,12 +1222,16 @@ function bindModule(root, config, dashboard, shared, pageId) {
 
   if (isTraceMapPage(pageId)) {
     bindBaseTraceMap(root, dialog);
+    bindBaseTracePhotos(root, dialog);
     bindBaseTracePreviewMaps(root);
   }
 
   if (form) {
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (form._baseTracePhotoController) {
+        await form._baseTracePhotoController.waitUntilReady();
+      }
       const values = Object.fromEntries(new FormData(form).entries());
       const record = config.createRecord(normalizeValues(values), shared);
       const records = readCustomRecords(pageId);
@@ -1335,6 +1389,32 @@ function renderBaseMap(record) {
       </div>
     </div>
   `;
+}
+
+function renderBasePhotos(record) {
+  const photos = normalizeTracePhotoList(record && record.photos);
+  return `
+    <div class="subsection">
+      <h5>基地照片</h5>
+      ${photos.length ? `
+        <div class="detail-photo-grid">
+          ${photos.map((photo) => `
+            <figure class="detail-photo-card">
+              <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
+              <figcaption>${escapeHtml(photo.name)}</figcaption>
+            </figure>
+          `).join("")}
+        </div>
+      ` : `
+        <div class="empty empty-compact">暂未上传基地照片</div>
+      `}
+    </div>
+  `;
+}
+
+function baseTraceActionNote(record) {
+  const photos = normalizeTracePhotoList(record && record.photos);
+  return photos.length ? `已归集 ${photos.length} 张基地照片` : "待补充基地照片";
 }
 
 function bindBaseTraceMap(root, dialog) {
@@ -1522,7 +1602,7 @@ function bindBaseTraceMap(root, dialog) {
         setFeedback("已根据地图点击更新坐标。", "success");
       });
 
-      setFeedback("可点击地图回填经纬度。", "muted");
+      setFeedback("可搜索地址并点击地图回填经纬度。", "muted");
       return state.map;
     } catch (error) {
       setEmptyState("天地图加载失败，请检查 tk 或网络。");
@@ -1636,7 +1716,7 @@ function bindBaseTraceMap(root, dialog) {
 
   if (dialog) {
     dialog.addEventListener("close", () => {
-      setFeedback(hasKey ? "可点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。", hasKey ? "muted" : "warn");
+      setFeedback(hasKey ? "可搜索地址并点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。", hasKey ? "muted" : "warn");
     });
   }
 }
@@ -1646,6 +1726,132 @@ function activateBaseTraceMap(root) {
   if (form && form._baseTraceMapController) {
     form._baseTraceMapController.activate();
   }
+}
+
+function bindBaseTracePhotos(root, dialog) {
+  const form = root.querySelector("[data-create-form]");
+  if (!form) {
+    return;
+  }
+
+  const storeInput = form.querySelector("[data-photo-store]");
+  const openButton = form.querySelector("[data-open-photo-window]");
+  const windowShell = form.querySelector("[data-photo-window]");
+  const closeButtons = form.querySelectorAll("[data-close-photo-window]");
+  const photoInput = form.querySelector("[data-photo-input]");
+  const photoGrid = form.querySelector("[data-photo-grid]");
+  const dialogGrid = form.querySelector("[data-photo-dialog-grid]");
+  const countPill = form.querySelector("[data-photo-count]");
+
+  if (!storeInput || !windowShell || !photoGrid || !dialogGrid) {
+    return;
+  }
+
+  const state = {
+    photos: normalizeTracePhotoList(storeInput.value),
+    pendingTask: Promise.resolve()
+  };
+
+  const syncStore = () => {
+    storeInput.value = JSON.stringify(state.photos);
+    if (countPill) {
+      countPill.textContent = `${state.photos.length} 张`;
+    }
+  };
+
+  const renderPhotoGrid = (container, removable) => {
+    if (!container) {
+      return;
+    }
+    if (!state.photos.length) {
+      container.innerHTML = '<div class="photo-empty">暂未添加照片</div>';
+      return;
+    }
+    container.innerHTML = state.photos.map((photo) => `
+      <figure class="${removable ? "photo-card photo-card-manage" : "photo-card"}">
+        <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
+        ${removable ? `<button class="photo-remove" type="button" data-remove-photo="${escapeAttribute(photo.id)}" aria-label="删除照片">✕</button>` : ""}
+        <figcaption>${escapeHtml(photo.name)}</figcaption>
+      </figure>
+    `).join("");
+  };
+
+  const render = () => {
+    syncStore();
+    renderPhotoGrid(photoGrid, false);
+    renderPhotoGrid(dialogGrid, true);
+  };
+
+  const openWindow = () => {
+    windowShell.hidden = false;
+    document.body.classList.add("has-photo-window");
+  };
+
+  const closeWindow = () => {
+    windowShell.hidden = true;
+    document.body.classList.remove("has-photo-window");
+  };
+
+  const appendPhotos = async (files) => {
+    const imageFiles = Array.from(files || []).filter((file) => file && String(file.type || "").startsWith("image/"));
+    if (!imageFiles.length) {
+      return;
+    }
+    const room = Math.max(0, BASE_TRACE_MAX_PHOTOS - state.photos.length);
+    if (!room) {
+      return;
+    }
+    const nextPhotos = await Promise.all(imageFiles.slice(0, room).map(createTracePhotoRecord));
+    state.photos = [...state.photos, ...nextPhotos];
+    render();
+  };
+
+  if (openButton) {
+    openButton.addEventListener("click", openWindow);
+  }
+
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", closeWindow);
+  });
+
+  windowShell.addEventListener("click", (event) => {
+    if (event.target === windowShell || event.target.closest("[data-close-photo-window]")) {
+      closeWindow();
+    }
+  });
+
+  if (photoInput) {
+    photoInput.addEventListener("change", (event) => {
+      const files = event.target.files;
+      state.pendingTask = appendPhotos(files).finally(() => {
+        if (photoInput) {
+          photoInput.value = "";
+        }
+      });
+    });
+  }
+
+  dialogGrid.addEventListener("click", (event) => {
+    const removeButton = event.target.closest("[data-remove-photo]");
+    if (!removeButton) {
+      return;
+    }
+    const targetId = removeButton.dataset.removePhoto || "";
+    state.photos = state.photos.filter((photo) => photo.id !== targetId);
+    render();
+  });
+
+  if (dialog) {
+    dialog.addEventListener("close", closeWindow);
+  }
+
+  form._baseTracePhotoController = {
+    waitUntilReady: async () => {
+      await state.pendingTask;
+    }
+  };
+
+  render();
 }
 
 function bindBaseTracePreviewMaps(root) {
@@ -1783,6 +1989,105 @@ function normalizeValues(values) {
   return Object.fromEntries(
     Object.entries(values).map(([key, value]) => [key, String(value).trim()])
   );
+}
+
+function normalizeTracePhotoList(value) {
+  let parsed = value;
+  if (typeof value === "string") {
+    const raw = value.trim();
+    if (!raw) {
+      return [];
+    }
+    try {
+      parsed = JSON.parse(raw);
+    } catch (error) {
+      return [];
+    }
+  }
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+  return parsed
+    .map((item, index) => {
+      if (typeof item === "string") {
+        const url = item.trim();
+        if (!url) {
+          return null;
+        }
+        return {
+          id: `photo-${index + 1}`,
+          name: `基地照片 ${index + 1}`,
+          url
+        };
+      }
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+      const url = String(item.url || item.dataUrl || "").trim();
+      if (!url) {
+        return null;
+      }
+      return {
+        id: String(item.id || `photo-${index + 1}`),
+        name: String(item.name || `基地照片 ${index + 1}`),
+        url
+      };
+    })
+    .filter(Boolean);
+}
+
+async function createTracePhotoRecord(file) {
+  const url = await compressTracePhoto(file);
+  const name = String(file && file.name ? file.name : "基地照片").replace(/\.[a-z0-9]+$/i, "");
+  return {
+    id: `photo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name: name || "基地照片",
+    url
+  };
+}
+
+async function compressTracePhoto(file) {
+  const source = await readFileAsDataUrl(file);
+  try {
+    const image = await loadImageFromDataUrl(source);
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    const maxEdge = Math.max(width, height);
+    const scale = maxEdge > BASE_TRACE_PHOTO_MAX_EDGE ? BASE_TRACE_PHOTO_MAX_EDGE / maxEdge : 1;
+    const targetWidth = Math.max(1, Math.round(width * scale));
+    const targetHeight = Math.max(1, Math.round(height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return source;
+    }
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, targetWidth, targetHeight);
+    context.drawImage(image, 0, 0, targetWidth, targetHeight);
+    return canvas.toDataURL("image/jpeg", BASE_TRACE_PHOTO_QUALITY);
+  } catch (error) {
+    return source;
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("photo-read-failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageFromDataUrl(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("photo-decode-failed"));
+    image.src = source;
+  });
 }
 
 function isTraceMapPage(pageId) {
