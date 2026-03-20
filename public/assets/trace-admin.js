@@ -787,15 +787,7 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
               </aside>
             </div>
             `
-            : `
-            <div class="list-grid">
-              ${tableContent}
-              <div class="list-item">
-                <strong>当前模块说明</strong>
-                <span>这里只保留 ${escapeHtml(config.title)} 自己的录入、台账和详情。其他环节请从左侧进入对应页面处理。</span>
-              </div>
-            </div>
-            `}
+            : tableContent}
         </div>
       </section>
       ${renderDialog(config)}
