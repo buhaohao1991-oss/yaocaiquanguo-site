@@ -693,7 +693,7 @@ async function loadDashboard() {
 function renderPage(root, pageId, dashboard, shared) {
   if (pageId === "home") {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage(shared, pageId);
+    root.innerHTML = renderHomePage(pageId);
     bindHome(root);
     return;
   }
@@ -701,7 +701,7 @@ function renderPage(root, pageId, dashboard, shared) {
   const config = MODULE_CONFIGS[pageId];
   if (!config) {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage(shared, "home");
+    root.innerHTML = renderHomePage("home");
     bindHome(root);
     return;
   }
@@ -714,49 +714,7 @@ function renderPage(root, pageId, dashboard, shared) {
   bindModule(root, config, dashboard, shared, pageId);
 }
 
-function renderHomePage(shared, activeId) {
-  const moduleMap = new Map(WORKFLOW_ITEMS.map((item) => [item.id, item]));
-  const homeGroups = [
-    { title: "建档起始", subtitle: "基地与种苗建档", itemIds: ["base-trace", "seed-trace"] },
-    { title: "过程追溯", subtitle: "农事、采收与加工", itemIds: ["farming-trace", "harvest-trace", "processing-trace"] },
-    { title: "管理闭环", subtitle: "品种、赋码与仓储", itemIds: ["herb-management", "trace-code-management", "warehouse-management"] }
-  ];
-  const moduleCards = homeGroups.map((group, index) => {
-    const items = group.itemIds.map((id) => {
-      const item = moduleMap.get(id);
-      if (!item) {
-        return "";
-      }
-      const count = getPageRecords(item.id, shared).length;
-      return `
-        <a class="workflow-item" href="${item.href}">
-          <div class="workflow-item-main">
-            <strong>${escapeHtml(item.title)}</strong>
-            <span>${escapeHtml(item.subtitle)}</span>
-          </div>
-          <div class="workflow-item-meta">
-            <span class="workflow-item-count">${count} 条</span>
-            <span class="workflow-item-link">进入</span>
-          </div>
-        </a>
-      `;
-    }).join("");
-    return `
-      <section class="workflow-band">
-        <div class="workflow-band-head">
-          <span class="workflow-band-step">${String(index + 1).padStart(2, "0")}</span>
-          <div class="workflow-band-copy">
-            <h4>${escapeHtml(group.title)}</h4>
-            <p>${escapeHtml(group.subtitle)}</p>
-          </div>
-        </div>
-        <div class="workflow-band-list">
-          ${items}
-        </div>
-      </section>
-    `;
-  }).join("");
-
+function renderHomePage(activeId) {
   return `
     <div class="app-shell">
       ${renderSidebar(activeId)}
@@ -769,17 +727,6 @@ function renderHomePage(shared, activeId) {
             <div class="home-actions">
               <a class="button primary" href="base-trace.html">开始基地建档</a>
             </div>
-          </div>
-        </section>
-        <section class="home-section">
-          <div class="home-section-head">
-            <div class="panel-title">
-              <span class="section-caption">模块入口</span>
-              <h3>按流程分组进入模块</h3>
-            </div>
-          </div>
-          <div class="entry-grid">
-            ${moduleCards}
           </div>
         </section>
       </main>
@@ -1306,20 +1253,6 @@ function renderDetail(record, { summary, badges, metrics, progress, sections, ex
 
 function detailTitle(record) {
   return record.name || record.seedBatch || record.task || record.harvestBatch || record.processNo || record.herb || record.codeRange || record.warehouse || "当前记录";
-}
-
-function moduleFootnote(pageId) {
-  const notes = {
-    "base-trace": "基地建档",
-    "seed-trace": "种苗来源",
-    "farming-trace": "田间记录",
-    "harvest-trace": "采收验收",
-    "processing-trace": "工序归档",
-    "herb-management": "品种标准",
-    "trace-code-management": "批次赋码",
-    "warehouse-management": "库存闭环"
-  };
-  return notes[pageId] || "进入页面";
 }
 
 function renderBaseMap(record) {
