@@ -1,13 +1,13 @@
 const NAV_ITEMS = [
-  { id: "home", href: "index.html", icon: "首", title: "首页", subtitle: "工作台总览" },
-  { id: "base-trace", href: "base-trace.html", icon: "基", title: "基地溯源", subtitle: "基地档案与归集" },
-  { id: "seed-trace", href: "seed-trace.html", icon: "种", title: "种子溯源", subtitle: "种苗来源与到货" },
-  { id: "farming-trace", href: "farming-trace.html", icon: "农", title: "农事溯源", subtitle: "农事记录与巡田" },
-  { id: "harvest-trace", href: "harvest-trace.html", icon: "采", title: "采收追溯", subtitle: "采收批次与验收" },
-  { id: "processing-trace", href: "processing-trace.html", icon: "初", title: "初加工溯源", subtitle: "净选切制与质控" },
-  { id: "herb-management", href: "herb-management.html", icon: "药", title: "药材管理", subtitle: "药材档案与标准" },
-  { id: "trace-code-management", href: "trace-code-management.html", icon: "码", title: "溯源码管理", subtitle: "批次赋码与绑定" },
-  { id: "warehouse-management", href: "warehouse-management.html", icon: "仓", title: "仓库管理", subtitle: "库存与仓位巡检" }
+  { id: "home", href: "index.html", title: "首页", subtitle: "工作台总览" },
+  { id: "base-trace", href: "base-trace.html", title: "基地溯源", subtitle: "基地档案与归集" },
+  { id: "seed-trace", href: "seed-trace.html", title: "种子溯源", subtitle: "种苗来源与到货" },
+  { id: "farming-trace", href: "farming-trace.html", title: "农事溯源", subtitle: "农事记录与巡田" },
+  { id: "harvest-trace", href: "harvest-trace.html", title: "采收追溯", subtitle: "采收批次与验收" },
+  { id: "processing-trace", href: "processing-trace.html", title: "初加工溯源", subtitle: "净选切制与质控" },
+  { id: "herb-management", href: "herb-management.html", title: "药材管理", subtitle: "药材档案与标准" },
+  { id: "trace-code-management", href: "trace-code-management.html", title: "溯源码管理", subtitle: "批次赋码与绑定" },
+  { id: "warehouse-management", href: "warehouse-management.html", title: "仓库管理", subtitle: "库存与仓位巡检" }
 ];
 
 const WORKFLOW_ITEMS = NAV_ITEMS.filter((item) => item.id !== "home");
@@ -820,7 +820,7 @@ function renderSidebar(activeId) {
           ${renderBrandMark()}
         </div>
         <div class="brand-copy">
-          <span class="brand-eyebrow">全流程溯源工作台</span>
+          <span class="brand-eyebrow">全流程溯源</span>
           <h1>中药材溯源平台</h1>
           <p>基地建档 · 批次流转 · 质检归档 · 仓储闭环</p>
         </div>
@@ -865,13 +865,85 @@ function renderBrandMark() {
 function renderNavItem(item, activeId) {
   return `
     <a class="nav-item ${item.id === activeId ? "is-active" : ""}" href="${item.href}">
-      <span class="nav-icon">${escapeHtml(item.icon)}</span>
+      <span class="nav-icon" aria-hidden="true">${renderNavIcon(item.id)}</span>
       <span class="nav-text">
         <strong>${escapeHtml(item.title)}</strong>
         <span>${escapeHtml(item.subtitle)}</span>
       </span>
     </a>
   `;
+}
+
+function renderNavIcon(id) {
+  const icons = {
+    home: `
+      <svg viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="4" width="6" height="6" rx="1.5" />
+        <rect x="14" y="4" width="6" height="6" rx="1.5" />
+        <rect x="4" y="14" width="6" height="6" rx="1.5" />
+        <rect x="14" y="14" width="6" height="6" rx="1.5" />
+      </svg>
+    `,
+    "base-trace": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 20V10" />
+        <path d="M12 12C9.6 9.8 7.1 9.9 5.5 12C8 12.8 10 12.8 12 12Z" />
+        <path d="M12 12C14.4 9.8 16.9 9.9 18.5 12C16 12.8 14 12.8 12 12Z" />
+        <path d="M6 20H18" />
+      </svg>
+    `,
+    "seed-trace": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 19C15.3 19 18 16.2 18 12.8C18 9.6 15.9 6.9 12 5C8.1 6.9 6 9.6 6 12.8C6 16.2 8.7 19 12 19Z" />
+        <path d="M12 9V16" />
+      </svg>
+    `,
+    "farming-trace": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M8 4H16L18 6V20H6V6L8 4Z" />
+        <path d="M9 10H15" />
+        <path d="M9 14H13" />
+      </svg>
+    `,
+    "harvest-trace": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M7 10L12 5L17 10" />
+        <path d="M8 11H16L17.5 18H6.5L8 11Z" />
+      </svg>
+    `,
+    "processing-trace": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M6 7H18" />
+        <path d="M9 7V17" />
+        <path d="M15 7V17" />
+        <path d="M6 17H18" />
+      </svg>
+    `,
+    "herb-management": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M6 5.5H13.5C15.2 5.5 16.5 6.8 16.5 8.5V18.5H9C7.3 18.5 6 17.2 6 15.5V5.5Z" />
+        <path d="M9 9H13.5" />
+        <path d="M9 12.5H13.5" />
+      </svg>
+    `,
+    "trace-code-management": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="4" width="5" height="5" rx="1" />
+        <rect x="15" y="4" width="5" height="5" rx="1" />
+        <rect x="4" y="15" width="5" height="5" rx="1" />
+        <path d="M15 15H17V17H20" />
+        <path d="M17 20V17" />
+      </svg>
+    `,
+    "warehouse-management": `
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M4 10L12 5L20 10" />
+        <path d="M6 10V19H18V10" />
+        <path d="M10 19V14H14V19" />
+      </svg>
+    `
+  };
+  return icons[id] || icons.home;
 }
 
 function renderTableRow(config, record, selectedRecord) {

@@ -65,53 +65,55 @@ textarea {
   position: sticky;
   top: 0;
   min-height: 100vh;
-  padding: 24px 18px 20px;
+  padding: 20px 16px 18px;
   background:
     radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.06), transparent 24%),
     linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-deep) 100%);
   color: rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .brand {
   position: relative;
   display: grid;
-  gap: 14px;
-  padding: 18px 16px;
-  border-radius: 22px;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 14px 14px 15px;
+  border-radius: 20px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
     rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(132, 207, 165, 0.12);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 14px 28px rgba(10, 15, 22, 0.18);
+    0 10px 22px rgba(10, 15, 22, 0.16);
   overflow: hidden;
 }
 
 .brand::after {
   content: "";
   position: absolute;
-  inset: auto -18px -22px auto;
-  width: 92px;
-  height: 92px;
+  inset: auto -14px -18px auto;
+  width: 74px;
+  height: 74px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(43, 197, 110, 0.16), rgba(43, 197, 110, 0));
+  background: radial-gradient(circle, rgba(43, 197, 110, 0.12), rgba(43, 197, 110, 0));
   pointer-events: none;
 }
 
 .brand-mark {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
-  border-radius: 18px;
+  border-radius: 16px;
   background: radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.18), transparent 44%);
   box-shadow:
-    0 12px 22px rgba(19, 103, 60, 0.24),
+    0 10px 18px rgba(19, 103, 60, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
@@ -123,27 +125,27 @@ textarea {
 
 .brand-copy {
   display: grid;
-  gap: 8px;
+  gap: 5px;
 }
 
 .brand-eyebrow {
   display: inline-flex;
   justify-self: start;
   align-items: center;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(222, 243, 231, 0.8);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
 }
 
 .brand-copy h1 {
   margin: 0;
-  font-size: 23px;
-  line-height: 1.15;
+  font-size: 20px;
+  line-height: 1.08;
   letter-spacing: -0.02em;
   font-weight: 700;
 }
@@ -151,29 +153,29 @@ textarea {
 .brand-copy p {
   margin: 0;
   color: rgba(255, 255, 255, 0.72);
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 11px;
+  line-height: 1.55;
 }
 
 .nav-caption {
-  padding: 2px 10px 0;
+  padding: 2px 10px 2px;
   color: rgba(255, 255, 255, 0.42);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
 }
 
 .nav-group {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 12px;
-  border-radius: 16px;
+  gap: 10px;
+  padding: 10px 11px;
+  border-radius: 14px;
   border: 1px solid transparent;
   color: rgba(255, 255, 255, 0.84);
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -193,16 +195,24 @@ textarea {
 }
 
 .nav-icon {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   display: grid;
   place-items: center;
-  border-radius: 11px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.92);
-  font-size: 13px;
-  font-weight: 700;
+}
+
+.nav-icon svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .nav-item.is-active .nav-icon {
@@ -215,13 +225,13 @@ textarea {
 }
 
 .nav-text strong {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.2;
 }
 
 .nav-text span {
   color: rgba(255, 255, 255, 0.56);
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.45;
 }
 
@@ -231,8 +241,8 @@ textarea {
 
 .sidebar-foot {
   margin-top: auto;
-  padding: 14px 14px 15px;
-  border-radius: 16px;
+  padding: 12px 13px 13px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.045);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -249,15 +259,15 @@ textarea {
 .sidebar-foot strong {
   display: block;
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
 .sidebar-foot p {
   margin: 6px 0 0;
   color: rgba(255, 255, 255, 0.68);
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 .main {
@@ -1131,11 +1141,11 @@ tbody tr:last-child td {
   .sidebar {
     position: static;
     min-height: auto;
-    padding: 18px 16px;
+    padding: 16px 14px;
   }
 
   .brand {
-    padding: 16px 14px;
+    padding: 13px 13px 14px;
   }
 
   .main {
@@ -1230,8 +1240,18 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 540px) {
+  .brand {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 48px;
+    height: 48px;
+  }
+
   .brand-copy h1 {
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .home-hero h2 {
