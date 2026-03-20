@@ -1258,7 +1258,7 @@ tbody tr:last-child td {
 }
 
 .dialog-map-enabled {
-  width: min(1280px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 72px));
 }
 
 .dialog-header {
@@ -1312,8 +1312,8 @@ tbody tr:last-child td {
 
 .dialog-map-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 500px);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 430px);
+  gap: 18px;
   align-items: start;
 }
 
