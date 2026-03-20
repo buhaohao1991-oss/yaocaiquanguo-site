@@ -700,17 +700,17 @@ function renderHomePage(dashboard, shared, activeId) {
     activeId,
     dashboard,
     title: "中药材溯源平台",
-    kicker: "TRACE CONSOLE",
-    subtitle: "首页只保留模块入口，录入时直接进入对应页面处理。",
+    kicker: "HERBAL TRACE",
+    subtitle: "面向基地、种苗、农事、采收、初加工、赋码与仓储的中药材全流程工作台。",
     topActions: `
-      <a class="button primary" href="base-trace.html">开始录入</a>
+      <a class="button primary" href="base-trace.html">进入基地建档</a>
     `,
     body: `
       <section class="panel">
         <div class="panel-header">
           <div class="panel-title">
-            <h3>模块入口</h3>
-            <p>每个模块都是独立页面，只保留本模块自己的台账和录入内容。</p>
+            <h3>业务模块</h3>
+            <p>从基地开始逐步建档，每个模块独立进入、独立维护。</p>
           </div>
         </div>
         <div class="panel-body">
@@ -798,8 +798,25 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">药</div>
+          <div class="brand-mark" aria-hidden="true">
+            <svg class="brand-mark-svg" viewBox="0 0 72 72" fill="none">
+              <defs>
+                <linearGradient id="brandSeal" x1="10" y1="8" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#31c871" />
+                  <stop offset="1" stop-color="#158247" />
+                </linearGradient>
+              </defs>
+              <rect x="4" y="4" width="64" height="64" rx="24" fill="url(#brandSeal)" />
+              <circle cx="36" cy="36" r="19" stroke="rgba(255,255,255,0.28)" stroke-width="1.4" />
+              <path d="M36 22V49" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+              <path d="M36 29C31 22 24 22 20 29C27 31 32 30 36 29Z" fill="#ffffff" />
+              <path d="M36 29C41 22 48 22 52 29C45 31 40 30 36 29Z" fill="#ffffff" opacity="0.95" />
+              <path d="M36 40C31 34 25 35 22 42C28 44 33 43 36 40Z" fill="#ffffff" opacity="0.9" />
+              <path d="M36 40C41 34 47 35 50 42C44 44 39 43 36 40Z" fill="#ffffff" opacity="0.85" />
+            </svg>
+          </div>
           <div class="brand-copy">
+            <span class="brand-eyebrow">Traceability Console</span>
             <h1>中药材溯源平台</h1>
             <p>基地、批次、资料、质检一体化管理</p>
           </div>
