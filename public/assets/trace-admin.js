@@ -715,13 +715,12 @@ function renderPage(root, pageId, dashboard, shared) {
 }
 
 function renderHomePage(shared, activeId) {
-  const heroTags = ["基地建档", "种苗关联", "过程归档", "仓储闭环"];
-  const moduleCards = WORKFLOW_ITEMS.map((item, index) => {
+  const moduleCards = WORKFLOW_ITEMS.map((item) => {
     const count = getPageRecords(item.id, shared).length;
     return `
       <a class="entry-card" href="${item.href}">
         <div class="entry-card-top">
-          <span class="entry-card-index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="entry-card-kicker">${escapeHtml(moduleFootnote(item.id))}</span>
           <span class="entry-card-count">${count} 条</span>
         </div>
         <div class="entry-card-body">
@@ -729,7 +728,6 @@ function renderHomePage(shared, activeId) {
           <p>${escapeHtml(item.subtitle)}</p>
         </div>
         <div class="entry-card-foot">
-          <span>${escapeHtml(moduleFootnote(item.id))}</span>
           <span class="entry-card-link">进入模块</span>
         </div>
       </a>
@@ -744,12 +742,9 @@ function renderHomePage(shared, activeId) {
           <div class="home-hero-copy">
             <span class="section-caption">中药材全流程追溯</span>
             <h2>中药材溯源平台</h2>
-            <p>从基地建档开始，逐步完成种苗、农事、采收、加工、赋码与仓储的独立台账管理。</p>
+            <p>围绕基地、批次、质检与仓储，统一进入各模块独立台账。</p>
             <div class="home-actions">
               <a class="button primary" href="base-trace.html">开始基地建档</a>
-            </div>
-            <div class="home-flow">
-              ${heroTags.map((tag) => `<span class="home-flow-pill">${escapeHtml(tag)}</span>`).join("")}
             </div>
           </div>
         </section>
@@ -759,7 +754,6 @@ function renderHomePage(shared, activeId) {
               <span class="section-caption">模块入口</span>
               <h3>按环节进入独立页面</h3>
             </div>
-            <p>首页只保留业务入口，台账查询、详情查看和新增动作都在各自模块页完成。</p>
           </div>
           <div class="entry-grid">
             ${moduleCards}
@@ -843,21 +837,6 @@ function renderModulePage(config, pageId, allRecords, filteredRecords, selectedR
 function renderSidebar(activeId) {
   return `
     <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          ${renderBrandMark()}
-        </div>
-        <div class="brand-copy">
-          <span class="brand-eyebrow">全流程溯源平台</span>
-          <h1>中药材溯源平台</h1>
-          <div class="brand-tags">
-            <span>建档</span>
-            <span>流转</span>
-            <span>质检</span>
-            <span>仓储</span>
-          </div>
-        </div>
-      </div>
       <div class="nav-caption">模块导航</div>
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderNavItem(item, activeId)).join("")}
@@ -868,34 +847,6 @@ function renderSidebar(activeId) {
         <p>${escapeHtml(SIDE_FOOTER.body)}</p>
       </div>
     </aside>
-  `;
-}
-
-function renderBrandMark() {
-  return `
-    <svg class="brand-mark-svg" viewBox="0 0 88 88" fill="none">
-      <defs>
-        <linearGradient id="brandSeal" x1="14" y1="10" x2="74" y2="78" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#2BC56E" />
-          <stop offset="1" stop-color="#15663F" />
-        </linearGradient>
-        <linearGradient id="brandStroke" x1="24" y1="20" x2="59" y2="63" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#F6FFF8" />
-          <stop offset="1" stop-color="#DDF5E6" />
-        </linearGradient>
-      </defs>
-      <rect x="10" y="10" width="68" height="68" rx="20" fill="url(#brandSeal)" />
-      <path d="M44 24V62" stroke="url(#brandStroke)" stroke-width="3" stroke-linecap="round" />
-      <path d="M44 24H58" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
-      <path d="M30 43H44" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
-      <path d="M44 62H58" stroke="url(#brandStroke)" stroke-width="2.6" stroke-linecap="round" />
-      <circle cx="44" cy="24" r="4" fill="url(#brandStroke)" />
-      <circle cx="44" cy="43" r="4" fill="url(#brandStroke)" opacity="0.94" />
-      <circle cx="44" cy="62" r="4" fill="url(#brandStroke)" opacity="0.88" />
-      <circle cx="60" cy="24" r="3.2" fill="url(#brandStroke)" opacity="0.82" />
-      <circle cx="28" cy="43" r="3.2" fill="url(#brandStroke)" opacity="0.78" />
-      <circle cx="60" cy="62" r="3.2" fill="url(#brandStroke)" opacity="0.74" />
-    </svg>
   `;
 }
 

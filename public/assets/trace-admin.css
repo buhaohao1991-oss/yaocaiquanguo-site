@@ -4,8 +4,8 @@
   --panel: #ffffff;
   --panel-soft: #f7f9f7;
   --panel-muted: #f2f5f3;
-  --sidebar: #27313d;
-  --sidebar-deep: #1e2732;
+  --sidebar: #353c38;
+  --sidebar-deep: #2b312e;
   --line: #dde4df;
   --line-strong: #cfd8d2;
   --text: #1c2430;
@@ -58,22 +58,22 @@ textarea {
 .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: 248px minmax(0, 1fr);
 }
 
 .sidebar {
   position: sticky;
   top: 0;
   min-height: 100vh;
-  padding: 20px 16px 18px;
+  padding: 24px 16px 18px;
   background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.06), transparent 24%),
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.12), transparent 24%),
     linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-deep) 100%);
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(247, 248, 244, 0.92);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .brand {
@@ -177,8 +177,8 @@ textarea {
 }
 
 .nav-caption {
-  padding: 2px 10px 2px;
-  color: rgba(255, 255, 255, 0.42);
+  padding: 4px 10px 2px;
+  color: rgba(238, 242, 235, 0.44);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -196,20 +196,20 @@ textarea {
   padding: 10px 11px;
   border-radius: 14px;
   border: 1px solid transparent;
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(244, 246, 242, 0.84);
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .nav-item:hover {
   transform: translateX(2px);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .nav-item.is-active {
-  background: linear-gradient(135deg, rgba(30, 156, 90, 0.2), rgba(30, 156, 90, 0.1));
-  border-color: rgba(74, 193, 124, 0.22);
-  box-shadow: inset 0 0 0 1px rgba(46, 177, 103, 0.1);
+  background: linear-gradient(135deg, rgba(205, 224, 214, 0.16), rgba(126, 150, 135, 0.12));
+  border-color: rgba(208, 226, 216, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(224, 235, 229, 0.05);
   color: #fff;
 }
 
@@ -221,7 +221,7 @@ textarea {
   place-items: center;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(247, 248, 244, 0.94);
 }
 
 .nav-icon svg {
@@ -235,7 +235,7 @@ textarea {
 }
 
 .nav-item.is-active .nav-icon {
-  background: linear-gradient(135deg, rgba(34, 184, 107, 0.9), rgba(21, 111, 65, 0.92));
+  background: linear-gradient(135deg, rgba(153, 177, 161, 0.96), rgba(88, 106, 94, 0.98));
 }
 
 .nav-text {
@@ -249,7 +249,7 @@ textarea {
 }
 
 .nav-text span {
-  color: rgba(255, 255, 255, 0.56);
+  color: rgba(236, 240, 234, 0.54);
   font-size: 10px;
   line-height: 1.45;
 }
@@ -262,14 +262,14 @@ textarea {
   margin-top: auto;
   padding: 12px 13px 13px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-foot-label {
   display: block;
   margin-bottom: 6px;
-  color: rgba(214, 238, 223, 0.72);
+  color: rgba(228, 236, 230, 0.72);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -284,7 +284,7 @@ textarea {
 
 .sidebar-foot p {
   margin: 6px 0 0;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(242, 244, 240, 0.64);
   font-size: 11px;
   line-height: 1.6;
 }
@@ -325,11 +325,11 @@ textarea {
 
 .home-hero {
   position: relative;
-  padding: 38px 38px 34px;
-  border-radius: 30px;
+  padding: 34px 34px 30px;
+  border-radius: 28px;
   border: 1px solid rgba(214, 224, 217, 0.95);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 248, 245, 0.98)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.99), rgba(246, 248, 246, 0.98)),
     #fff;
   box-shadow: var(--shadow);
   overflow: hidden;
@@ -338,81 +338,53 @@ textarea {
 .home-hero::before {
   content: "";
   position: absolute;
-  top: -110px;
-  right: -36px;
-  width: 320px;
-  height: 320px;
+  top: -120px;
+  right: -50px;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(31, 157, 90, 0.15), rgba(31, 157, 90, 0));
+  background: radial-gradient(circle, rgba(31, 157, 90, 0.1), rgba(31, 157, 90, 0));
   pointer-events: none;
 }
 
 .home-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgba(28, 36, 48, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(28, 36, 48, 0.04) 1px, transparent 1px);
-  background-size: 36px 36px;
-  mask-image: linear-gradient(135deg, rgba(0, 0, 0, 0.35), transparent 72%);
-  pointer-events: none;
+  display: none;
 }
 
 .home-hero-copy {
   position: relative;
   z-index: 1;
-  max-width: 720px;
+  max-width: 620px;
 }
 
 .home-hero h2 {
-  margin: 18px 0 0;
-  font-size: 44px;
-  line-height: 1.06;
+  margin: 16px 0 0;
+  font-size: 40px;
+  line-height: 1.08;
   letter-spacing: -0.03em;
   font-weight: 700;
 }
 
 .home-hero p {
-  margin: 14px 0 0;
-  max-width: 620px;
+  margin: 12px 0 0;
+  max-width: 520px;
   color: var(--muted);
-  font-size: 16px;
-  line-height: 1.9;
+  font-size: 15px;
+  line-height: 1.8;
 }
 
 .home-actions {
-  margin-top: 26px;
-}
-
-.home-flow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 28px;
-}
-
-.home-flow-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: rgba(247, 250, 248, 0.9);
-  border: 1px solid var(--line);
-  color: #3b4957;
-  font-size: 13px;
-  font-weight: 600;
+  margin-top: 22px;
 }
 
 .home-section {
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .home-section-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: end;
+  display: grid;
+  gap: 8px;
 }
 
 .home-section-head .panel-title {
@@ -421,32 +393,24 @@ textarea {
 
 .home-section-head h3 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.2;
-}
-
-.home-section-head p {
-  margin: 0;
-  max-width: 420px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.8;
 }
 
 .entry-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .entry-card {
   position: relative;
-  min-height: 188px;
+  min-height: 176px;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 18px;
-  padding: 20px;
-  border-radius: 22px;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(249, 251, 249, 0.98)),
@@ -460,7 +424,7 @@ textarea {
   content: "";
   position: absolute;
   inset: 0 auto auto 0;
-  width: 100%;
+  width: 82px;
   height: 4px;
   background: linear-gradient(90deg, rgba(31, 157, 90, 0.62), rgba(31, 157, 90, 0));
 }
@@ -479,11 +443,11 @@ textarea {
   align-items: center;
 }
 
-.entry-card-index {
+.entry-card-kicker {
   color: #5b6774;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
 }
 
 .entry-card-count {
@@ -501,22 +465,23 @@ textarea {
 
 .entry-card-body {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .entry-card-body strong {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.25;
 }
 
 .entry-card-body p {
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.75;
 }
 
 .entry-card-foot {
+  justify-content: flex-end;
   color: var(--muted);
   font-size: 12px;
 }
@@ -1588,7 +1553,7 @@ body.has-photo-window {
 
 @media (max-width: 1100px) {
   .app-shell {
-    grid-template-columns: 252px minmax(0, 1fr);
+    grid-template-columns: 236px minmax(0, 1fr);
   }
 
   .panel-layout {
