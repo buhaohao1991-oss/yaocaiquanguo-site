@@ -715,22 +715,42 @@ function renderPage(root, pageId, dashboard, shared) {
 }
 
 function renderHomePage(shared, activeId) {
-  const moduleCards = WORKFLOW_ITEMS.map((item) => {
-    const count = getPageRecords(item.id, shared).length;
+  const moduleMap = new Map(WORKFLOW_ITEMS.map((item) => [item.id, item]));
+  const homeGroups = [
+    { title: "建档起始", subtitle: "基地与种苗建档", itemIds: ["base-trace", "seed-trace"] },
+    { title: "过程追溯", subtitle: "农事、采收与加工", itemIds: ["farming-trace", "harvest-trace", "processing-trace"] },
+    { title: "管理闭环", subtitle: "品种、赋码与仓储", itemIds: ["herb-management", "trace-code-management", "warehouse-management"] }
+  ];
+  const moduleCards = homeGroups.map((group) => {
+    const items = group.itemIds.map((id) => {
+      const item = moduleMap.get(id);
+      if (!item) {
+        return "";
+      }
+      const count = getPageRecords(item.id, shared).length;
+      return `
+        <a class="entry-list-item" href="${item.href}">
+          <div class="entry-list-main">
+            <strong>${escapeHtml(item.title)}</strong>
+            <span>${escapeHtml(item.subtitle)}</span>
+          </div>
+          <div class="entry-list-side">
+            <span class="entry-list-count">${count} 条</span>
+            <span class="entry-list-arrow">›</span>
+          </div>
+        </a>
+      `;
+    }).join("");
     return `
-      <a class="entry-card" href="${item.href}">
-        <div class="entry-card-top">
-          <span class="entry-card-kicker">${escapeHtml(moduleFootnote(item.id))}</span>
-          <span class="entry-card-count">${count} 条</span>
+      <section class="entry-group">
+        <div class="entry-group-head">
+          <h4>${escapeHtml(group.title)}</h4>
+          <p>${escapeHtml(group.subtitle)}</p>
         </div>
-        <div class="entry-card-body">
-          <strong>${escapeHtml(item.title)}</strong>
-          <p>${escapeHtml(item.subtitle)}</p>
+        <div class="entry-list">
+          ${items}
         </div>
-        <div class="entry-card-foot">
-          <span class="entry-card-link">进入模块</span>
-        </div>
-      </a>
+      </section>
     `;
   }).join("");
 
@@ -752,7 +772,7 @@ function renderHomePage(shared, activeId) {
           <div class="home-section-head">
             <div class="panel-title">
               <span class="section-caption">模块入口</span>
-              <h3>按环节进入独立页面</h3>
+              <h3>按流程分组进入模块</h3>
             </div>
           </div>
           <div class="entry-grid">
