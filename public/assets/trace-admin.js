@@ -795,10 +795,6 @@ function renderModulePage(config, pageId, allRecords, filteredRecords, selectedR
               <p>${escapeHtml(config.tableSubtitle)}</p>
             </div>
             <div class="panel-actions">
-              <label class="searchbar">
-                <span>搜索</span>
-                <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-              </label>
               <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
             </div>
           </div>
@@ -1019,27 +1015,20 @@ function renderTraceMapDialogBody(config, pageId) {
   const noteField = config.fields.find((field) => field.name === "note");
   const mainFields = config.fields.filter((field) => field.name !== "note");
   return `
-    <div class="dialog-map-layout">
-      <div class="dialog-form-column">
-        <section class="dialog-section">
-          <div class="dialog-section-head">
-            <div>
+      <div class="dialog-map-layout">
+        <div class="dialog-form-column">
+          <section class="dialog-section">
+            <div class="dialog-section-head">
               <h5>基础信息</h5>
-              <p>先录入基地主体、药材和定位信息，右侧地图会同步回填坐标。</p>
             </div>
-            <span class="dialog-section-tag">建档首屏</span>
-          </div>
-          <div class="form-grid form-grid-map">
-            ${mainFields.map((field) => renderField(field, pageId)).join("")}
-          </div>
-        </section>
+            <div class="form-grid form-grid-map">
+              ${mainFields.map((field) => renderField(field, pageId)).join("")}
+            </div>
+          </section>
         ${noteField ? `
           <section class="dialog-section dialog-section-note">
             <div class="dialog-section-head">
-              <div>
-                <h5>归档说明</h5>
-                <p>这里补认证情况、照片归档或地图定位的补充备注。</p>
-              </div>
+              <h5>归档说明</h5>
             </div>
             <div class="form-grid form-grid-note">
               ${renderField({ ...noteField, full: true }, pageId)}
@@ -1116,31 +1105,14 @@ function renderBaseMapEditor() {
   const config = getTraceMapConfig();
   const mapReady = Boolean(config.tk);
   const emptyMessage = mapReady ? "地图加载中..." : "未配置天地图 Key，当前仍可手动填写经纬度。";
-  const feedbackText = mapReady ? "支持地址搜索、卫星图切换和点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。";
   return `
     <section class="map-editor-card" data-base-map-editor>
       <div class="map-editor-head">
-        <div>
-          <h5>地图定位</h5>
-          <p>地图点位与经纬度联动保存，首版只保留标准图、卫星图和地址搜索。</p>
-        </div>
-        <div class="map-layer-switch">
-          <button class="map-layer-button is-active" type="button" data-map-layer="normal" ${mapReady ? "" : "disabled"}>标准图</button>
-          <button class="map-layer-button" type="button" data-map-layer="satellite" ${mapReady ? "" : "disabled"}>卫星图</button>
-        </div>
-      </div>
-      <div class="map-toolbar">
-        <label class="map-searchbar">
-          <span>地图搜索</span>
-          <input type="search" placeholder="输入基地地址或地名" data-map-search-input ${mapReady ? "" : "disabled"}>
-        </label>
-        <button class="button secondary" type="button" data-map-search ${mapReady ? "" : "disabled"}>搜索定位</button>
-        <button class="button ghost" type="button" data-map-sync-coordinates>按坐标定位</button>
+        <h5>卫星定位</h5>
       </div>
       <div class="trace-live-map" data-trace-map-editor-canvas>
         <div class="trace-live-map-state" data-trace-map-editor-empty>${emptyMessage}</div>
       </div>
-      <p class="map-feedback" data-map-feedback>${feedbackText}</p>
     </section>
   `;
 }
@@ -1388,7 +1360,7 @@ function bindBaseTraceMap(root, dialog) {
   const state = {
     map: null,
     marker: null,
-    layer: "normal",
+    layer: "satellite",
     loading: false
   };
 
@@ -1550,7 +1522,7 @@ function bindBaseTraceMap(root, dialog) {
         setFeedback("已根据地图点击更新坐标。", "success");
       });
 
-      setFeedback("支持地址搜索、卫星图切换和点击地图回填经纬度。", "muted");
+      setFeedback("可点击地图回填经纬度。", "muted");
       return state.map;
     } catch (error) {
       setEmptyState("天地图加载失败，请检查 tk 或网络。");
@@ -1664,7 +1636,7 @@ function bindBaseTraceMap(root, dialog) {
 
   if (dialog) {
     dialog.addEventListener("close", () => {
-      setFeedback(hasKey ? "支持地址搜索、卫星图切换和点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。", hasKey ? "muted" : "warn");
+      setFeedback(hasKey ? "可点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。", hasKey ? "muted" : "warn");
     });
   }
 }
