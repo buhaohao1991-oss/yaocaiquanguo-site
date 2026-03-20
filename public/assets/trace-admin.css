@@ -996,6 +996,10 @@ tbody tr:last-child td {
   background: linear-gradient(180deg, #eff6f1, #f8fbf8);
 }
 
+.trace-live-map {
+  min-height: 420px;
+}
+
 .trace-map-preview {
   min-height: 220px;
 }
@@ -1293,7 +1297,7 @@ tbody tr:last-child td {
 }
 
 .dialog-map-enabled {
-  width: min(980px, calc(100% - 24px));
+  width: min(1280px, calc(100% - 32px));
 }
 
 .dialog-header {
@@ -1330,12 +1334,91 @@ tbody tr:last-child td {
 
 .dialog-body {
   padding: 22px;
+  max-height: calc(100vh - 132px);
+  overflow: auto;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+}
+
+.dialog-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 500px);
+  gap: 20px;
+  align-items: start;
+}
+
+.dialog-form-column {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.dialog-map-column {
+  position: sticky;
+  top: 0;
+  min-width: 0;
+}
+
+.dialog-map-column .map-editor-card {
+  margin-top: 0;
+}
+
+.dialog-section {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #fcfdfc, #f7f9f7);
+}
+
+.dialog-section-note {
+  background: #fff;
+}
+
+.dialog-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.dialog-section-head h5 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.dialog-section-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.dialog-section-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(31, 157, 90, 0.08);
+  border: 1px solid rgba(31, 157, 90, 0.12);
+  color: var(--accent-deep);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.form-grid-map {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid-note {
+  grid-template-columns: 1fr;
 }
 
 .field {
@@ -1400,7 +1483,7 @@ tbody tr:last-child td {
   text-align: center;
 }
 
-@media (max-width: 1240px) {
+@media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: 252px minmax(0, 1fr);
   }
@@ -1411,6 +1494,18 @@ tbody tr:last-child td {
 
   .detail-panel {
     position: static;
+  }
+
+  .dialog-map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog-map-column {
+    position: static;
+  }
+
+  .trace-live-map {
+    min-height: 320px;
   }
 }
 
@@ -1481,7 +1576,8 @@ tbody tr:last-child td {
   .trace-map-meta,
   .map-editor-head,
   .map-toolbar,
-  .field-inline {
+  .field-inline,
+  .dialog-section-head {
     flex-direction: column;
   }
 
@@ -1491,6 +1587,10 @@ tbody tr:last-child td {
 
   .map-searchbar {
     flex-basis: 100%;
+  }
+
+  .form-grid-map {
+    grid-template-columns: 1fr;
   }
 
   .field-inline .button-inline,

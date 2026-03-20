@@ -986,6 +986,13 @@ function renderTableRow(config, record, selectedRecord) {
 
 function renderDialog(config, pageId) {
   const dialogClass = isTraceMapPage(pageId) ? "dialog dialog-map-enabled" : "dialog";
+  const bodyContent = isTraceMapPage(pageId)
+    ? renderTraceMapDialogBody(config, pageId)
+    : `
+        <div class="form-grid">
+          ${config.fields.map((field) => renderField(field, pageId)).join("")}
+        </div>
+      `;
   return `
     <dialog class="${dialogClass}" data-record-dialog>
       <div class="dialog-header">
@@ -996,10 +1003,7 @@ function renderDialog(config, pageId) {
         <button class="dialog-close" type="button" data-close-dialog>关闭</button>
       </div>
       <form class="dialog-body" data-create-form>
-        <div class="form-grid">
-          ${config.fields.map((field) => renderField(field, pageId)).join("")}
-        </div>
-        ${isTraceMapPage(pageId) ? renderBaseMapEditor() : ""}
+        ${bodyContent}
         <div class="form-foot">
           <span class="helper">保存后会自动出现在当前模块的独立页面台账里。</span>
           <div class="panel-actions">
@@ -1009,6 +1013,45 @@ function renderDialog(config, pageId) {
         </div>
       </form>
     </dialog>
+  `;
+}
+
+function renderTraceMapDialogBody(config, pageId) {
+  const noteField = config.fields.find((field) => field.name === "note");
+  const mainFields = config.fields.filter((field) => field.name !== "note");
+  return `
+    <div class="dialog-map-layout">
+      <div class="dialog-form-column">
+        <section class="dialog-section">
+          <div class="dialog-section-head">
+            <div>
+              <h5>基础信息</h5>
+              <p>先录入基地主体、药材和定位信息，右侧地图会同步回填坐标。</p>
+            </div>
+            <span class="dialog-section-tag">建档首屏</span>
+          </div>
+          <div class="form-grid form-grid-map">
+            ${mainFields.map((field) => renderField(field, pageId)).join("")}
+          </div>
+        </section>
+        ${noteField ? `
+          <section class="dialog-section dialog-section-note">
+            <div class="dialog-section-head">
+              <div>
+                <h5>归档说明</h5>
+                <p>这里补认证情况、照片归档或地图定位的补充备注。</p>
+              </div>
+            </div>
+            <div class="form-grid form-grid-note">
+              ${renderField({ ...noteField, full: true }, pageId)}
+            </div>
+          </section>
+        ` : ""}
+      </div>
+      <aside class="dialog-map-column">
+        ${renderBaseMapEditor()}
+      </aside>
+    </div>
   `;
 }
 
