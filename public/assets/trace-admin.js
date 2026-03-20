@@ -43,6 +43,19 @@ const STORAGE_ZONES = ["A-01-03", "A-02-05", "B-03-01", "C-01-09", "D-02-07"];
 const PROCESS_NAMES = ["净选", "清洗", "烘润", "切制", "分级", "包装"];
 const FARM_TASKS = ["整地起垄", "补苗巡查", "病虫监测", "追肥灌溉", "采前抽样", "田间记录补录"];
 const TRACE_SCENES = ["包装标签", "入库贴码", "出库交接", "质检关联", "对外查询码"];
+const TRACE_MAP_PAGE_ID = "base-trace";
+const TRACE_MAP_SCRIPT_ID = "trace-map-sdk";
+const TRACE_MAP_CONFIG_DEFAULTS = {
+  provider: "tianditu",
+  tk: "",
+  defaultCenter: [104.114129, 35.550339],
+  defaultZoom: 5,
+  detailZoom: 11,
+  searchZoom: 15
+};
+const TRACE_MAP_RUNTIME = {
+  sdkPromise: null
+};
 
 const MODULE_CONFIGS = {
   "base-trace": {
@@ -87,8 +100,8 @@ const MODULE_CONFIGS = {
     },
     createRecord: (values, shared) => {
       const index = shared.baseRecords.length + readCustomRecords("base-trace").length + 1;
-      const longitude = normalizeLongitude(values.longitude, index);
-      const latitude = normalizeLatitude(values.latitude, index);
+      const longitude = normalizeOptionalLongitude(values.longitude, index);
+      const latitude = normalizeOptionalLatitude(values.latitude, index);
       return {
         id: recordId("BASE", index),
         code: `JD202603${String(index).padStart(3, "0")}`,
@@ -99,7 +112,7 @@ const MODULE_CONFIGS = {
         address: values.address,
         longitude,
         latitude,
-        coordinateText: `${longitude}, ${latitude}`,
+        coordinateText: formatCoordinateText(longitude, latitude),
         completion: 72,
         batchCount: 1,
         fileCount: 3,
@@ -814,7 +827,7 @@ function renderModulePage(config, pageId, allRecords, filteredRecords, selectedR
               : tableContent}
           </div>
         </section>
-        ${renderDialog(config)}
+        ${renderDialog(config, pageId)}
       </main>
     </div>
   `;
@@ -971,9 +984,10 @@ function renderTableRow(config, record, selectedRecord) {
   `;
 }
 
-function renderDialog(config) {
+function renderDialog(config, pageId) {
+  const dialogClass = isTraceMapPage(pageId) ? "dialog dialog-map-enabled" : "dialog";
   return `
-    <dialog class="dialog" data-record-dialog>
+    <dialog class="${dialogClass}" data-record-dialog>
       <div class="dialog-header">
         <div class="dialog-title">
           <h4>${escapeHtml(config.actionLabel)}</h4>
@@ -983,8 +997,9 @@ function renderDialog(config) {
       </div>
       <form class="dialog-body" data-create-form>
         <div class="form-grid">
-          ${config.fields.map((field) => renderField(field)).join("")}
+          ${config.fields.map((field) => renderField(field, pageId)).join("")}
         </div>
+        ${isTraceMapPage(pageId) ? renderBaseMapEditor() : ""}
         <div class="form-foot">
           <span class="helper">保存后会自动出现在当前模块的独立页面台账里。</span>
           <div class="panel-actions">
@@ -997,10 +1012,23 @@ function renderDialog(config) {
   `;
 }
 
-function renderField(field) {
+function renderField(field, pageId) {
   const type = field.type || "text";
   const fieldClass = field.full ? "field is-full" : "field";
   const required = field.optional ? "" : "required";
+  const attributes = [];
+  if (isTraceMapPage(pageId) && field.name === "address") {
+    attributes.push('data-map-address-input');
+  }
+  if (isTraceMapPage(pageId) && field.name === "longitude") {
+    attributes.push('data-map-longitude-input');
+    attributes.push('inputmode="decimal"');
+  }
+  if (isTraceMapPage(pageId) && field.name === "latitude") {
+    attributes.push('data-map-latitude-input');
+    attributes.push('inputmode="decimal"');
+  }
+  const attributeText = attributes.length ? ` ${attributes.join(" ")}` : "";
   if (field.as === "textarea") {
     return `
       <div class="${fieldClass}">
@@ -1022,11 +1050,56 @@ function renderField(field) {
     `;
   }
 
+  if (isTraceMapPage(pageId) && field.name === "address") {
+    return `
+      <div class="${fieldClass}">
+        <label>${escapeHtml(field.label)}</label>
+        <div class="field-inline">
+          <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(type)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${required}${attributeText}>
+          <button class="button ghost button-inline" type="button" data-open-map-search>地图定位</button>
+        </div>
+      </div>
+    `;
+  }
+
   return `
     <div class="${fieldClass}">
       <label>${escapeHtml(field.label)}</label>
-      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(type)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${required}>
+      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(type)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${required}${attributeText}>
     </div>
+  `;
+}
+
+function renderBaseMapEditor() {
+  const config = getTraceMapConfig();
+  const mapReady = Boolean(config.tk);
+  const emptyMessage = mapReady ? "地图加载中..." : "未配置天地图 Key，当前仍可手动填写经纬度。";
+  const feedbackText = mapReady ? "支持地址搜索、卫星图切换和点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。";
+  return `
+    <section class="map-editor-card" data-base-map-editor>
+      <div class="map-editor-head">
+        <div>
+          <h5>地图定位</h5>
+          <p>地图点位与经纬度联动保存，首版只保留标准图、卫星图和地址搜索。</p>
+        </div>
+        <div class="map-layer-switch">
+          <button class="map-layer-button is-active" type="button" data-map-layer="normal" ${mapReady ? "" : "disabled"}>标准图</button>
+          <button class="map-layer-button" type="button" data-map-layer="satellite" ${mapReady ? "" : "disabled"}>卫星图</button>
+        </div>
+      </div>
+      <div class="map-toolbar">
+        <label class="map-searchbar">
+          <span>地图搜索</span>
+          <input type="search" placeholder="输入基地地址或地名" data-map-search-input ${mapReady ? "" : "disabled"}>
+        </label>
+        <button class="button secondary" type="button" data-map-search ${mapReady ? "" : "disabled"}>搜索定位</button>
+        <button class="button ghost" type="button" data-map-sync-coordinates>按坐标定位</button>
+      </div>
+      <div class="trace-live-map" data-trace-map-editor-canvas>
+        <div class="trace-live-map-state" data-trace-map-editor-empty>${emptyMessage}</div>
+      </div>
+      <p class="map-feedback" data-map-feedback>${feedbackText}</p>
+    </section>
   `;
 }
 
@@ -1066,6 +1139,11 @@ function bindModule(root, config, dashboard, shared, pageId) {
     button.addEventListener("click", () => {
       if (dialog) {
         dialog.showModal();
+        if (isTraceMapPage(pageId)) {
+          window.requestAnimationFrame(() => {
+            activateBaseTraceMap(root);
+          });
+        }
       }
     });
   });
@@ -1077,6 +1155,11 @@ function bindModule(root, config, dashboard, shared, pageId) {
       }
     });
   });
+
+  if (isTraceMapPage(pageId)) {
+    bindBaseTraceMap(root, dialog);
+    bindBaseTracePreviewMaps(root);
+  }
 
   if (form) {
     form.addEventListener("submit", (event) => {
@@ -1198,7 +1281,9 @@ function moduleFootnote(pageId) {
 }
 
 function renderBaseMap(record) {
-  const map = buildBaseMapData(record);
+  const coordinates = readTraceMapCoordinates(record);
+  const coordinateText = coordinates ? formatCoordinateText(coordinates.lng, coordinates.lat) : "未补充坐标";
+  const mapStatus = coordinates ? "已完成定位" : "待补充定位";
   return `
     <div class="subsection">
       <div class="trace-map-card">
@@ -1209,67 +1294,394 @@ function renderBaseMap(record) {
           </div>
           <span class="trace-map-code">${escapeHtml(record.code || "地图定位")}</span>
         </div>
-        <div class="trace-map-canvas">
-          <svg viewBox="0 0 320 184" fill="none" aria-hidden="true">
-            <rect x="12" y="12" width="296" height="160" rx="18" class="trace-map-surface" />
-            <path d="M40 48H280" class="trace-map-grid" />
-            <path d="M40 82H280" class="trace-map-grid" />
-            <path d="M40 116H280" class="trace-map-grid" />
-            <path d="M40 150H280" class="trace-map-grid" />
-            <path d="M68 30V154" class="trace-map-grid" />
-            <path d="M122 30V154" class="trace-map-grid" />
-            <path d="M176 30V154" class="trace-map-grid" />
-            <path d="M230 30V154" class="trace-map-grid" />
-            <path d="M284 30V154" class="trace-map-grid" />
-            <path d="${escapeAttribute(map.routePath)}" class="trace-map-route" />
-            <path d="${escapeAttribute(map.plotPath)}" class="trace-map-plot" />
-            <circle cx="${escapeAttribute(map.x)}" cy="${escapeAttribute(map.y)}" r="11" class="trace-map-marker-ring" />
-            <circle cx="${escapeAttribute(map.x)}" cy="${escapeAttribute(map.y)}" r="5.5" class="trace-map-marker-core" />
-            <text x="${escapeAttribute(map.labelX)}" y="${escapeAttribute(map.labelY)}" class="trace-map-label">${escapeHtml(record.name)}</text>
-          </svg>
+        <div
+          class="trace-map-preview"
+          data-trace-map-preview
+          data-name="${escapeAttribute(record.name || "")}"
+          data-address="${escapeAttribute(record.address || "")}"
+          data-lng="${escapeAttribute(coordinates ? coordinates.lng.toFixed(6) : "")}"
+          data-lat="${escapeAttribute(coordinates ? coordinates.lat.toFixed(6) : "")}"
+        >
+          <div class="trace-live-map-state">地图加载中...</div>
         </div>
         <div class="trace-map-meta">
           <div class="trace-map-stat">
             <span>定位坐标</span>
-            <strong>${escapeHtml(map.coordinateText)}</strong>
+            <strong>${escapeHtml(coordinateText)}</strong>
           </div>
           <div class="trace-map-stat">
             <span>地块范围</span>
             <strong>${escapeHtml(record.area)}</strong>
           </div>
-          <a class="trace-map-link" href="${escapeAttribute(map.url)}" target="_blank" rel="noreferrer">查看地图</a>
+          <div class="trace-map-stat">
+            <span>地图状态</span>
+            <strong>${escapeHtml(mapStatus)}</strong>
+          </div>
         </div>
       </div>
     </div>
   `;
 }
 
-function buildBaseMapData(record) {
-  const longitude = parseCoordinate(record.longitude, defaultLongitude(1), 73, 135);
-  const latitude = parseCoordinate(record.latitude, defaultLatitude(1), 18, 54);
-  const x = Math.round(46 + ((longitude - 73) / (135 - 73)) * 228);
-  const y = Math.round(150 - ((latitude - 18) / (54 - 18)) * 108);
-  const plotWidth = 34;
-  const plotHeight = 22;
-  const plotPath = [
-    `M ${x - plotWidth} ${y + 10}`,
-    `L ${x - 10} ${y - plotHeight}`,
-    `L ${x + plotWidth} ${y - 4}`,
-    `L ${x + 18} ${y + plotHeight}`,
-    `L ${x - 20} ${y + plotHeight + 8}`,
-    "Z"
-  ].join(" ");
-  const routePath = `M ${x - 72} ${y + 24} C ${x - 40} ${y + 8}, ${x - 20} ${y - 12}, ${x} ${y}`;
-  return {
-    x,
-    y,
-    labelX: clamp(x + 16, 42, 220),
-    labelY: clamp(y - 18, 30, 154),
-    plotPath,
-    routePath,
-    coordinateText: `${longitude.toFixed(6)}, ${latitude.toFixed(6)}`,
-    url: `https://www.openstreetmap.org/?mlat=${latitude.toFixed(6)}&mlon=${longitude.toFixed(6)}#map=13/${latitude.toFixed(6)}/${longitude.toFixed(6)}`
+function bindBaseTraceMap(root, dialog) {
+  const form = root.querySelector("[data-create-form]");
+  if (!form) {
+    return;
+  }
+
+  const section = form.querySelector("[data-base-map-editor]");
+  const addressInput = form.querySelector("[data-map-address-input]");
+  const longitudeInput = form.querySelector("[data-map-longitude-input]");
+  const latitudeInput = form.querySelector("[data-map-latitude-input]");
+  const searchInput = form.querySelector("[data-map-search-input]");
+  const searchButtons = root.querySelectorAll("[data-map-search]");
+  const openMapButton = form.querySelector("[data-open-map-search]");
+  const syncCoordinatesButton = form.querySelector("[data-map-sync-coordinates]");
+  const mapCanvas = form.querySelector("[data-trace-map-editor-canvas]");
+  const emptyState = form.querySelector("[data-trace-map-editor-empty]");
+  const feedback = form.querySelector("[data-map-feedback]");
+  const layerButtons = form.querySelectorAll("[data-map-layer]");
+  const config = getTraceMapConfig();
+  const hasKey = Boolean(config.tk);
+  const state = {
+    map: null,
+    marker: null,
+    layer: "normal",
+    loading: false
   };
+
+  const setFeedback = (message, tone = "muted") => {
+    if (!feedback) {
+      return;
+    }
+    feedback.textContent = message;
+    feedback.dataset.tone = tone;
+  };
+
+  const setEmptyState = (message) => {
+    if (!emptyState) {
+      return;
+    }
+    emptyState.textContent = message;
+    emptyState.hidden = false;
+  };
+
+  const hideEmptyState = () => {
+    if (!emptyState) {
+      return;
+    }
+    emptyState.hidden = true;
+  };
+
+  const updateLayerButtons = () => {
+    layerButtons.forEach((button) => {
+      const isActive = (button.dataset.mapLayer || "normal") === state.layer;
+      button.classList.toggle("is-active", isActive);
+    });
+  };
+
+  const syncSearchFromAddress = () => {
+    if (searchInput && document.activeElement !== searchInput) {
+      searchInput.value = addressInput ? addressInput.value : "";
+    }
+  };
+
+  const syncAddressFromSearch = () => {
+    if (addressInput) {
+      addressInput.value = searchInput ? searchInput.value : "";
+    }
+  };
+
+  const getTypedCoordinates = () => {
+    const lng = parseOptionalCoordinate(longitudeInput ? longitudeInput.value : "", 73, 135);
+    const lat = parseOptionalCoordinate(latitudeInput ? latitudeInput.value : "", 18, 54);
+    if (lng === null || lat === null) {
+      return null;
+    }
+    return { lng, lat };
+  };
+
+  const updateLayer = () => {
+    updateLayerButtons();
+    if (!state.map) {
+      return;
+    }
+    ensureTraceMapTypes();
+    const layer = state.layer === "satellite"
+      ? (window.TMAP_HYBRID_MAP || window.TMAP_SATELLITE_MAP || window.TMAP_NORMAL_MAP)
+      : window.TMAP_NORMAL_MAP;
+    if (layer) {
+      state.map.setMapType(layer);
+    }
+  };
+
+  const placeMarker = async (lng, lat, options = {}) => {
+    if (!state.map) {
+      return;
+    }
+
+    const zoom = options.zoom || config.searchZoom;
+    const point = new window.T.LngLat(lng, lat);
+    if (state.marker) {
+      state.map.removeOverLay(state.marker);
+    }
+    state.marker = new window.T.Marker(point);
+    state.map.addOverLay(state.marker);
+    state.map.centerAndZoom(point, zoom);
+
+    if (longitudeInput) {
+      longitudeInput.value = lng.toFixed(6);
+    }
+    if (latitudeInput) {
+      latitudeInput.value = lat.toFixed(6);
+    }
+
+    if (options.reverseGeocode && hasKey) {
+      try {
+        const address = await reverseGeocodeTraceLocation(lng, lat);
+        if (address && addressInput) {
+          addressInput.value = address;
+          syncSearchFromAddress();
+        }
+      } catch (error) {
+        setFeedback("已回填经纬度，可继续手动补充基地地址。", "warn");
+      }
+    }
+  };
+
+  const ensureMap = async () => {
+    if (!mapCanvas || !section) {
+      return null;
+    }
+
+    if (!hasKey) {
+      setFeedback("未配置天地图 Key，当前仍可手动填写经纬度。", "warn");
+      setEmptyState("未配置天地图 Key，当前仍可手动填写经纬度。");
+      return null;
+    }
+
+    if (state.map) {
+      if (typeof state.map.checkResize === "function") {
+        state.map.checkResize();
+      }
+      return state.map;
+    }
+
+    if (state.loading) {
+      return null;
+    }
+
+    state.loading = true;
+    setFeedback("地图加载中...", "muted");
+
+    try {
+      await loadTraceMapSdk();
+      ensureTraceMapTypes();
+      hideEmptyState();
+      const initialCoordinates = getTypedCoordinates();
+      const center = initialCoordinates || {
+        lng: config.defaultCenter[0],
+        lat: config.defaultCenter[1]
+      };
+      state.map = new window.T.Map(mapCanvas);
+      state.map.centerAndZoom(new window.T.LngLat(center.lng, center.lat), initialCoordinates ? config.detailZoom : config.defaultZoom);
+      if (typeof state.map.enableScrollWheelZoom === "function") {
+        state.map.enableScrollWheelZoom();
+      }
+      updateLayer();
+
+      if (initialCoordinates) {
+        await placeMarker(initialCoordinates.lng, initialCoordinates.lat, { zoom: config.detailZoom });
+      }
+
+      state.map.addEventListener("click", async (event) => {
+        const clickedPoint = event && (event.lnglat || event.lngLat);
+        if (!clickedPoint) {
+          return;
+        }
+        const lng = Number(clickedPoint.getLng ? clickedPoint.getLng() : clickedPoint.lng);
+        const lat = Number(clickedPoint.getLat ? clickedPoint.getLat() : clickedPoint.lat);
+        if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
+          return;
+        }
+        await placeMarker(lng, lat, { zoom: config.searchZoom, reverseGeocode: true });
+        setFeedback("已根据地图点击更新坐标。", "success");
+      });
+
+      setFeedback("支持地址搜索、卫星图切换和点击地图回填经纬度。", "muted");
+      return state.map;
+    } catch (error) {
+      setEmptyState("天地图加载失败，请检查 tk 或网络。");
+      setFeedback("天地图加载失败，请检查 tk 或网络。", "danger");
+      return null;
+    } finally {
+      state.loading = false;
+    }
+  };
+
+  const searchAddress = async () => {
+    const keyword = (searchInput && searchInput.value.trim()) || (addressInput && addressInput.value.trim()) || "";
+    if (!keyword) {
+      setFeedback("请先输入基地地址后再搜索定位。", "warn");
+      if (addressInput) {
+        addressInput.focus();
+      }
+      return;
+    }
+
+    if (addressInput) {
+      addressInput.value = keyword;
+    }
+    if (searchInput) {
+      searchInput.value = keyword;
+    }
+
+    const map = await ensureMap();
+    if (!map) {
+      return;
+    }
+
+    setFeedback("正在搜索地址...", "muted");
+
+    try {
+      const coordinates = await geocodeTraceAddress(keyword);
+      await placeMarker(coordinates.lng, coordinates.lat, { zoom: config.searchZoom });
+      setFeedback(`已定位到 ${keyword}。`, "success");
+    } catch (error) {
+      setFeedback(error.message || "未找到对应地址，请换更完整的行政区和地点信息。", "danger");
+    }
+  };
+
+  const syncCoordinatesToMap = async () => {
+    const coordinates = getTypedCoordinates();
+    if (!coordinates) {
+      setFeedback("请输入有效的经纬度后再定位。", "warn");
+      return;
+    }
+    const map = await ensureMap();
+    if (!map) {
+      return;
+    }
+    await placeMarker(coordinates.lng, coordinates.lat, { zoom: config.detailZoom });
+    setFeedback("已按当前经纬度完成定位。", "success");
+  };
+
+  if (addressInput) {
+    addressInput.addEventListener("input", syncSearchFromAddress);
+  }
+  if (searchInput) {
+    searchInput.addEventListener("input", syncAddressFromSearch);
+  }
+  if (openMapButton) {
+    openMapButton.addEventListener("click", async () => {
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      await searchAddress();
+    });
+  }
+  searchButtons.forEach((button) => {
+    button.addEventListener("click", searchAddress);
+  });
+  if (syncCoordinatesButton) {
+    syncCoordinatesButton.addEventListener("click", syncCoordinatesToMap);
+  }
+  [longitudeInput, latitudeInput].forEach((input) => {
+    if (!input) {
+      return;
+    }
+    input.addEventListener("change", syncCoordinatesToMap);
+  });
+  layerButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      state.layer = button.dataset.mapLayer || "normal";
+      updateLayerButtons();
+      const map = await ensureMap();
+      if (map) {
+        updateLayer();
+      }
+    });
+  });
+
+  form._baseTraceMapController = {
+    activate: async () => {
+      if (searchInput && !searchInput.value && addressInput) {
+        searchInput.value = addressInput.value;
+      }
+      const map = await ensureMap();
+      if (map && typeof map.checkResize === "function") {
+        map.checkResize();
+      }
+    }
+  };
+
+  if (!hasKey) {
+    setFeedback("未配置天地图 Key，当前仍可手动填写经纬度。", "warn");
+    setEmptyState("未配置天地图 Key，当前仍可手动填写经纬度。");
+  }
+
+  if (dialog) {
+    dialog.addEventListener("close", () => {
+      setFeedback(hasKey ? "支持地址搜索、卫星图切换和点击地图回填经纬度。" : "请先在地图配置文件中补充 tk，或先手动填写经纬度。", hasKey ? "muted" : "warn");
+    });
+  }
+}
+
+function activateBaseTraceMap(root) {
+  const form = root.querySelector("[data-create-form]");
+  if (form && form._baseTraceMapController) {
+    form._baseTraceMapController.activate();
+  }
+}
+
+function bindBaseTracePreviewMaps(root) {
+  const previews = root.querySelectorAll("[data-trace-map-preview]");
+  previews.forEach((preview) => {
+    mountBaseTracePreview(preview);
+  });
+}
+
+async function mountBaseTracePreview(container) {
+  const config = getTraceMapConfig();
+  const coordinates = readTraceMapCoordinates({
+    longitude: container.dataset.lng,
+    latitude: container.dataset.lat
+  });
+
+  if (!config.tk) {
+    container.innerHTML = '<div class="trace-live-map-state">未配置天地图 Key，当前仅展示坐标信息。</div>';
+    container.classList.add("is-fallback");
+    return;
+  }
+
+  try {
+    await loadTraceMapSdk();
+    container.innerHTML = "";
+    container.classList.remove("is-fallback");
+    const center = coordinates || {
+      lng: config.defaultCenter[0],
+      lat: config.defaultCenter[1]
+    };
+    const map = new window.T.Map(container);
+    map.centerAndZoom(new window.T.LngLat(center.lng, center.lat), coordinates ? config.detailZoom : config.defaultZoom);
+    const layer = window.TMAP_HYBRID_MAP || window.TMAP_SATELLITE_MAP || window.TMAP_NORMAL_MAP;
+    if (layer) {
+      map.setMapType(layer);
+    }
+    if (coordinates) {
+      const marker = new window.T.Marker(new window.T.LngLat(coordinates.lng, coordinates.lat));
+      map.addOverLay(marker);
+    }
+    if (typeof map.disableScrollWheelZoom === "function") {
+      map.disableScrollWheelZoom();
+    }
+    if (typeof map.disableDoubleClickZoom === "function") {
+      map.disableDoubleClickZoom();
+    }
+  } catch (error) {
+    container.innerHTML = '<div class="trace-live-map-state">天地图加载失败，请检查 tk 或网络。</div>';
+    container.classList.add("is-fallback");
+  }
 }
 
 function readCustomRecords(pageId) {
@@ -1359,12 +1771,235 @@ function normalizeValues(values) {
   );
 }
 
+function isTraceMapPage(pageId) {
+  return pageId === TRACE_MAP_PAGE_ID;
+}
+
+function getTraceMapConfig() {
+  const runtimeConfig = typeof window !== "undefined" && window.TRACE_MAP_CONFIG ? window.TRACE_MAP_CONFIG : {};
+  const merged = { ...TRACE_MAP_CONFIG_DEFAULTS, ...runtimeConfig };
+  return {
+    ...merged,
+    defaultCenter: normalizeTraceMapCenter(merged.defaultCenter)
+  };
+}
+
+function normalizeTraceMapCenter(center) {
+  if (Array.isArray(center) && center.length >= 2) {
+    const lng = parseOptionalCoordinate(center[0], 73, 135);
+    const lat = parseOptionalCoordinate(center[1], 18, 54);
+    if (lng !== null && lat !== null) {
+      return [lng, lat];
+    }
+  }
+  return [...TRACE_MAP_CONFIG_DEFAULTS.defaultCenter];
+}
+
+async function loadTraceMapSdk() {
+  if (window.T && window.T.Map && window.T.MapType && window.T.TileLayer) {
+    return window.T;
+  }
+
+  if (TRACE_MAP_RUNTIME.sdkPromise) {
+    return TRACE_MAP_RUNTIME.sdkPromise;
+  }
+
+  const config = getTraceMapConfig();
+  if (!config.tk) {
+    throw new Error("missing-trace-map-key");
+  }
+
+  TRACE_MAP_RUNTIME.sdkPromise = new Promise((resolve, reject) => {
+    const finishWithGlobals = () => {
+      if (window.T && window.T.Map && window.T.MapType && window.T.TileLayer) {
+        resolve(window.T);
+        return true;
+      }
+      return false;
+    };
+
+    if (finishWithGlobals()) {
+      return;
+    }
+
+    const waitForGlobals = (startedAt) => {
+      if (finishWithGlobals()) {
+        return;
+      }
+      if (Date.now() - startedAt > 15000) {
+        TRACE_MAP_RUNTIME.sdkPromise = null;
+        reject(new Error("trace-map-timeout"));
+        return;
+      }
+      window.setTimeout(() => {
+        waitForGlobals(startedAt);
+      }, 80);
+    };
+
+    const existing = document.getElementById(TRACE_MAP_SCRIPT_ID);
+    if (existing) {
+      waitForGlobals(Date.now());
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = TRACE_MAP_SCRIPT_ID;
+    script.src = `https://api.tianditu.gov.cn/api?v=4.0&tk=${encodeURIComponent(config.tk)}`;
+    script.async = true;
+    script.onload = () => {
+      waitForGlobals(Date.now());
+    };
+    script.onerror = () => {
+      TRACE_MAP_RUNTIME.sdkPromise = null;
+      reject(new Error("trace-map-load-failed"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return TRACE_MAP_RUNTIME.sdkPromise;
+}
+
+function ensureTraceMapTypes() {
+  if (!(window.T && window.T.MapType && window.T.TileLayer && window.T.w)) {
+    return;
+  }
+
+  try {
+    if (!window.TMAP_NORMAL_MAP) {
+      const vectorLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.t()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.r()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      const vectorLabelLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.Y()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.T()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_NORMAL_MAP = new window.T.MapType([vectorLayer, vectorLabelLayer], "TMAP_NORMAL_MAP", { a: 1 });
+    }
+
+    if (!window.TMAP_SATELLITE_MAP) {
+      const imageLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.I()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.U()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_SATELLITE_MAP = new window.T.MapType([imageLayer], "TMAP_SATELLITE_MAP");
+    }
+
+    if (!window.TMAP_HYBRID_MAP) {
+      const imageLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.I()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.U()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      const imageLabelLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.i()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.u()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_HYBRID_MAP = new window.T.MapType([imageLayer, imageLabelLayer], "TMAP_HYBRID_MAP");
+    }
+  } catch (error) {
+    // Let the map fall back to the provider default base layer if custom map types are not ready yet.
+  }
+}
+
+function createTraceTileLayer(getUrl) {
+  const layer = new window.T.TileLayer("", {
+    minZoom: 1,
+    maxZoom: 18
+  });
+  layer.getTileUrl = getUrl;
+  return layer;
+}
+
+function currentTraceProjectionCode() {
+  return window.T && window.T.gq && window.T.gq.EW === 0 ? "EPSG:900913" : "EPSG:4326";
+}
+
+async function geocodeTraceAddress(keyword) {
+  const config = getTraceMapConfig();
+  const response = await fetch(
+    `https://api.tianditu.gov.cn/geocoder?ds=${encodeURIComponent(JSON.stringify({ keyWord: keyword }))}&tk=${encodeURIComponent(config.tk)}`
+  );
+  if (!response.ok) {
+    throw new Error("地址搜索暂时不可用，请稍后重试。");
+  }
+  const data = await response.json();
+  const lng = parseOptionalCoordinate(data && data.location ? data.location.lon : "", 73, 135);
+  const lat = parseOptionalCoordinate(data && data.location ? data.location.lat : "", 18, 54);
+  if (String(data && data.status) !== "0" || lng === null || lat === null) {
+    throw new Error("未找到对应地址，请换更完整的行政区和地点信息。");
+  }
+  return { lng, lat };
+}
+
+async function reverseGeocodeTraceLocation(lng, lat) {
+  const config = getTraceMapConfig();
+  const postStr = JSON.stringify({ lon: Number(lng), lat: Number(lat), ver: 1 });
+  const response = await fetch(
+    `https://api.tianditu.gov.cn/geocoder?postStr=${encodeURIComponent(postStr)}&type=geocode&tk=${encodeURIComponent(config.tk)}`
+  );
+  if (!response.ok) {
+    throw new Error("reverse-geocode-request-failed");
+  }
+  const data = await response.json();
+  if (String(data && data.status) !== "0") {
+    throw new Error("reverse-geocode-empty");
+  }
+  return data && data.result ? data.result.formatted_address || "" : "";
+}
+
 function normalizeLongitude(value, index) {
   return parseCoordinate(value, defaultLongitude(index), 73, 135).toFixed(6);
 }
 
 function normalizeLatitude(value, index) {
   return parseCoordinate(value, defaultLatitude(index), 18, 54).toFixed(6);
+}
+
+function normalizeOptionalLongitude(value, index) {
+  const raw = String(value ?? "").trim();
+  if (!raw) {
+    return "";
+  }
+  return parseCoordinate(raw, defaultLongitude(index), 73, 135).toFixed(6);
+}
+
+function normalizeOptionalLatitude(value, index) {
+  const raw = String(value ?? "").trim();
+  if (!raw) {
+    return "";
+  }
+  return parseCoordinate(raw, defaultLatitude(index), 18, 54).toFixed(6);
+}
+
+function parseOptionalCoordinate(value, min, max) {
+  const raw = Number(String(value ?? "").trim());
+  if (Number.isFinite(raw) && raw >= min && raw <= max) {
+    return raw;
+  }
+  return null;
+}
+
+function readTraceMapCoordinates(record) {
+  const lng = parseOptionalCoordinate(record && record.longitude, 73, 135);
+  const lat = parseOptionalCoordinate(record && record.latitude, 18, 54);
+  if (lng === null || lat === null) {
+    return null;
+  }
+  return { lng, lat };
+}
+
+function formatCoordinateText(longitude, latitude) {
+  const lng = parseOptionalCoordinate(longitude, 73, 135);
+  const lat = parseOptionalCoordinate(latitude, 18, 54);
+  if (lng === null || lat === null) {
+    return "";
+  }
+  return `${lng.toFixed(6)}, ${lat.toFixed(6)}`;
 }
 
 function clamp(value, min, max) {
