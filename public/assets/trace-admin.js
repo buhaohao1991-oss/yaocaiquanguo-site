@@ -13,8 +13,8 @@ const NAV_ITEMS = [
 const WORKFLOW_ITEMS = NAV_ITEMS.filter((item) => item.id !== "home");
 
 const SIDE_FOOTER = {
-  title: "当前版本",
-  body: "这是空白流程测试版。平台不再预置任何演示记录，你可以从基地开始自己完整跑一遍溯源流程。"
+  title: "空白流程测试版",
+  body: "新增记录仅保存在当前浏览器，可继续完整跑通溯源流程。"
 };
 
 const DATA_PREFIX = "trace-admin-empty-v1";
@@ -661,7 +661,7 @@ async function loadDashboard() {
 function renderPage(root, pageId, dashboard, shared) {
   if (pageId === "home") {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage(dashboard, shared, pageId);
+    root.innerHTML = renderHomePage(shared, pageId);
     bindHome(root);
     return;
   }
@@ -669,7 +669,7 @@ function renderPage(root, pageId, dashboard, shared) {
   const config = MODULE_CONFIGS[pageId];
   if (!config) {
     document.title = "中药材溯源平台";
-    root.innerHTML = renderHomePage(dashboard, shared, "home");
+    root.innerHTML = renderHomePage(shared, "home");
     bindHome(root);
     return;
   }
@@ -678,52 +678,67 @@ function renderPage(root, pageId, dashboard, shared) {
   const allRecords = getPageRecords(pageId, shared);
   const filtered = filterRecords(allRecords, APP_STATE.query, config.searchText);
   const selected = pickSelectedRecord(filtered, allRecords, APP_STATE.selectedId);
-  root.innerHTML = renderModulePage(config, dashboard, shared, pageId, allRecords, filtered, selected);
+  root.innerHTML = renderModulePage(config, pageId, allRecords, filtered, selected);
   bindModule(root, config, dashboard, shared, pageId);
 }
 
-function renderHomePage(dashboard, shared, activeId) {
-  const moduleCards = WORKFLOW_ITEMS.map((item) => {
+function renderHomePage(shared, activeId) {
+  const heroTags = ["基地建档", "种苗关联", "过程归档", "仓储闭环"];
+  const moduleCards = WORKFLOW_ITEMS.map((item, index) => {
     const count = getPageRecords(item.id, shared).length;
     return `
-      <a class="module-card" href="${item.href}">
-        <div class="module-card-head">
-          <strong>${escapeHtml(item.title)}</strong>
-          <span class="module-card-count">${count} 条</span>
+      <a class="entry-card" href="${item.href}">
+        <div class="entry-card-top">
+          <span class="entry-card-index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="entry-card-count">${count} 条</span>
         </div>
-        <p>${escapeHtml(item.subtitle)}</p>
+        <div class="entry-card-body">
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(item.subtitle)}</p>
+        </div>
+        <div class="entry-card-foot">
+          <span>${escapeHtml(moduleFootnote(item.id))}</span>
+          <span class="entry-card-link">进入模块</span>
+        </div>
       </a>
     `;
   }).join("");
 
-  return shellLayout({
-    activeId,
-    dashboard,
-    title: "中药材溯源平台",
-    kicker: "中药材全流程追溯",
-    subtitle: "围绕基地建档、生产流转、质检归档与仓储管理，构建清晰可查的业务工作台。",
-    topActions: `
-      <a class="button primary" href="base-trace.html">开始基地建档</a>
-    `,
-    body: `
-      <section class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <h3>业务模块</h3>
-            <p>从基地开始逐步建档，每个模块独立进入、独立维护。</p>
+  return `
+    <div class="app-shell">
+      ${renderSidebar(activeId)}
+      <main class="main home-main">
+        <section class="home-hero">
+          <div class="home-hero-copy">
+            <span class="section-caption">中药材全流程追溯</span>
+            <h2>中药材溯源平台</h2>
+            <p>从基地建档开始，逐步完成种苗、农事、采收、加工、赋码与仓储的独立台账管理。</p>
+            <div class="home-actions">
+              <a class="button primary" href="base-trace.html">开始基地建档</a>
+            </div>
+            <div class="home-flow">
+              ${heroTags.map((tag) => `<span class="home-flow-pill">${escapeHtml(tag)}</span>`).join("")}
+            </div>
           </div>
-        </div>
-        <div class="panel-body">
-          <div class="module-card-grid">
+        </section>
+        <section class="home-section">
+          <div class="home-section-head">
+            <div class="panel-title">
+              <span class="section-caption">模块入口</span>
+              <h3>按环节进入独立页面</h3>
+            </div>
+            <p>首页只保留业务入口，台账查询、详情查看和新增动作都在各自模块页完成。</p>
+          </div>
+          <div class="entry-grid">
             ${moduleCards}
           </div>
-        </div>
-      </section>
-    `
-  });
+        </section>
+      </main>
+    </div>
+  `;
 }
 
-function renderModulePage(config, dashboard, shared, pageId, allRecords, filteredRecords, selectedRecord) {
+function renderModulePage(config, pageId, allRecords, filteredRecords, selectedRecord) {
   const tableContent = filteredRecords.length
     ? `
       <div class="table-wrap">
@@ -741,149 +756,109 @@ function renderModulePage(config, dashboard, shared, pageId, allRecords, filtere
     `
     : `<div class="empty">${allRecords.length ? `没有找到符合条件的${escapeHtml(config.title)}记录。` : `当前还没有${escapeHtml(config.title)}记录，请先新增第一条数据。`}</div>`;
 
-  return shellLayout({
-    activeId: pageId,
-    dashboard,
-    title: config.title,
-    kicker: config.kicker,
-    subtitle: config.subtitle,
-    topActions: ``,
-    body: `
-      <section class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <h3>${escapeHtml(config.tableTitle)}</h3>
-            <p>${escapeHtml(config.tableSubtitle)}</p>
-          </div>
-          <div class="panel-actions">
-            <label class="searchbar">
-              <span>搜索</span>
-              <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-            </label>
-            <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
-          </div>
-        </div>
-        <div class="panel-body">
-          ${allRecords.length
-            ? `
-            <div class="panel-layout">
-              <div>
-                ${tableContent}
-              </div>
-              <aside class="detail-panel">
-                <section class="panel">
-                  <div class="panel-header">
-                    <div class="panel-title">
-                      <h3>当前详情</h3>
-                      <p>只显示当前模块这条记录的关键信息。</p>
-                    </div>
-                  </div>
-                  <div class="panel-body">
-                    ${selectedRecord ? config.detail(selectedRecord) : `<div class="empty">当前没有可展示的记录，请先新增一条数据。</div>`}
-                  </div>
-                </section>
-              </aside>
-            </div>
-            `
-            : tableContent}
-        </div>
-      </section>
-      ${renderDialog(config)}
-    `
-  });
-}
-
-function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions, body }) {
   return `
     <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-mark" aria-hidden="true">
-            <svg class="brand-mark-svg" viewBox="0 0 88 88" fill="none">
-              <defs>
-                <linearGradient id="brandSeal" x1="14" y1="10" x2="74" y2="78" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#3BD27C" />
-                  <stop offset="1" stop-color="#127544" />
-                </linearGradient>
-                <linearGradient id="brandStroke" x1="22" y1="18" x2="60" y2="66" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#F4FFF7" />
-                  <stop offset="1" stop-color="#DDF8E7" />
-                </linearGradient>
-              </defs>
-              <rect x="6" y="6" width="76" height="76" rx="30" fill="url(#brandSeal)" />
-              <path d="M44 24V61" stroke="url(#brandStroke)" stroke-width="3.2" stroke-linecap="round" />
-              <path d="M44 33C36 22 26 22 21 32C31 35 39 35 44 33Z" fill="url(#brandStroke)" />
-              <path d="M44 33C52 22 62 22 67 32C57 35 49 35 44 33Z" fill="url(#brandStroke)" opacity="0.96" />
-              <path d="M44 47C36 38 28 39 23 49C33 52 40 51 44 47Z" fill="url(#brandStroke)" opacity="0.92" />
-              <path d="M44 47C52 38 60 39 65 49C55 52 48 51 44 47Z" fill="url(#brandStroke)" opacity="0.88" />
-              <path d="M25 60H63" stroke="rgba(255,255,255,0.34)" stroke-width="2" stroke-linecap="round" />
-            </svg>
+      ${renderSidebar(pageId)}
+      <main class="main module-main">
+        <header class="page-header">
+          <div class="page-header-main">
+            <span class="section-caption">业务模块</span>
+            <h2>${escapeHtml(config.title)}</h2>
+            <p>${escapeHtml(config.subtitle)}</p>
           </div>
-          <div class="brand-copy">
-            <span class="brand-eyebrow">全流程溯源平台</span>
-            <h1>中药材溯源平台</h1>
-            <p>基地建档 · 批次流转 · 质检归档 · 仓储追踪</p>
-          </div>
-        </div>
-        <div class="nav-caption">模块导航</div>
-        <nav class="nav-group">
-          ${NAV_ITEMS.map((item) => renderNavItem(item, activeId)).join("")}
-        </nav>
-        <div class="sidebar-foot">
-          <strong>${escapeHtml(SIDE_FOOTER.title)}</strong>
-          ${escapeHtml(SIDE_FOOTER.body)}
-        </div>
-      </aside>
-      <main class="main">
-        <header class="topbar ${activeId === "home" ? "is-home" : ""}">
-          <div class="headline">
-            <span class="headline-kicker">${escapeHtml(kicker)}</span>
-            <h2>${escapeHtml(title)}</h2>
-            <p>${escapeHtml(subtitle)}</p>
-          </div>
-          ${topActions ? `<div class="topbar-side">${topActions}</div>` : ""}
         </header>
-        ${body}
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h3>${escapeHtml(config.tableTitle)}</h3>
+              <p>${escapeHtml(config.tableSubtitle)}</p>
+            </div>
+            <div class="panel-actions">
+              <label class="searchbar">
+                <span>搜索</span>
+                <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
+              </label>
+              <button class="button primary" type="button" data-open-dialog>${escapeHtml(config.actionLabel)}</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            ${allRecords.length
+              ? `
+              <div class="panel-layout">
+                <div>
+                  ${tableContent}
+                </div>
+                <aside class="detail-panel">
+                  <section class="panel panel-subtle">
+                    <div class="panel-header">
+                      <div class="panel-title">
+                        <h3>当前详情</h3>
+                        <p>仅展示当前模块选中记录的关键信息。</p>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      ${selectedRecord ? config.detail(selectedRecord) : `<div class="empty">当前没有可展示的记录，请先新增一条数据。</div>`}
+                    </div>
+                  </section>
+                </aside>
+              </div>
+              `
+              : tableContent}
+          </div>
+        </section>
+        ${renderDialog(config)}
       </main>
     </div>
   `;
 }
 
-function renderWorkflowPanel(activeId, title, description) {
+function renderSidebar(activeId) {
   return `
-    <section class="workflow-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <h3>${escapeHtml(title)}</h3>
-          <p>${escapeHtml(description)}</p>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          ${renderBrandMark()}
+        </div>
+        <div class="brand-copy">
+          <span class="brand-eyebrow">全流程溯源工作台</span>
+          <h1>中药材溯源平台</h1>
+          <p>基地建档 · 批次流转 · 质检归档 · 仓储闭环</p>
         </div>
       </div>
-      <div class="workflow-body">
-        <div class="workflow-grid">
-          ${WORKFLOW_ITEMS.map((item, index) => `
-            <a class="workflow-step ${activeId === item.id ? "is-active" : ""}" href="${item.href}">
-              <div class="workflow-index">${String(index + 1).padStart(2, "0")}</div>
-              <h4>${escapeHtml(item.title)}</h4>
-              <p>${escapeHtml(item.subtitle)}</p>
-            </a>
-          `).join("")}
-        </div>
+      <div class="nav-caption">模块导航</div>
+      <nav class="nav-group">
+        ${NAV_ITEMS.map((item) => renderNavItem(item, activeId)).join("")}
+      </nav>
+      <div class="sidebar-foot">
+        <span class="sidebar-foot-label">当前环境</span>
+        <strong>${escapeHtml(SIDE_FOOTER.title)}</strong>
+        <p>${escapeHtml(SIDE_FOOTER.body)}</p>
       </div>
-    </section>
+    </aside>
   `;
 }
 
-function renderSummaryGrid(cards) {
+function renderBrandMark() {
   return `
-    <section class="summary-grid">
-      ${cards.map((card) => `
-        <div class="summary-card">
-          <div class="label">${escapeHtml(card.label)}</div>
-          <div class="value">${escapeHtml(card.value)}</div>
-          <div class="note">${escapeHtml(card.note)}</div>
-        </div>
-      `).join("")}
-    </section>
+    <svg class="brand-mark-svg" viewBox="0 0 88 88" fill="none">
+      <defs>
+        <linearGradient id="brandSeal" x1="14" y1="10" x2="74" y2="78" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#2BC56E" />
+          <stop offset="1" stop-color="#15663F" />
+        </linearGradient>
+        <linearGradient id="brandStroke" x1="24" y1="20" x2="59" y2="63" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#F6FFF8" />
+          <stop offset="1" stop-color="#DDF5E6" />
+        </linearGradient>
+      </defs>
+      <rect x="10" y="10" width="68" height="68" rx="22" fill="url(#brandSeal)" />
+      <path d="M44 23V59" stroke="url(#brandStroke)" stroke-width="3.2" stroke-linecap="round" />
+      <path d="M44 31C37 24 29 24 25 31C33 34 39 34 44 31Z" fill="url(#brandStroke)" />
+      <path d="M44 31C51 24 59 24 63 31C55 34 49 34 44 31Z" fill="url(#brandStroke)" opacity="0.95" />
+      <path d="M44 46C37 39 31 40 27 47C34 50 40 50 44 46Z" fill="url(#brandStroke)" opacity="0.92" />
+      <path d="M44 46C51 39 57 40 61 47C54 50 48 50 44 46Z" fill="url(#brandStroke)" opacity="0.88" />
+      <path d="M28 61H60" stroke="rgba(255,255,255,0.42)" stroke-width="2" stroke-linecap="round" />
+    </svg>
   `;
 }
 
@@ -1119,14 +1094,14 @@ function detailTitle(record) {
 
 function moduleFootnote(pageId) {
   const notes = {
-    "base-trace": "基地是整条溯源链的起点",
-    "seed-trace": "把供种来源和批号单独看清",
-    "farming-trace": "农事记录要按次填报",
-    "harvest-trace": "采收批次直接关系后续加工",
-    "processing-trace": "加工工序要和采收批次对上",
-    "herb-management": "从药材维度统筹档案标准",
-    "trace-code-management": "码段必须能回查到具体批次",
-    "warehouse-management": "仓库是溯源闭环的最后一页"
+    "base-trace": "基地建档",
+    "seed-trace": "种苗来源",
+    "farming-trace": "田间记录",
+    "harvest-trace": "采收验收",
+    "processing-trace": "工序归档",
+    "herb-management": "品种标准",
+    "trace-code-management": "批次赋码",
+    "warehouse-management": "库存闭环"
   };
   return notes[pageId] || "进入页面";
 }
