@@ -700,10 +700,10 @@ function renderHomePage(dashboard, shared, activeId) {
     activeId,
     dashboard,
     title: "中药材溯源平台",
-    kicker: "HERBAL TRACE",
-    subtitle: "面向基地、种苗、农事、采收、初加工、赋码与仓储的中药材全流程工作台。",
+    kicker: "中药材全流程追溯",
+    subtitle: "围绕基地建档、生产流转、质检归档与仓储管理，构建清晰可查的业务工作台。",
     topActions: `
-      <a class="button primary" href="base-trace.html">进入基地建档</a>
+      <a class="button primary" href="base-trace.html">开始基地建档</a>
     `,
     body: `
       <section class="panel">
@@ -799,29 +799,33 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
       <aside class="sidebar">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">
-            <svg class="brand-mark-svg" viewBox="0 0 72 72" fill="none">
+            <svg class="brand-mark-svg" viewBox="0 0 88 88" fill="none">
               <defs>
-                <linearGradient id="brandSeal" x1="10" y1="8" x2="60" y2="64" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#31c871" />
-                  <stop offset="1" stop-color="#158247" />
+                <linearGradient id="brandSeal" x1="14" y1="10" x2="74" y2="78" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#3BD27C" />
+                  <stop offset="1" stop-color="#127544" />
+                </linearGradient>
+                <linearGradient id="brandStroke" x1="22" y1="18" x2="60" y2="66" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#F4FFF7" />
+                  <stop offset="1" stop-color="#DDF8E7" />
                 </linearGradient>
               </defs>
-              <rect x="4" y="4" width="64" height="64" rx="24" fill="url(#brandSeal)" />
-              <circle cx="36" cy="36" r="19" stroke="rgba(255,255,255,0.28)" stroke-width="1.4" />
-              <path d="M36 22V49" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-              <path d="M36 29C31 22 24 22 20 29C27 31 32 30 36 29Z" fill="#ffffff" />
-              <path d="M36 29C41 22 48 22 52 29C45 31 40 30 36 29Z" fill="#ffffff" opacity="0.95" />
-              <path d="M36 40C31 34 25 35 22 42C28 44 33 43 36 40Z" fill="#ffffff" opacity="0.9" />
-              <path d="M36 40C41 34 47 35 50 42C44 44 39 43 36 40Z" fill="#ffffff" opacity="0.85" />
+              <rect x="6" y="6" width="76" height="76" rx="30" fill="url(#brandSeal)" />
+              <path d="M44 24V61" stroke="url(#brandStroke)" stroke-width="3.2" stroke-linecap="round" />
+              <path d="M44 33C36 22 26 22 21 32C31 35 39 35 44 33Z" fill="url(#brandStroke)" />
+              <path d="M44 33C52 22 62 22 67 32C57 35 49 35 44 33Z" fill="url(#brandStroke)" opacity="0.96" />
+              <path d="M44 47C36 38 28 39 23 49C33 52 40 51 44 47Z" fill="url(#brandStroke)" opacity="0.92" />
+              <path d="M44 47C52 38 60 39 65 49C55 52 48 51 44 47Z" fill="url(#brandStroke)" opacity="0.88" />
+              <path d="M25 60H63" stroke="rgba(255,255,255,0.34)" stroke-width="2" stroke-linecap="round" />
             </svg>
           </div>
           <div class="brand-copy">
-            <span class="brand-eyebrow">Traceability Console</span>
+            <span class="brand-eyebrow">全流程溯源平台</span>
             <h1>中药材溯源平台</h1>
-            <p>基地、批次、资料、质检一体化管理</p>
+            <p>基地建档 · 批次流转 · 质检归档 · 仓储追踪</p>
           </div>
         </div>
-        <div class="nav-caption">Trace Modules</div>
+        <div class="nav-caption">模块导航</div>
         <nav class="nav-group">
           ${NAV_ITEMS.map((item) => renderNavItem(item, activeId)).join("")}
         </nav>
@@ -831,7 +835,7 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
         </div>
       </aside>
       <main class="main">
-        <header class="topbar">
+        <header class="topbar ${activeId === "home" ? "is-home" : ""}">
           <div class="headline">
             <span class="headline-kicker">${escapeHtml(kicker)}</span>
             <h2>${escapeHtml(title)}</h2>
