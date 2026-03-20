@@ -998,9 +998,8 @@ function renderDialog(config, pageId) {
       <div class="dialog-header">
         <div class="dialog-title">
           <h4>${escapeHtml(config.actionLabel)}</h4>
-          <p>这条记录会保存到当前浏览器，刷新后仍可继续你自己的流程测试。</p>
         </div>
-        <button class="dialog-close" type="button" data-close-dialog>关闭</button>
+        <button class="dialog-close" type="button" data-close-dialog aria-label="关闭">✕</button>
       </div>
       <form class="dialog-body" data-create-form>
         ${bodyContent}
