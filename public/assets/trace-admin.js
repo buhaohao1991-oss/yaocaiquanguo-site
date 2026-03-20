@@ -14,43 +14,22 @@ const WORKFLOW_ITEMS = NAV_ITEMS.filter((item) => item.id !== "home");
 
 const SIDE_FOOTER = {
   title: "当前版本",
-  body: "这是前端多页面演示版。新增档案、批次和资料会写入当前浏览器本地存储，用于展示独立页面流程。"
+  body: "这是空白流程测试版。平台不再预置任何演示记录，你可以从基地开始自己完整跑一遍溯源流程。"
 };
 
-const DATA_PREFIX = "trace-admin-demo";
+const DATA_PREFIX = "trace-admin-empty-v1";
 const DEFAULT_DASHBOARD = {
   meta: {
-    generated_at: "2026-03-20 09:00:00",
-    latest_date: "2026-03-20",
-    source_count: 1,
-    herb_count: 12,
-    covered_markets: ["亳州", "安国", "玉林"]
+    generated_at: "2026-03-20 10:00:00",
+    latest_date: "空白流程版",
+    source_count: 0,
+    herb_count: 0,
+    covered_markets: []
   },
-  status: "演示数据",
+  status: "空白流程测试版",
   origin: {
-    total: 5,
-    items: [
-      {
-        date: "2026-03-20",
-        herb: "黄连",
-        spec: "统货",
-        location: "湖北利川",
-        price: "335 元/kg",
-        tag: "关注",
-        summary: "湖北利川黄连基地完成春季巡田",
-        source: "演示数据"
-      },
-      {
-        date: "2026-03-20",
-        herb: "党参",
-        spec: "鲜货",
-        location: "甘肃岷县",
-        price: "42 元/kg",
-        tag: "走快",
-        summary: "甘肃岷县党参采收批次完成初验",
-        source: "演示数据"
-      }
-    ]
+    total: 0,
+    items: []
   }
 };
 
@@ -737,8 +716,9 @@ function renderHomePage(dashboard, shared, activeId) {
 
   const notices = [
     "现在开始，左侧每个模块都会进入新的页面，不再共享一个长页面。",
+    "平台已清空所有预置记录，你录入的第一条数据就是流程起点。",
     "流程顺序按：基地 -> 种子 -> 农事 -> 采收 -> 初加工 -> 药材 -> 赋码 -> 仓储。",
-    "新增内容会写进浏览器本地存储，刷新后依然存在，便于你继续演示。"
+    "新增内容会写进当前浏览器本地存储，刷新后依然存在，便于你继续测试。"
   ];
 
   return shellLayout({
@@ -779,7 +759,7 @@ function renderHomePage(dashboard, shared, activeId) {
               </div>
               <div class="panel-body">
                 <div class="list-grid">
-                  ${activityItems}
+                  ${activityItems || `<div class="empty">当前还没有任何预置动作。你可以从“基地溯源”开始新增第一条记录，后面的流程页再逐步补齐。</div>`}
                 </div>
               </div>
             </section>
@@ -917,12 +897,12 @@ function shellLayout({ activeId, dashboard, title, kicker, subtitle, topActions,
           </div>
           <div class="topbar-side">
             <span class="top-chip"><span class="chip-pulse"></span>${escapeHtml(dashboard.meta.latest_date || todayText())}</span>
-            <span class="top-chip">行情源 ${escapeHtml(String(dashboard.meta.source_count || 0))} 个</span>
+            <span class="top-chip">预置记录 ${escapeHtml(String(dashboard.meta.source_count || 0))} 条</span>
             ${topActions || ""}
           </div>
         </header>
         ${body}
-        <p class="footer">数据基于公开行情整理和前端演示建模。当前新增内容保存在浏览器本地，仅用于展示多页面溯源流程。</p>
+        <p class="footer">当前是空白流程测试版。系统不再预置演示记录，你新增的内容只会保存在当前浏览器本地，便于自己完整测试流程。</p>
       </main>
     </div>
   `;
@@ -992,7 +972,7 @@ function renderDialog(config) {
       <div class="dialog-header">
         <div class="dialog-title">
           <h4>${escapeHtml(config.actionLabel)}</h4>
-          <p>这条记录会保存到当前浏览器，刷新后仍可继续演示多页面流程。</p>
+          <p>这条记录会保存到当前浏览器，刷新后仍可继续你自己的流程测试。</p>
         </div>
         <button class="dialog-close" type="button" data-close-dialog>关闭</button>
       </div>
@@ -1134,161 +1114,16 @@ function filterRecords(records, query, searchText) {
 }
 
 function buildSharedData(dashboard) {
-  const originItems = Array.isArray(dashboard.origin && dashboard.origin.items) && dashboard.origin.items.length
-    ? dashboard.origin.items
-    : DEFAULT_DASHBOARD.origin.items;
-  const uniqueItems = uniqueBy(originItems, (item) => `${item.location}-${item.herb}`).slice(0, 8);
-  const herbs = uniqueBy(originItems, (item) => item.herb).slice(0, 8);
-
-  const baseRecords = uniqueItems.map((item, index) => ({
-    id: recordId("BASE", index + 1),
-    code: `JD202603${String(index + 1).padStart(3, "0")}`,
-    name: `${item.location}${item.herb}基地`,
-    manager: MANAGERS[index % MANAGERS.length],
-    herb: item.herb,
-    area: `${(92 + index * 26).toFixed(index % 2 === 0 ? 0 : 1)} 亩`,
-    address: item.location,
-    completion: 78 + (index % 4) * 5,
-    batchCount: 2 + (index % 3),
-    fileCount: 4 + index,
-    stage: index % 3 === 0 ? "建档完成" : index % 3 === 1 ? "资料补录" : "等待审核",
-    statusLabel: index % 3 === 0 ? "已归档" : index % 3 === 1 ? "审核中" : "待补资料",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "pending" : "warn",
-    lastUpdate: item.date,
-    note: item.summary,
-    documents: ["基地信息表", "地块坐标图", "现场照片", "GAP 自查表"].slice(0, 3 + (index % 2)),
-    actions: [`${item.date} 完成基地建档`, `${item.date} 补录负责人信息`, `${item.date} 更新产地图像`]
-  }));
-
-  const seedRecords = baseRecords.map((base, index) => ({
-    id: recordId("SEED", index + 1),
-    seedBatch: `ZZ-${String(index + 1).padStart(2, "0")}-202603`,
-    herb: base.herb,
-    baseName: base.name,
-    supplier: SUPPLIERS[index % SUPPLIERS.length],
-    quantity: `${260 + index * 48} kg`,
-    germination: `${94 - (index % 4)}%`,
-    receivedAt: shiftDate("2026-03-04", index),
-    certificate: index % 3 === 0 ? "资质齐全" : "待补报告",
-    statusLabel: index % 3 === 0 ? "已入库" : index % 3 === 1 ? "待抽检" : "待上传证照",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "warn" : "pending",
-    note: `${base.name} 的种苗到货记录`,
-    checks: ["到货清点完成", "发芽率抽检", "供种资质归档"]
-  }));
-
-  const farmingRecords = baseRecords.map((base, index) => ({
-    id: recordId("FARM", index + 1),
-    task: FARM_TASKS[index % FARM_TASKS.length],
-    herb: base.herb,
-    baseName: base.name,
-    operator: AGRI_TEAMS[index % AGRI_TEAMS.length],
-    recordCount: `${2 + (index % 4)} 条`,
-    weather: `${16 + index}℃ / 湿度 ${62 + index}%`,
-    plannedDate: shiftDate("2026-03-10", index),
-    statusLabel: index % 3 === 0 ? "已完成" : index % 3 === 1 ? "待复核" : "补录中",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "pending" : "warn",
-    note: `${base.name} 的田间记录来自巡田填报`,
-    steps: ["现场填报", "图片上传", "管理员复核"]
-  }));
-
-  const harvestRecords = baseRecords.map((base, index) => ({
-    id: recordId("HARV", index + 1),
-    harvestBatch: `HV-${String(index + 1).padStart(2, "0")}-202603`,
-    herb: base.herb,
-    baseName: base.name,
-    freshWeight: `${680 + index * 95} kg`,
-    dryYield: `${24 + (index % 5)}%`,
-    inspector: INSPECTORS[index % INSPECTORS.length],
-    harvestDate: shiftDate("2026-03-14", index),
-    statusLabel: index % 3 === 0 ? "已入库" : index % 3 === 1 ? "待质检" : "待复核",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "warn" : "pending",
-    note: `${base.name} 的采收批次已经关联验收人员`,
-    steps: ["采收登记", "鲜货过磅", "验收签字"]
-  }));
-
-  const processingRecords = harvestRecords.map((harvest, index) => ({
-    id: recordId("PROC", index + 1),
-    processNo: `GC-${String(index + 1).padStart(2, "0")}-202603`,
-    herb: harvest.herb,
-    inputBatch: harvest.harvestBatch,
-    workshop: WORKSHOPS[index % WORKSHOPS.length],
-    outputSpec: originItems[index] ? originItems[index].spec : "统货",
-    qcResult: index % 3 === 0 ? "理化合格" : index % 3 === 1 ? "待复验" : "水分复核",
-    archivedAt: shiftDate("2026-03-16", index),
-    statusLabel: index % 3 === 0 ? "已归档" : index % 3 === 1 ? "加工中" : "待补报告",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "info" : "warn",
-    note: `${harvest.harvestBatch} 已进入车间工序`,
-    steps: ["进料核对", "工序执行", "质检归档"]
-  }));
-
-  const herbRecords = herbs.map((item, index) => ({
-    id: recordId("HERB", index + 1),
-    herb: item.herb,
-    standard: item.spec,
-    originZone: item.location,
-    annualVolume: `${22 + index * 6} 吨`,
-    grade: index % 2 === 0 ? "道地" : "常规",
-    lastPrice: item.price,
-    recentBatch: processingRecords[index] ? processingRecords[index].processNo : `GC-${String(index + 1).padStart(2, "0")}-202603`,
-    statusLabel: "标准已关联",
-    statusTone: "good",
-    note: item.summary,
-    highlights: ["标准版本已确认", "近期价格已更新", "可回查最近批次"]
-  }));
-
-  const traceCodeRecords = processingRecords.map((processing, index) => {
-    const printed = 500 + index * 80;
-    const activated = 260 + index * 60;
-    return {
-      id: recordId("CODE", index + 1),
-      codeRange: `TCM-${String(index + 1).padStart(3, "0")}-001~${String(printed).padStart(3, "0")}`,
-      herb: processing.herb,
-      boundBatch: processing.processNo,
-      printed: `${printed} 枚`,
-      activated: `${activated} 枚`,
-      activationRate: `${Math.round((activated / printed) * 100)}%`,
-      scene: TRACE_SCENES[index % TRACE_SCENES.length],
-      statusLabel: index % 3 === 0 ? "已绑定" : index % 3 === 1 ? "待启用" : "已激活",
-      statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "pending" : "info",
-      note: `${processing.processNo} 的码段绑定记录`,
-      checkpoints: ["码段生成", "批次绑定", "扫码验证"]
-    };
-  });
-
-  const warehouseRecords = processingRecords.map((processing, index) => ({
-    id: recordId("WARE", index + 1),
-    warehouse: WAREHOUSES[index % WAREHOUSES.length],
-    boundBatch: processing.processNo,
-    herb: processing.herb,
-    stock: `${460 + index * 70} kg`,
-    temperature: `${17 + (index % 4)}℃`,
-    humidity: `${54 + index}%`,
-    location: STORAGE_ZONES[index % STORAGE_ZONES.length],
-    recheckAt: shiftDate("2026-03-18", index),
-    statusLabel: index % 3 === 0 ? "在库" : index % 3 === 1 ? "待复检" : "待出库",
-    statusTone: index % 3 === 0 ? "good" : index % 3 === 1 ? "warn" : "pending",
-    note: `${processing.processNo} 已进入仓库管理环节`,
-    checks: ["入库登记", "环境巡检", "复检提醒"]
-  }));
-
-  const activities = [
-    { title: `${baseRecords[0].name} 完成基地建档`, desc: `${baseRecords[0].lastUpdate} · 负责人 ${baseRecords[0].manager} 已补录地块与资料` },
-    { title: `${seedRecords[0].seedBatch} 完成到货登记`, desc: `${seedRecords[0].receivedAt} · 供种单位 ${seedRecords[0].supplier}` },
-    { title: `${farmingRecords[1].task} 已填报巡田记录`, desc: `${farmingRecords[1].plannedDate} · ${farmingRecords[1].baseName}` },
-    { title: `${harvestRecords[0].harvestBatch} 进入采收验收`, desc: `${harvestRecords[0].harvestDate} · 鲜货 ${harvestRecords[0].freshWeight}` },
-    { title: `${processingRecords[0].processNo} 生成溯源码`, desc: `${traceCodeRecords[0].codeRange} · 场景 ${traceCodeRecords[0].scene}` }
-  ];
-
   return {
-    baseRecords,
-    seedRecords,
-    farmingRecords,
-    harvestRecords,
-    processingRecords,
-    herbRecords,
-    traceCodeRecords,
-    warehouseRecords,
-    activities
+    baseRecords: [],
+    seedRecords: [],
+    farmingRecords: [],
+    harvestRecords: [],
+    processingRecords: [],
+    herbRecords: [],
+    traceCodeRecords: [],
+    warehouseRecords: [],
+    activities: []
   };
 }
 
