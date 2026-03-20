@@ -890,8 +890,13 @@ function renderModulePage(config, pageId, allRecords, filteredRecords, selectedR
 }
 
 function renderSidebar(activeId) {
+  const activeItem = NAV_ITEMS.find((item) => item.id === activeId) || NAV_ITEMS[0];
   return `
     <aside class="sidebar">
+      <div class="sidebar-mobile-head">
+        <strong>中药材溯源平台</strong>
+        <span>${escapeHtml(activeItem.title)} · ${escapeHtml(activeItem.subtitle)}</span>
+      </div>
       <div class="nav-caption">模块导航</div>
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderNavItem(item, activeId)).join("")}
