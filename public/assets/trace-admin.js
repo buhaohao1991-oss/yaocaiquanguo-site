@@ -324,126 +324,18 @@ function renderAndBind(root, pageId) {
 }
 
 function renderHomePage(shared) {
-  const nextAction = shared.summary.nextAction;
   const modules = NAV_ITEMS.filter((item) => item.id !== "home");
-  const totalRecords = modules.reduce((sum, item) => sum + navCountFor(item.id, shared), 0);
 
   return `
     <div class="app-shell">
       ${renderSidebar("home", shared)}
       <main class="main home-main">
-        <section class="hero-panel hero-home">
-          <div class="hero-copy">
-            <span class="kicker">TRACE OPERATIONS CONSOLE</span>
-            <h1>中药材溯源工作台</h1>
-            <p>借鉴完整链路逻辑，但用更高级的工作台体验把基地、种源、种植、采收、加工、赋码和仓储串成一条真正能跑的业务线。</p>
-            <div class="hero-actions">
-              ${nextAction ? `
-                <button class="button primary" type="button" data-continue-workflow ${workflowTriggerAttrs(nextAction)}>
-                  ${escapeHtml(nextAction.label || nextAction.title)}
-                </button>
-              ` : `
-                <a class="button primary" href="base-trace.html?action=create">开始建立第一条链路</a>
-              `}
-              <button class="button secondary" type="button" data-clear-workflow>清空当前流程</button>
-            </div>
-            <div class="hero-inline-stats">
-              <span>当前总记录 ${totalRecords}</span>
-              <span>待办 ${shared.summary.pendingTasks.length}</span>
-              <span>最近更新 ${shared.summary.latestDate}</span>
-            </div>
-            <div class="hero-track">
-              ${shared.summary.stageCards.map((card, index) => `
-                <article class="hero-track-item ${Number(card.value) > 0 ? "is-filled" : ""}">
-                  <span>${String(index + 1).padStart(2, "0")}</span>
-                  <strong>${escapeHtml(card.label)}</strong>
-                  <em>${escapeHtml(card.value)} 条</em>
-                </article>
-              `).join("")}
-            </div>
-          </div>
-          <aside class="hero-side">
-            <section class="spotlight-card">
-              <div class="spotlight-label">流程推进度</div>
-              <div class="spotlight-progress">
-                <strong>${shared.summary.flowCompletion}%</strong>
-                <span>链路已贯通程度</span>
-              </div>
-              <div class="flow-meter">
-                <div class="flow-meter-fill" style="width:${shared.summary.flowCompletion}%"></div>
-              </div>
-              <div class="spotlight-list">
-                ${shared.summary.stageCards.map((card) => `
-                  <article class="spotlight-item">
-                    <span>${escapeHtml(card.label)}</span>
-                    <strong>${escapeHtml(card.value)}</strong>
-                  </article>
-                `).join("")}
-              </div>
-            </section>
-          </aside>
+        <section class="home-stage">
+          <h1>工作台</h1>
         </section>
 
-        <section class="module-card-grid">
+        <section class="module-card-grid home-module-grid">
           ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
-        </section>
-
-        <section class="home-grid">
-          <section class="panel">
-            <div class="panel-headline">
-              <div>
-                <span class="panel-kicker">PENDING WORK</span>
-                <h2>当前待补链路</h2>
-              </div>
-            </div>
-            <div class="panel-body">
-              ${shared.summary.pendingTasks.length ? `
-                <div class="task-list">
-                  ${shared.summary.pendingTasks.map((task) => `
-                    <button class="task-card" type="button" data-continue-workflow ${workflowTriggerAttrs(task)}>
-                      <strong>${escapeHtml(task.title)}</strong>
-                      <span>${escapeHtml(task.detail)}</span>
-                    </button>
-                  `).join("")}
-                </div>
-              ` : `
-                <div class="empty-state compact">
-                  <strong>当前链路已经全部接通</strong>
-                  <span>你可以继续补充更多基地和批次，或者进入赋码页预览查询链路。</span>
-                </div>
-              `}
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-headline">
-              <div>
-                <span class="panel-kicker">RECENT ACTIVITY</span>
-                <h2>最近动作</h2>
-              </div>
-            </div>
-            <div class="panel-body">
-              ${shared.summary.activities.length ? `
-                <div class="activity-list">
-                  ${shared.summary.activities.map((activity) => `
-                    <article class="activity-item">
-                      <div class="activity-dot"></div>
-                      <div class="activity-copy">
-                        <strong>${escapeHtml(activity.title)}</strong>
-                        <span>${escapeHtml(activity.description)}</span>
-                      </div>
-                      <time>${escapeHtml(activity.date)}</time>
-                    </article>
-                  `).join("")}
-                </div>
-              ` : `
-                <div class="empty-state compact">
-                  <strong>还没有任何动作记录</strong>
-                  <span>从“基地溯源”开始新建第一条档案，系统会自动形成活动轨迹。</span>
-                </div>
-              `}
-            </div>
-          </section>
         </section>
       </main>
     </div>
@@ -451,19 +343,20 @@ function renderHomePage(shared) {
 }
 
 function renderEntityPage(pageId, config, shared, allViews, filteredViews, selected) {
+  const stats = config.getStats(shared, allViews);
   return `
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         <section class="page-hero">
           <div class="page-copy">
-            <span class="kicker">${escapeHtml(config.kicker)}</span>
             <h1>${escapeHtml(config.title)}</h1>
-            <p>${escapeHtml(config.subtitle)}</p>
           </div>
-          <div class="stat-grid">
-            ${config.getStats(shared, allViews).map((stat) => renderStatCard(stat)).join("")}
-          </div>
+          ${shouldShowStats(stats) ? `
+            <div class="stat-grid">
+              ${stats.map((stat) => renderStatCard(stat)).join("")}
+            </div>
+          ` : ""}
         </section>
 
         <section class="panel command-panel">
@@ -471,7 +364,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
           </div>
           <div class="command-actions">
-            <span class="result-count">${filteredViews.length} 条</span>
+            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
             <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
@@ -479,10 +372,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
         <section class="content-layout">
           <section class="panel table-panel">
             <div class="panel-headline">
-              <div>
-                <span class="panel-kicker">MODULE TABLE</span>
-                <h2>${escapeHtml(config.title)}台账</h2>
-              </div>
+              <h2>${escapeHtml(config.title)}台账</h2>
             </div>
             <div class="panel-body">
               ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
@@ -492,10 +382,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
           <aside class="detail-rail">
             <section class="panel detail-panel">
               <div class="panel-headline">
-                <div>
-                  <span class="panel-kicker">SELECTED RECORD</span>
-                  <h2>当前详情</h2>
-                </div>
+                <h2>当前详情</h2>
               </div>
               <div class="panel-body">
                 ${selected ? config.renderDetail(selected, shared) : `
@@ -517,19 +404,20 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
 
 function renderCompoundPage(pageId, config, shared, allViews, filteredViews, selected) {
   const secondaryItems = config.getSecondaryViews(selected, shared);
+  const stats = config.getStats(shared, allViews);
   return `
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         <section class="page-hero">
           <div class="page-copy">
-            <span class="kicker">${escapeHtml(config.kicker)}</span>
             <h1>${escapeHtml(config.title)}</h1>
-            <p>${escapeHtml(config.subtitle)}</p>
           </div>
-          <div class="stat-grid">
-            ${config.getStats(shared, allViews).map((stat) => renderStatCard(stat)).join("")}
-          </div>
+          ${shouldShowStats(stats) ? `
+            <div class="stat-grid">
+              ${stats.map((stat) => renderStatCard(stat)).join("")}
+            </div>
+          ` : ""}
         </section>
 
         <section class="panel command-panel">
@@ -537,7 +425,7 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
           </div>
           <div class="command-actions">
-            <span class="result-count">${filteredViews.length} 条</span>
+            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
             <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
@@ -545,10 +433,7 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
         <section class="content-layout">
           <section class="panel table-panel">
             <div class="panel-headline">
-              <div>
-                <span class="panel-kicker">PRIMARY FLOW</span>
-                <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
-              </div>
+              <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
             </div>
             <div class="panel-body">
               ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
@@ -558,10 +443,7 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
           <aside class="detail-rail">
             <section class="panel detail-panel">
               <div class="panel-headline">
-                <div>
-                  <span class="panel-kicker">SELECTED FLOW</span>
-                  <h2>当前详情</h2>
-                </div>
+                <h2>当前详情</h2>
               </div>
               <div class="panel-body">
                 ${selected ? config.renderDetail(selected, shared) : `
@@ -577,12 +459,9 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
 
         <section class="panel">
           <div class="panel-headline">
-            <div>
-              <span class="panel-kicker">SECONDARY TIMELINE</span>
-              <h2>${pageId === "farming-trace" ? "农事记录时间轴" : "工艺步骤时间轴"}</h2>
-            </div>
+            <h2>${pageId === "farming-trace" ? "农事记录时间轴" : "工艺步骤时间轴"}</h2>
             <div class="panel-tools">
-              <span class="result-count">${secondaryItems.length} 条</span>
+              ${secondaryItems.length ? `<span class="result-count">${secondaryItems.length} 条</span>` : ""}
               <button class="button secondary" type="button" data-open-dialog="secondary" ${selected ? "" : "disabled"}>
                 ${escapeHtml(config.secondaryActionLabel)}
               </button>
@@ -803,17 +682,15 @@ function renderPublicInfoCard(title, lines) {
 
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
-  const pending = shared.summary.pendingTasks.find((task) => task.pageId === item.id);
   return `
     <a class="module-card" href="${escapeAttribute(item.href)}">
       <div class="module-card-head">
         <span class="module-icon">${renderNavIcon(item.id)}</span>
-        <strong>${escapeHtml(item.title)}</strong>
+        ${count ? `<span class="module-card-count">${count}</span>` : ""}
       </div>
-      <p>${escapeHtml(item.subtitle)}</p>
+      <strong class="module-card-title">${escapeHtml(item.title)}</strong>
       <div class="module-card-foot">
-        <span>${count} 条记录</span>
-        <em>${escapeHtml(pending ? pending.short : "已接入链路")}</em>
+        <em>进入</em>
       </div>
     </a>
   `;
@@ -825,25 +702,17 @@ function renderSidebar(activeId, shared) {
       <div class="sidebar-brand">
         <div class="brand-mark">
           <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
-            <rect x="8" y="8" width="48" height="48" rx="16" fill="url(#brand-gradient)"></rect>
-            <path d="M32 19V45" stroke="white" stroke-width="4" stroke-linecap="round"></path>
-            <path d="M32 27C25 20 18 22 14 29C21 31 26 31 32 27Z" fill="white" fill-opacity="0.96"></path>
-            <path d="M32 27C39 20 46 22 50 29C43 31 38 31 32 27Z" fill="white" fill-opacity="0.96"></path>
-            <path d="M32 37C26 31 21 33 18 39C23 41 27 41 32 37Z" fill="white" fill-opacity="0.9"></path>
-            <path d="M32 37C38 31 43 33 46 39C41 41 37 41 32 37Z" fill="white" fill-opacity="0.9"></path>
-            <path d="M22 48H42" stroke="white" stroke-opacity="0.8" stroke-width="3" stroke-linecap="round"></path>
-            <defs>
-              <linearGradient id="brand-gradient" x1="12" y1="10" x2="52" y2="56" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#2fbe73"></stop>
-                <stop offset="1" stop-color="#14693f"></stop>
-              </linearGradient>
-            </defs>
+            <circle cx="32" cy="32" r="24" fill="#F4F5EF" stroke="#D4D9CF" stroke-width="2"></circle>
+            <path d="M32 18V46" stroke="#1D6A53" stroke-width="3.5" stroke-linecap="round"></path>
+            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#2F8E69"></path>
+            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#2F8E69"></path>
+            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#5FA884"></path>
+            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
+            <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
           </svg>
         </div>
         <div class="brand-copy">
-          <span class="brand-kicker">BOTANICAL TRACE</span>
           <strong>中药材溯源平台</strong>
-          <small>链路驱动的工作台原型</small>
         </div>
       </div>
 
@@ -859,11 +728,8 @@ function renderSidebarItem(item, activeId, shared) {
   return `
     <a class="nav-item ${item.id === activeId ? "is-active" : ""}" href="${escapeAttribute(item.href)}">
       <span class="nav-icon">${renderNavIcon(item.id)}</span>
-      <span class="nav-copy">
-        <strong>${escapeHtml(item.title)}</strong>
-        <small>${escapeHtml(item.subtitle)}</small>
-      </span>
-      <span class="nav-count">${count}</span>
+      <span class="nav-copy"><strong>${escapeHtml(item.title)}</strong></span>
+      ${count ? `<span class="nav-count">${count}</span>` : ""}
     </a>
   `;
 }
@@ -875,6 +741,18 @@ function renderStatCard(stat) {
       <strong>${escapeHtml(stat.value)}</strong>
     </article>
   `;
+}
+
+function shouldShowStats(stats) {
+  return stats.some((stat) => {
+    const raw = String(stat.value ?? "").trim();
+    return raw !== ""
+      && raw !== "0"
+      && raw !== "0.0"
+      && raw !== "0.00"
+      && raw !== "0 条"
+      && raw !== "--";
+  });
 }
 
 function renderTable(columns, rows, selected) {
@@ -932,10 +810,7 @@ function renderDialogShell(kind, title, body, wide = false) {
     <dialog class="workspace-dialog ${wide ? "is-wide" : ""}" data-dialog="${escapeAttribute(kind)}">
       <div class="dialog-frame">
         <div class="dialog-head">
-          <div>
-            <span class="panel-kicker">NEW RECORD</span>
-            <h3>${escapeHtml(title)}</h3>
-          </div>
+          <h3>${escapeHtml(title)}</h3>
           <button class="dialog-close" type="button" data-close-dialog="${escapeAttribute(kind)}" aria-label="关闭">✕</button>
         </div>
         <form class="dialog-form" data-form-kind="${escapeAttribute(kind)}">
@@ -1332,12 +1207,10 @@ function renderInitialFormContext(pageId, kind, shared, draft, selected) {
 function renderDialogContextCard(title, lines) {
   return `
     <div class="context-card">
-      <span class="panel-kicker">SMART CONTEXT</span>
       <h4>${escapeHtml(title)}</h4>
       <div class="context-lines">
         ${lines.map((line) => `<strong>${escapeHtml(line || "--")}</strong>`).join("")}
       </div>
-      <p>表单会根据你选择的上游记录自动补足链路信息。</p>
     </div>
   `;
 }
@@ -1345,13 +1218,11 @@ function renderDialogContextCard(title, lines) {
 function renderDialogContextFallback() {
   return `
     <div class="context-card">
-      <span class="panel-kicker">SMART CONTEXT</span>
       <h4>等待选择上游记录</h4>
       <div class="context-lines">
         <strong>先选择基地、种源、采收或加工记录</strong>
         <strong>系统会在右侧实时显示链路摘要</strong>
       </div>
-      <p>这一步的目标是减少手工重复录入，让每条记录都能接住上一环。</p>
     </div>
   `;
 }
