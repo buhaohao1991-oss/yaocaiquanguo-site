@@ -6,17 +6,3 @@ window.TRACE_MAP_CONFIG = {
   detailZoom: 11,
   searchZoom: 15
 };
-
-(function bootstrapTraceMapSdk() {
-  if (!window.TRACE_MAP_CONFIG || !window.TRACE_MAP_CONFIG.tk) {
-    return;
-  }
-  if (document.getElementById("trace-map-sdk")) {
-    return;
-  }
-  const script = document.createElement("script");
-  script.id = "trace-map-sdk";
-  script.src = `https://api.tianditu.gov.cn/api?v=4.0&tk=${encodeURIComponent(window.TRACE_MAP_CONFIG.tk)}`;
-  script.async = true;
-  document.head.appendChild(script);
-})();
