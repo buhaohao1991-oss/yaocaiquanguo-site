@@ -1,0 +1,12 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - link "返回赋码台账" [ref=e6] [cursor=pointer]:
+        - /url: trace-code-management.html
+      - generic [ref=e7]: 中药材溯源码查询页
+    - generic [ref=e8]:
+      - heading "请选择一条溯源码预览" [level=1] [ref=e9]
+      - paragraph [ref=e10]: 下面列出当前浏览器已生成的溯源码，点击后可以直接查看对外查询页效果。
+      - generic [ref=e11]:
+        - strong [ref=e12]: 后台还没有生成任何溯源码
+        - generic [ref=e13]: 先在“赋码与查询”页面新增一条溯源码，再回到这里预览消费者查询页。

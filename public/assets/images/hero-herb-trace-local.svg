@@ -1,0 +1,95 @@
+<svg width="1440" height="960" viewBox="0 0 1440 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="181.5" y1="92" x2="1230" y2="864" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDE5D8"/>
+      <stop offset="0.52" stop-color="#D6C8AA"/>
+      <stop offset="1" stop-color="#A67E54"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="262" y1="198" x2="1178" y2="774" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCFAF3" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#EEF3EA" stop-opacity="0.92"/>
+    </linearGradient>
+    <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#2D6549"/>
+      <stop offset="1" stop-color="#81A76F"/>
+    </linearGradient>
+    <linearGradient id="leafB" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#214537"/>
+      <stop offset="1" stop-color="#5A876C"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#8B5E36"/>
+      <stop offset="1" stop-color="#C69A69"/>
+    </linearGradient>
+    <filter id="shadow" x="145" y="100" width="1166" height="760" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="28"/>
+      <feGaussianBlur stdDeviation="34"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.065 0 0 0 0 0.102 0 0 0 0 0.083 0 0 0 0.18 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+    <filter id="soft" x="0" y="0" width="1440" height="960" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="28" result="effect1_foregroundBlur_1_1"/>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="960" rx="56" fill="url(#bg)"/>
+  <g opacity="0.6" filter="url(#soft)">
+    <circle cx="220" cy="204" r="114" fill="#87A871"/>
+    <circle cx="1196" cy="170" r="144" fill="#D0A77F"/>
+    <circle cx="1292" cy="784" r="164" fill="#385E4B"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="214" y="168" width="1012" height="624" rx="40" fill="url(#panel)"/>
+    <rect x="246" y="202" width="948" height="556" rx="30" fill="#F7F3E9" stroke="#22372E" stroke-opacity="0.08"/>
+
+    <rect x="286" y="242" width="292" height="476" rx="28" fill="#19342C"/>
+    <rect x="618" y="242" width="536" height="84" rx="24" fill="#FDFBF6"/>
+    <rect x="618" y="354" width="250" height="168" rx="24" fill="#F5EFE1"/>
+    <rect x="890" y="354" width="264" height="168" rx="24" fill="#EEF4EB"/>
+    <rect x="618" y="550" width="536" height="128" rx="24" fill="#FBF8F0"/>
+
+    <path d="M362 640C430 514 460 419 452 344C446 289 418 257 372 248C346 307 332 360 330 407C326 494 356 573 362 640Z" fill="url(#leafA)"/>
+    <path d="M434 620C516 558 566 490 582 420C598 349 584 290 542 242C488 286 446 340 420 400C384 481 390 572 434 620Z" fill="url(#leafB)"/>
+    <path d="M308 606C350 560 374 510 380 456C386 402 374 354 344 314C302 350 274 392 264 444C252 507 266 563 308 606Z" fill="#739067"/>
+    <path d="M478 472C530 438 570 393 598 338" stroke="#D7E6D2" stroke-width="8" stroke-linecap="round"/>
+    <path d="M416 408C438 356 446 305 440 254" stroke="#D7E6D2" stroke-width="7" stroke-linecap="round"/>
+    <path d="M332 446C314 404 300 362 292 320" stroke="#D7E6D2" stroke-width="7" stroke-linecap="round"/>
+
+    <circle cx="708" cy="284" r="12" fill="#2E6A4A"/>
+    <circle cx="782" cy="284" r="12" fill="#8B5E36"/>
+    <circle cx="856" cy="284" r="12" fill="#C7A170"/>
+    <rect x="904" y="270" width="202" height="28" rx="14" fill="#ECF2EC"/>
+
+    <path d="M668 438C730 380 792 368 848 400C900 430 954 430 1012 386C1048 358 1078 326 1104 290" stroke="#2D6549" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="668" cy="438" r="18" fill="#F5EFE1" stroke="#2D6549" stroke-width="6"/>
+    <circle cx="848" cy="400" r="18" fill="#F5EFE1" stroke="#2D6549" stroke-width="6"/>
+    <circle cx="1012" cy="386" r="18" fill="#F5EFE1" stroke="#2D6549" stroke-width="6"/>
+    <circle cx="1104" cy="290" r="18" fill="#F5EFE1" stroke="#8B5E36" stroke-width="6"/>
+
+    <rect x="646" y="388" width="92" height="18" rx="9" fill="#DCE8D8"/>
+    <rect x="646" y="420" width="146" height="18" rx="9" fill="#DCE8D8"/>
+    <rect x="922" y="384" width="84" height="18" rx="9" fill="#CAD9C2"/>
+    <rect x="922" y="416" width="120" height="18" rx="9" fill="#CAD9C2"/>
+
+    <rect x="646" y="582" width="146" height="20" rx="10" fill="#E8EFE7"/>
+    <rect x="646" y="618" width="280" height="18" rx="9" fill="#E8EFE7"/>
+    <rect x="960" y="580" width="148" height="48" rx="18" fill="url(#accent)"/>
+
+    <rect x="738" y="518" width="232" height="112" rx="24" fill="#234435"/>
+    <text x="766" y="556" fill="#E7F0E7" font-size="24" font-family="'Helvetica Neue', Arial, sans-serif" letter-spacing="2">批次 DS-2026-0318</text>
+    <text x="766" y="594" fill="#F8F4EA" font-size="48" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700">来源可查</text>
+
+    <rect x="1028" y="552" width="96" height="96" rx="22" fill="#F1E4D2"/>
+    <path d="M1060 584H1092" stroke="#8B5E36" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1060 608H1092" stroke="#8B5E36" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1060 632H1092" stroke="#8B5E36" stroke-width="8" stroke-linecap="round"/>
+    <rect x="347" y="657" width="186" height="22" rx="11" fill="#284E3D"/>
+    <rect x="556" y="657" width="126" height="22" rx="11" fill="#7E9D6D"/>
+  </g>
+</svg>

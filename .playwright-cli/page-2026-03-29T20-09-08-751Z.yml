@@ -1,0 +1,189 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: OC
+      - generic [ref=e6]:
+        - generic [ref=e7]: All A-Shares Research
+        - strong [ref=e8]: A股长期主义研究站
+    - navigation "主导航" [ref=e9]:
+      - link "个股研究" [ref=e10] [cursor=pointer]:
+        - /url: "#overview"
+      - link "证据链" [ref=e11] [cursor=pointer]:
+        - /url: "#evidence"
+      - link "事件" [ref=e12] [cursor=pointer]:
+        - /url: "#timeline"
+      - link "数据日志" [ref=e13] [cursor=pointer]:
+        - /url: "#logs"
+    - generic [ref=e14]:
+      - button "导出纪要" [ref=e15] [cursor=pointer]
+      - button "刷新候选池" [ref=e16] [cursor=pointer]
+  - main [ref=e17]:
+    - complementary [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]: All A-Shares
+          - heading "研究对象" [level=2] [ref=e22]
+        - generic [ref=e23]:
+          - generic [ref=e24]: 检测中
+          - generic [ref=e25]: 准备连接真实数据与长期研究模型
+        - generic [ref=e26]:
+          - generic [ref=e27]: 股票代码 / 名称
+          - textbox "股票代码 / 名称" [ref=e28]:
+            - /placeholder: 支持全部A股代码或名称
+            - text: "000792"
+        - generic [ref=e29]:
+          - generic [ref=e30]: 长期主义
+          - generic [ref=e31]: 全A股覆盖
+          - generic [ref=e32]: 真实数据
+        - generic [ref=e33]:
+          - generic [ref=e34]: 批量分析代码
+          - textbox "批量分析代码" [ref=e35]:
+            - /placeholder: "000792\n601088\n300750"
+            - text: 000792 601088 300750
+        - generic [ref=e36]:
+          - button "AI 研究结论" [ref=e37] [cursor=pointer]
+          - button "批量分析" [ref=e38] [cursor=pointer]
+        - paragraph [ref=e39]: 正在连接本地研究服务...
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - text: Long-Term Pool
+            - heading "A股候选池" [level=2] [ref=e43]
+          - generic [ref=e44]: 等待候选池
+        - paragraph [ref=e46]: 服务启动后会显示全部 A 股长期候选池。
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - text: Method
+            - heading "长期框架" [level=2] [ref=e50]
+          - generic [ref=e51]: 仅数据
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: "1"
+            - generic [ref=e55]:
+              - strong [ref=e56]: 先筛选后深挖
+              - generic [ref=e57]: 先看全市场候选池，再进入单股页做真实数据研究。
+          - generic [ref=e58]:
+            - generic [ref=e59]: "2"
+            - generic [ref=e60]:
+              - strong [ref=e61]: 只保留长期因子
+              - generic [ref=e62]: 重点关注经营质量、成长质量、估值性价比和价格位置。
+          - generic [ref=e63]:
+            - generic [ref=e64]: "3"
+            - generic [ref=e65]:
+              - strong [ref=e66]: AI 只做研究助手
+              - generic [ref=e67]: OpenClaw 用来整理结论，不替代原始数据和长期判断。
+          - generic [ref=e68]:
+            - generic [ref=e69]: "4"
+            - generic [ref=e70]:
+              - strong [ref=e71]: 输出可跟踪结论
+              - generic [ref=e72]: 每次研究都落到催化、风险、证据链和后续观察点。
+        - generic [ref=e73]:
+          - generic [ref=e76]: 站点定位
+          - code [ref=e77]: 面向全部 A 股的长期投资研究站 · 等待候选池 · 等待口径
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - article [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]: Single Stock Research
+            - generic [ref=e83]: 未连接
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - heading "等待载入" [level=1] [ref=e86]
+              - paragraph [ref=e87]: 请先启动本地服务并载入真实股票数据
+            - generic [ref=e88]:
+              - generic [ref=e89]: "--"
+              - generic [ref=e90]: 运行本地服务后可用
+          - paragraph [ref=e91]: 这个页面只做两件事：先看全市场长期候选池，再对单只 A 股生成真实研究结论。
+          - generic [ref=e92]:
+            - generic [ref=e93]: 全部A股
+            - generic [ref=e94]: 长期主义
+            - generic [ref=e95]: 真实数据
+        - article [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - text: Long-Term Thesis
+              - heading "长期判断" [level=2] [ref=e99]
+            - generic [ref=e100]: 等待数据
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - strong [ref=e103]: "0"
+              - generic [ref=e104]: /100
+            - generic [ref=e105]:
+              - heading "尚未载入" [level=3] [ref=e106]
+              - paragraph [ref=e107]: 候选池和个股研究结果会在服务可用后自动显示。
+      - generic [ref=e108]:
+        - article [ref=e109]:
+          - generic [ref=e111]:
+            - text: Price & Valuation
+            - heading "价格结构" [level=2] [ref=e112]
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]:
+                  - generic [ref=e117]: 区间表现
+                  - strong [ref=e118]: "--"
+                - generic [ref=e119]:
+                  - generic [ref=e120]: 波动率
+                  - strong [ref=e121]: "--"
+              - img "价格走势图" [ref=e122]
+              - generic [ref=e123]:
+                - generic [ref=e124]: "--"
+                - generic [ref=e125]: "--"
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - text: Market Context
+                - heading "市场热度" [level=3] [ref=e131]
+              - generic [ref=e132]: 等待数据
+        - article [ref=e133]:
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - text: Long-Term Engine
+              - heading "长期因子" [level=2] [ref=e136]
+            - generic [ref=e137]: 优先看质量、成长、估值
+      - generic [ref=e138]:
+        - article [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - text: Research Summary
+              - heading "结构化研究结论" [level=2] [ref=e142]
+            - generic [ref=e143]: 面向长期持有，不是短线喊单
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - heading "当前判断" [level=3] [ref=e146]
+              - paragraph [ref=e147]: 未载入
+            - generic [ref=e148]:
+              - heading "技术与交易" [level=3] [ref=e149]
+              - list
+            - generic [ref=e150]:
+              - heading "基本面与估值" [level=3] [ref=e151]
+              - list
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - heading "催化因素" [level=3] [ref=e154]
+                - list
+              - generic [ref=e155]:
+                - heading "核心风险" [level=3] [ref=e156]
+                - list
+        - article [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - text: Timeline
+              - heading "事件时间线" [level=2] [ref=e160]
+            - generic [ref=e161]: 把观点绑回事件
+      - generic [ref=e162]:
+        - article [ref=e163]:
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - text: Evidence Chain
+              - heading "证据链" [level=2] [ref=e166]
+            - generic [ref=e167]: 让每个判断都有来源
+        - article [ref=e168]:
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - text: Execution
+              - heading "数据日志" [level=2] [ref=e171]
+            - generic [ref=e172]: 未连接
+          - generic [ref=e174]:
+            - generic [ref=e175]: 04:09:08
+            - generic [ref=e176]: INFO 本地服务未连接。

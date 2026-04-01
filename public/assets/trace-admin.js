@@ -323,20 +323,96 @@ function renderAndBind(root, pageId) {
   bindModule(root, pageId, config, shared, selected);
 }
 
+function renderMobileHeader(title) {
+  return `
+    <header class="mobile-header">
+      <button class="hamburger" data-action="toggle-sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <strong>${escapeHtml(title)}</strong>
+      <div style="width: 32px"></div>
+    </header>
+  `;
+}
+
 function renderHomePage(shared) {
   const modules = NAV_ITEMS.filter((item) => item.id !== "home");
 
+  // Stats calculations
+  const totalBases = shared.views.bases.length;
+  const totalQr = shared.views.qrCodes.length;
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const newRecordsThisMonth = shared.store.activities.filter((a) => {
+    const d = new Date(a.timestamp || a.createdAt);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  }).length;
+
+  // Link completion rate logic
+  const completeQr = shared.views.qrCodes.filter((qr) => {
+    return qr.primaryProcessId && qr.warehouseId;
+  }).length;
+  const completionRate = shared.views.qrCodes.length > 0
+    ? Math.round((completeQr / shared.views.qrCodes.length) * 100)
+    : 0;
+
+  const recentActivities = shared.store.activities.slice(0, 10);
+
   return `
     <div class="app-shell">
+      ${renderMobileHeader("工作台")}
       ${renderSidebar("home", shared)}
       <main class="main home-main">
         <section class="home-stage">
           <h1>工作台</h1>
         </section>
 
-        <section class="module-card-grid home-module-grid">
-          ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
-        </section>
+        <div class="home-stats-grid">
+          <div class="stat-card-v2">
+            <span class="stat-label">总基地数</span>
+            <div class="stat-value"><span>${totalBases}</span> <span class="stat-unit">个</span></div>
+          </div>
+          <div class="stat-card-v2">
+            <span class="stat-label">溯源码已签发</span>
+            <div class="stat-value"><span>${totalQr}</span> <span class="stat-unit">张</span></div>
+          </div>
+          <div class="stat-card-v2">
+            <span class="stat-label">本月新增记录</span>
+            <div class="stat-value"><span>${newRecordsThisMonth}</span> <span class="stat-unit">条</span></div>
+          </div>
+          <div class="stat-card-v2">
+            <span class="stat-label">链路完整率</span>
+            <div class="stat-value"><span>${completionRate}</span> <span class="stat-unit">%</span></div>
+          </div>
+        </div>
+
+        <div class="home-main-layout">
+          <div class="home-modules-section">
+            <h2 style="margin-bottom: 20px; font-family: var(--font-display);">业务模块</h2>
+            <div class="home-module-grid-v2">
+              ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
+            </div>
+          </div>
+
+          <aside class="home-activities-panel">
+            <h2>最近动态</h2>
+            <div class="timeline">
+              ${recentActivities.length > 0 ? recentActivities.map((activity) => `
+                <div class="timeline-item">
+                  <div class="timeline-content">
+                    <span class="timeline-title">${escapeHtml(activity.title)}</span>
+                    <span class="timeline-desc">${escapeHtml(activity.description)}</span>
+                    <span class="timeline-time">${formatActivityTime(activity.timestamp || activity.createdAt)}</span>
+                  </div>
+                </div>
+              `).join("") : `<div class="empty-state-small">暂无动态</div>`}
+            </div>
+          </aside>
+        </div>
       </main>
     </div>
   `;
@@ -346,6 +422,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
   const stats = config.getStats(shared, allViews);
   return `
     <div class="app-shell">
+      ${renderMobileHeader(config.title)}
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         <section class="page-hero">
@@ -407,6 +484,7 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
   const stats = config.getStats(shared, allViews);
   return `
     <div class="app-shell">
+      ${renderMobileHeader(config.title)}
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         <section class="page-hero">
@@ -683,20 +761,67 @@ function renderPublicInfoCard(title, lines) {
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
   return `
-    <a class="module-card" href="${escapeAttribute(item.href)}">
-      <div class="module-card-head">
-        <span class="module-icon">${renderNavIcon(item.id)}</span>
-        ${count ? `<span class="module-card-count">${count}</span>` : ""}
+    <a class="module-card-compact" href="${escapeAttribute(item.href)}">
+      <div class="module-icon-box">
+        ${renderNavIcon(item.id)}
       </div>
-      <strong class="module-card-title">${escapeHtml(item.title)}</strong>
-      <div class="module-card-foot">
-        <em>进入</em>
+      <div class="module-info-box">
+        <strong class="module-name">${escapeHtml(item.title)}</strong>
+        <span class="module-count">${count || 0} 条记录</span>
       </div>
     </a>
   `;
 }
 
+function calculateStorageUsage() {
+  const used = JSON.stringify(localStorage).length;
+  const limit = 5 * 1024 * 1024;
+  const percentage = Math.min(100, Math.round((used / limit) * 100));
+  let tone = "";
+  if (percentage > 95) tone = "danger";
+  else if (percentage > 80) tone = "warning";
+  return { used, percentage, tone };
+}
+
+function exportData() {
+  const store = localStorage.getItem(STORE_KEY);
+  if (!store) {
+    alert("当前没有任何数据可以导出。");
+    return;
+  }
+  const blob = new Blob([store], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const now = new Date();
+  const dateStr = now.toISOString().split("T")[0];
+  a.href = url;
+  a.download = `溯源数据备份_${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.bases || !data.activities) {
+        throw new Error("无效的数据格式");
+      }
+      if (confirm("导入将覆盖当前所有数据且不可撤销，是否继续？")) {
+        localStorage.setItem(STORE_KEY, e.target.result);
+        window.location.reload();
+      }
+    } catch (err) {
+      alert("导入失败：请提供正确的溯源数据 JSON 文件。");
+    }
+  };
+  reader.readAsText(file);
+}
+
 function renderSidebar(activeId, shared) {
+  const storage = calculateStorageUsage();
   return `
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -719,6 +844,23 @@ function renderSidebar(activeId, shared) {
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderSidebarItem(item, activeId, shared)).join("")}
       </nav>
+
+      <div class="sidebar-footer">
+        <div class="storage-monitor">
+          <div class="storage-label">
+            <span>存储空间占用</span>
+            <span>${storage.percentage}%</span>
+          </div>
+          <div class="storage-bar-bg">
+            <div class="storage-bar-fill ${storage.tone}" style="width: ${storage.percentage}%"></div>
+          </div>
+        </div>
+        <div class="sidebar-actions">
+          <button class="button-sidebar" data-action="export-data" title="导出数据备份">导出数据</button>
+          <button class="button-sidebar" data-action="trigger-import" title="导入数据备份">导入数据</button>
+          <input type="file" id="import-input" accept=".json" style="display:none">
+        </div>
+      </div>
     </aside>
   `;
 }
@@ -775,10 +917,28 @@ function renderTable(columns, rows, selected) {
 }
 
 function renderEmptyState(moduleTitle, totalCount) {
+  if (totalCount > 0) {
+    return `
+      <div class="empty-state">
+        <strong>没有找到符合条件的${escapeHtml(moduleTitle)}记录</strong>
+        <span>可以调整搜索词，或继续新增一条记录。</span>
+      </div>
+    `;
+  }
+
   return `
-    <div class="empty-state">
-      <strong>${totalCount ? `没有找到符合条件的${escapeHtml(moduleTitle)}记录` : `当前还没有${escapeHtml(moduleTitle)}记录`}</strong>
-      <span>${totalCount ? "可以调整搜索词，或继续新增一条记录。" : "你可以直接新建第一条记录，系统会自动串起后续链路。"} </span>
+    <div class="empty-state-v2">
+      <div class="empty-illustration">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h3>开始建立${escapeHtml(moduleTitle)}</h3>
+      <p>当前还没有记录。建立第一条记录后，系统会自动关联上下游链路，形成完整的溯源闭环。</p>
+      <div class="empty-actions">
+        <button class="button primary" type="button" data-open-dialog="primary">立即新建</button>
+        <a href="index.html" class="button-outline">查看引导</a>
+      </div>
     </div>
   `;
 }
@@ -854,7 +1014,7 @@ function renderBaseDialog(shared, draft) {
           fieldNumber("soilEc", "土壤 EC", "例如：0.38", false, draft.soilEc),
           fieldTextarea("intro", "基地介绍", "一句话说明基地背景、管理标准或产区特点", false, draft.intro)
         ])}
-        ${renderBasePhotoSection()}
+        ${renderGenericPhotoSection("基地照片")}
       </div>
       <aside class="dialog-map-column">
         ${renderBaseMapEditor()}
@@ -863,14 +1023,63 @@ function renderBaseDialog(shared, draft) {
   `;
 }
 
+function getPhotoSectionTitle(pageId, kind) {
+  if (pageId === "base-trace") return "基地照片";
+  if (pageId === "farming-trace" && kind === "primary") return "现场照片";
+  if (pageId === "harvest-trace") return "采收照片";
+  if (pageId === "processing-trace" && kind === "primary") return "加工环节照片";
+  return null;
+}
+
+function renderGenericPhotoSection(title) {
+  return `
+    <section class="form-section form-section-photo">
+      <div class="form-section-head section-flex">
+        <h4>${escapeHtml(title)}</h4>
+        <div class="photo-section-actions">
+          <span class="chip neutral" data-photo-count>0 张</span>
+          <button class="button ghost button-inline" type="button" data-open-photo-window>增加照片</button>
+        </div>
+      </div>
+      <input type="hidden" name="photos" value="[]" data-photo-store>
+      <div class="photo-strip" data-photo-grid>
+        <div class="photo-empty">暂未添加照片</div>
+      </div>
+      <div class="photo-window-shell" data-photo-window hidden>
+        <div class="photo-window-backdrop" data-close-photo-window></div>
+        <div class="photo-window-panel" role="dialog" aria-modal="true" aria-label="${escapeAttribute(title)}">
+          <div class="photo-window-header">
+            <h5>${escapeHtml(title)}</h5>
+            <button class="dialog-close" type="button" data-close-photo-window aria-label="关闭">✕</button>
+          </div>
+          <div class="photo-window-body">
+            <label class="button secondary photo-picker-button">
+              选择照片
+              <input type="file" accept="image/*" multiple hidden data-photo-input>
+            </label>
+            <div class="photo-window-grid" data-photo-dialog-grid>
+              <div class="photo-empty">暂未添加照片</div>
+            </div>
+          </div>
+          <div class="photo-window-foot">
+            <button class="button primary" type="button" data-close-photo-window>完成</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   const sections = getDialogSections(pageId, kind, shared, draft, selected);
   const hiddenFields = getHiddenDialogFields(pageId, kind, selected);
+  const photoTitle = getPhotoSectionTitle(pageId, kind);
   return `
     <div class="dialog-standard-layout">
       <div class="dialog-standard-main">
         ${hiddenFields}
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
+        ${photoTitle ? renderGenericPhotoSection(photoTitle) : ""}
       </div>
       <aside class="dialog-context" data-form-context>
         ${renderInitialFormContext(pageId, kind, shared, draft, selected)}
@@ -901,25 +1110,28 @@ function renderField(field) {
   if (field.full) {
     classes.push("is-full");
   }
+  if (field.required) {
+    classes.push("required");
+  }
   const requiredText = field.required ? "required" : "";
   const dataAttrs = [];
   if (field.mapSearch) {
-    dataAttrs.push('data-map-address-input');
+    dataAttrs.push("data-map-address-input");
   }
   if (field.mapLongitude) {
-    dataAttrs.push('data-map-longitude-input');
+    dataAttrs.push("data-map-longitude-input");
     dataAttrs.push('inputmode="decimal"');
   }
   if (field.mapLatitude) {
-    dataAttrs.push('data-map-latitude-input');
+    dataAttrs.push("data-map-latitude-input");
     dataAttrs.push('inputmode="decimal"');
   }
 
   if (field.type === "textarea") {
     return `
       <label class="${classes.join(" ")}">
-        <span>${escapeHtml(field.label)}</span>
-        <textarea name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText}>${escapeHtml(field.value || "")}</textarea>
+        <span class="field-label">${escapeHtml(field.label)}</span>
+        <textarea class="form-control" name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText}>${escapeHtml(field.value || "")}</textarea>
       </label>
     `;
   }
@@ -927,8 +1139,8 @@ function renderField(field) {
   if (field.type === "select") {
     return `
       <label class="${classes.join(" ")}">
-        <span>${escapeHtml(field.label)}</span>
-        <select name="${escapeAttribute(field.name)}" ${requiredText}>
+        <span class="field-label">${escapeHtml(field.label)}</span>
+        <select class="form-control" name="${escapeAttribute(field.name)}" ${requiredText}>
           <option value="">请选择</option>
           ${field.options.map((option) => `
             <option value="${escapeAttribute(option.value)}" ${String(option.value) === String(field.value || "") ? "selected" : ""}>
@@ -943,9 +1155,9 @@ function renderField(field) {
   if (field.mapSearch) {
     return `
       <label class="${classes.join(" ")}">
-        <span>${escapeHtml(field.label)}</span>
+        <span class="field-label">${escapeHtml(field.label)}</span>
         <div class="field-inline">
-          <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
+          <input class="form-control" name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
           <button class="button ghost button-inline" type="button" data-open-map-search>地图定位</button>
         </div>
       </label>
@@ -954,8 +1166,8 @@ function renderField(field) {
 
   return `
     <label class="${classes.join(" ")}">
-      <span>${escapeHtml(field.label)}</span>
-      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
+      <span class="field-label">${escapeHtml(field.label)}</span>
+      <input class="form-control" name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
     </label>
   `;
 }
@@ -1227,7 +1439,36 @@ function renderDialogContextFallback() {
   `;
 }
 
+function bindShell(root) {
+  const sidebar = root.querySelector(".sidebar");
+  const hamburger = root.querySelector('[data-action="toggle-sidebar"]');
+  if (hamburger && sidebar) {
+    hamburger.addEventListener("click", () => {
+      sidebar.classList.toggle("is-open");
+    });
+    // Close sidebar when clicking outside on mobile
+    root.addEventListener("click", (e) => {
+      if (sidebar.classList.contains("is-open") && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove("is-open");
+      }
+    });
+  }
+
+  const exportBtn = root.querySelector('[data-action="export-data"]');
+  if (exportBtn) {
+    exportBtn.addEventListener("click", exportData);
+  }
+
+  const triggerImportBtn = root.querySelector('[data-action="trigger-import"]');
+  const importInput = root.querySelector("#import-input");
+  if (triggerImportBtn && importInput) {
+    triggerImportBtn.addEventListener("click", () => importInput.click());
+    importInput.addEventListener("change", (e) => importData(e.target.files[0]));
+  }
+}
+
 function bindHome(root, shared) {
+  bindShell(root);
   root.addEventListener("click", (event) => {
     const clearButton = event.target.closest("[data-clear-workflow]");
     if (clearButton) {
@@ -1250,6 +1491,7 @@ function bindTraceQuery(root, shared) {
 }
 
 function bindModule(root, pageId, config, shared, selected) {
+  bindShell(root);
   const searchInput = root.querySelector("[data-search-input]");
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
@@ -1336,8 +1578,8 @@ function bindModule(root, pageId, config, shared, selected) {
       if (!form.reportValidity()) {
         return;
       }
-      if (form._baseTracePhotoController) {
-        await form._baseTracePhotoController.waitUntilReady();
+      if (form._photoController) {
+        await form._photoController.waitUntilReady();
       }
       const kind = form.dataset.formKind || "primary";
       const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
@@ -1352,8 +1594,20 @@ function bindModule(root, pageId, config, shared, selected) {
   if (pageId === "base-trace") {
     const dialog = root.querySelector('[data-dialog="primary"]');
     bindBaseTraceMap(root, dialog);
-    bindBaseTracePhotos(root, dialog);
+    bindPhotoUpload(root, dialog);
     bindBaseTracePreviewMaps(root);
+  } else {
+    // Check if other pages need photo upload
+    const primaryTitle = getPhotoSectionTitle(pageId, "primary");
+    if (primaryTitle) {
+      const dialog = root.querySelector('[data-dialog="primary"]');
+      bindPhotoUpload(root, dialog, "primary");
+    }
+    const secondaryTitle = getPhotoSectionTitle(pageId, "secondary");
+    if (secondaryTitle) {
+      const dialog = root.querySelector('[data-dialog="secondary"]');
+      bindPhotoUpload(root, dialog, "secondary");
+    }
   }
 
   const shouldAutoOpen = new URLSearchParams(window.location.search).get("action") === "create";
@@ -1629,6 +1883,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         unit: values.unit || "kg",
         managementStandard: values.managementStandard,
         plantExperience: values.plantExperience,
+        photos: normalizeTracePhotoList(values.photos),
         createdAt: isoDate()
       };
       store.plantProcesses.unshift(record);
@@ -1671,6 +1926,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         endDate: values.endDate || values.startDate || isoDate(),
         harvestWeight: toNumber(values.harvestWeight),
         harvestManager: values.harvestManager,
+        photos: normalizeTracePhotoList(values.photos),
         note: values.note,
         createdAt: isoDate()
       };
@@ -1695,6 +1951,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         startDate: values.startDate || isoDate(),
         endDate: values.endDate || values.startDate || isoDate(),
         processAddress: values.processAddress,
+        photos: normalizeTracePhotoList(values.photos),
         note: values.note,
         createdAt: isoDate(),
         materialName: material ? material.name : "",
@@ -2376,7 +2633,7 @@ function renderBaseDetail(view, shared) {
       infoCard("资料状态", [view.landCertStatus || "待补土地证明", view.envReportStatus || "待补环境检测", `${view.photoCount} 张基地照片`])
     ])}
     ${renderBaseMap(view)}
-    ${renderBasePhotos(view)}
+    ${renderPhotoGallery(view, "基地照片")}
   `;
 }
 
@@ -2422,6 +2679,7 @@ function renderPlantDetail(view, shared) {
       infoCard("种植管理", [view.plantMethod, view.managementStandard || "--", view.plantExperience || "--"])
     ])}
     ${renderNarrativeBlock("种植说明", view.previewMat ? `前茬作物：${view.previewMat}` : "当前没有补充前茬作物。")}
+    ${renderPhotoGallery(view, "现场照片")}
   `;
 }
 
@@ -2453,6 +2711,7 @@ function renderHarvestDetail(view, shared) {
       infoCard("来源主线", [view.baseName, view.plantBatch, view.herb])
     ])}
     ${renderNarrativeBlock("采收备注", view.note || "当前没有补充备注。")}
+    ${renderPhotoGallery(view, "采收现场照片")}
   `;
 }
 
@@ -2484,6 +2743,7 @@ function renderProcessDetail(view, shared) {
       infoCard("加工信息", [view.manager, formatPeriod(view.startDate, view.endDate), view.processAddress || "--"])
     ])}
     ${renderNarrativeBlock("工艺备注", view.note || "当前没有补充说明。")}
+    ${renderPhotoGallery(view, "加工现场照片")}
   `;
 }
 
@@ -2519,6 +2779,7 @@ function renderQrDetail(view, shared) {
       { label: "加工批次", value: view.processBatch }
     ])}
     ${renderActionBar([
+      { label: "打印溯源码", action: `window.printCode('${view.id}')`, tone: "primary", icon: "print" },
       externalLinkAction("查询页预览", view.publicUrl),
       subtleTextAction("查询地址", truncateText(view.publicUrl, 40))
     ])}
@@ -2526,9 +2787,27 @@ function renderQrDetail(view, shared) {
       infoCard("链路摘要", [view.baseName, view.seedBatch, view.plantBatch]),
       infoCard("落仓信息", [view.warehouseName, view.warehouseConditions, view.warehouseMethod])
     ])}
-    ${renderNarrativeBlock("查询说明", "这条码已经绑定到完整链路，可以直接打开查询页预览消费者视角。")}
+    ${renderNarrativeBlock("查询说明", "这条码已经绑定到完整链路，支持打印成贴纸或在线扫码预览。")}
+
+    <div id="print-area-${view.id}" class="print-only">
+      <div class="printable-qr-card">
+        <h1>中药材溯源码</h1>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(view.publicUrl)}" alt="QR Code">
+        <div class="printable-qr-info">
+          <div class="printable-qr-row"><span>药材名称：</span><strong>${escapeHtml(view.materialName)}</strong></div>
+          <div class="printable-qr-row"><span>溯源码号：</span><strong>${escapeHtml(view.traceCode)}</strong></div>
+          <div class="printable-qr-row"><span>生产批次：</span><strong>${escapeHtml(view.ppBatch)}</strong></div>
+          <div class="printable-qr-row"><span>生产日期：</span><strong>${escapeHtml(view.createdAt.split("T")[0])}</strong></div>
+          <div class="printable-qr-row"><span>企业名称：</span><strong>中药材全国追踪平台</strong></div>
+        </div>
+      </div>
+    </div>
   `;
 }
+
+window.printCode = function(qrId) {
+  window.print();
+};
 
 function renderWarehouseDetail(view, shared) {
   const readyProcess = shared.views.processes.find((item) => item.stepCount > 0 && item.qrCount === 0);
@@ -3098,6 +3377,20 @@ function fillIfEmpty(element, value) {
   element.value = value == null ? "" : String(value);
 }
 
+function formatActivityTime(timestamp) {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+
+  if (diffInSeconds < 60) return "刚刚";
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}分钟前`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}小时前`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}天前`;
+
+  return DATE_DISPLAY.format(date);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -3159,77 +3452,27 @@ function renderBaseMap(record) {
   `;
 }
 
-function renderBasePhotos(record) {
+function renderPhotoGallery(record, title = "现场照片") {
   const photos = normalizeTracePhotoList(record.photos);
+  if (!photos.length) return "";
   return `
     <div class="subsection">
       <div class="subsection-head">
-        <h4>基地照片</h4>
+        <h4>${escapeHtml(title)}</h4>
         <span class="chip neutral">${photos.length} 张</span>
       </div>
-      ${photos.length ? `
-        <div class="detail-photo-grid">
-          ${photos.map((photo) => `
-            <figure class="detail-photo-card">
-              <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
-              <figcaption>${escapeHtml(photo.name)}</figcaption>
-            </figure>
-          `).join("")}
-        </div>
-      ` : `
-        <div class="empty-state compact">
-          <strong>还没有基地照片</strong>
-          <span>可以在建档弹窗里继续补充现场照片。</span>
-        </div>
-      `}
-    </div>
-  `;
-}
-
-function renderBasePhotoSection() {
-  return `
-    <section class="form-section form-section-photo">
-      <div class="form-section-head section-flex">
-        <h4>基地照片</h4>
-        <div class="photo-section-actions">
-          <span class="chip neutral" data-photo-count>0 张</span>
-          <button class="button ghost button-inline" type="button" data-open-photo-window>增加照片</button>
-        </div>
-      </div>
-      <input type="hidden" name="photos" value="[]" data-photo-store>
-      <div class="photo-strip" data-photo-grid>
-        <div class="photo-empty">暂未添加照片</div>
-      </div>
-      ${renderBasePhotoWindow()}
-    </section>
-  `;
-}
-
-function renderBasePhotoWindow() {
-  return `
-    <div class="photo-window-shell" data-photo-window hidden>
-      <div class="photo-window-backdrop" data-close-photo-window></div>
-      <div class="photo-window-panel" role="dialog" aria-modal="true" aria-label="基地照片">
-        <div class="photo-window-header">
-          <h5>基地照片</h5>
-          <button class="dialog-close" type="button" data-close-photo-window aria-label="关闭">✕</button>
-        </div>
-        <div class="photo-window-body">
-          <label class="button secondary photo-picker-button">
-            选择照片
-            <input type="file" accept="image/*" multiple hidden data-photo-input>
-          </label>
-          <div class="photo-window-grid" data-photo-dialog-grid>
-            <div class="photo-empty">暂未添加照片</div>
-          </div>
-        </div>
-        <div class="photo-window-foot">
-          <button class="button primary" type="button" data-close-photo-window>完成</button>
-        </div>
+      <div class="detail-photo-grid">
+        ${photos.map((photo) => `
+          <figure class="detail-photo-card">
+            <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
+            <figcaption>${escapeHtml(photo.name)}</figcaption>
+          </figure>
+        `).join("")}
       </div>
     </div>
   `;
 }
+
 
 function renderBaseMapEditor() {
   const config = getTraceMapConfig();
@@ -3540,11 +3783,9 @@ function activateBaseTraceMap(root) {
   }
 }
 
-function bindBaseTracePhotos(root, dialog) {
-  const form = root.querySelector('form[data-form-kind="primary"]');
-  if (!form) {
-    return;
-  }
+function bindPhotoUpload(root, dialog, kind = "primary") {
+  const form = root.querySelector(`form[data-form-kind="${kind}"]`);
+  if (!form) return;
   const storeInput = form.querySelector("[data-photo-store]");
   const openButton = form.querySelector("[data-open-photo-window]");
   const shell = form.querySelector("[data-photo-window]");
@@ -3553,9 +3794,9 @@ function bindBaseTracePhotos(root, dialog) {
   const grid = form.querySelector("[data-photo-grid]");
   const dialogGrid = form.querySelector("[data-photo-dialog-grid]");
   const countPill = form.querySelector("[data-photo-count]");
-  if (!storeInput || !shell || !grid || !dialogGrid) {
-    return;
-  }
+  if (!storeInput || !shell || !grid || !dialogGrid) return;
+
+  const maxPhotos = 12;
 
   const state = {
     photos: normalizeTracePhotoList(storeInput.value),
@@ -3564,9 +3805,7 @@ function bindBaseTracePhotos(root, dialog) {
 
   const syncStore = () => {
     storeInput.value = JSON.stringify(state.photos);
-    if (countPill) {
-      countPill.textContent = `${state.photos.length} 张`;
-    }
+    if (countPill) countPill.textContent = `${state.photos.length} 张`;
   };
 
   const renderGrid = (container, removable) => {
@@ -3601,23 +3840,17 @@ function bindBaseTracePhotos(root, dialog) {
 
   const appendPhotos = async (files) => {
     const candidates = Array.from(files || []).filter((file) => String(file.type || "").startsWith("image/"));
-    const room = Math.max(0, BASE_TRACE_MAX_PHOTOS - state.photos.length);
-    if (!candidates.length || !room) {
-      return;
-    }
+    const room = Math.max(0, maxPhotos - state.photos.length);
+    if (!candidates.length || !room) return;
     const nextPhotos = await Promise.all(candidates.slice(0, room).map(createTracePhotoRecord));
     state.photos = [...state.photos, ...nextPhotos];
     render();
   };
 
-  if (openButton) {
-    openButton.addEventListener("click", openWindow);
-  }
+  if (openButton) openButton.addEventListener("click", openWindow);
   closeButtons.forEach((button) => button.addEventListener("click", closeWindow));
   shell.addEventListener("click", (event) => {
-    if (event.target === shell || event.target.closest("[data-close-photo-window]")) {
-      closeWindow();
-    }
+    if (event.target === shell || event.target.closest("[data-close-photo-window]")) closeWindow();
   });
 
   if (photoInput) {
@@ -3631,9 +3864,7 @@ function bindBaseTracePhotos(root, dialog) {
 
   dialogGrid.addEventListener("click", (event) => {
     const removeButton = event.target.closest("[data-remove-photo]");
-    if (!removeButton) {
-      return;
-    }
+    if (!removeButton) return;
     const photoId = removeButton.dataset.removePhoto || "";
     state.photos = state.photos.filter((photo) => photo.id !== photoId);
     render();
@@ -3643,7 +3874,7 @@ function bindBaseTracePhotos(root, dialog) {
     dialog.addEventListener("close", closeWindow);
   }
 
-  form._baseTracePhotoController = {
+  form._photoController = {
     waitUntilReady: async () => {
       await state.pendingTask;
     }

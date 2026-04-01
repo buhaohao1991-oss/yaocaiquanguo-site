@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#22372e">
+  <meta
+    name="description"
+    content="中药材溯源平台首页 demo，展示基地建档、农事追踪、质检合规、仓储流通和扫码回溯的全链路能力。"
+  >
+  <title>中药材溯源平台首页 Demo</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="assets/herb-trace-home.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#hero" aria-label="中药材溯源平台">
+        <span class="brand-mark">药</span>
+        <span class="brand-copy">
+          <strong>中药材溯源平台</strong>
+          <span>Herbal Traceability Platform</span>
+        </span>
+      </a>
+      <nav class="topnav" aria-label="页面导航">
+        <a href="#capabilities">核心卖点</a>
+        <a href="#workflow">全链流程</a>
+        <a href="#roles">适用角色</a>
+        <a href="#compliance">数据可信</a>
+      </nav>
+      <a class="topbar-action" href="#cta">申请体验</a>
+    </header>
+
+    <main>
+      <section class="hero reveal" id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">全链路可信追踪</p>
+          <h1>让每一批中药材，从山地种植到扫码交付，都有清晰证据链。</h1>
+          <p class="hero-lead">
+            以批次为主线，串联基地、农事、质检、加工、仓储与流通数据，
+            让来源可查、过程可证、责任可追，为企业协同与监管核验提供稳定的数据底座。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#cta">预约平台演示</a>
+            <button class="button button-secondary" id="audio-toggle" type="button">
+              播放首页介绍
+            </button>
+          </div>
+          <div class="hero-notes">
+            <div>
+              <span>批次视角</span>
+              <strong>从种源到仓储一批一档</strong>
+            </div>
+            <div>
+              <span>监管核验</span>
+              <strong>抽检、留痕、回看一页可查</strong>
+            </div>
+            <div>
+              <span>对外追溯</span>
+              <strong>扫码查看来源、质检与流通节点</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="visual-stage">
+            <div class="visual-video-wrap">
+              <video
+                class="hero-video"
+                id="hero-video"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                aria-label="中药材溯源平台背景视频"
+              >
+                <source src="assets/videos/bg-herb-trace-sora.mp4" type="video/mp4">
+              </video>
+            </div>
+            <img
+              class="hero-image"
+              src="assets/images/hero-herb-trace-local.svg"
+              alt="中药材溯源平台主视觉"
+            >
+            <div class="floating-card floating-card-primary">
+              <span>基地建档完整度</span>
+              <strong>93%</strong>
+              <p>地块、负责人、坐标与材料已归档</p>
+            </div>
+            <div class="floating-card floating-card-secondary">
+              <span>最近批次</span>
+              <strong>DS-2026-0318</strong>
+              <p>采收、净选、质检、入库节点已串联</p>
+            </div>
+            <div class="floating-strip">
+              <span>基地</span>
+              <span>农事</span>
+              <span>检测</span>
+              <span>加工</span>
+              <span>流通</span>
+              <span>扫码</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof-grid reveal">
+        <article class="proof-card">
+          <span>合规建档</span>
+          <strong>批次、坐标、照片、报告同步留痕</strong>
+          <p>把分散在 Excel、纸质单据和群消息里的信息沉淀为结构化档案。</p>
+        </article>
+        <article class="proof-card">
+          <span>过程可证</span>
+          <strong>关键节点自动串联，不再靠补录回忆</strong>
+          <p>采收、检测、加工和仓储都按时间顺序沉淀，形成完整过程记录。</p>
+        </article>
+        <article class="proof-card">
+          <span>责任可追</span>
+          <strong>从责任人到操作时间，一页定位问题源头</strong>
+          <p>支持批次回看、节点对比和异常追踪，减少责任界定成本。</p>
+        </article>
+      </section>
+
+      <section class="content-section reveal" id="capabilities">
+        <div class="section-heading">
+          <p class="eyebrow">核心卖点</p>
+          <h2>把种植、加工、质检与流通拆开记录，再按批次重新连接。</h2>
+          <p>
+            平台不是简单做一个查询页，而是先把全链路信息结构化，再把监管、协同和采购查询接到同一条数据主线。
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>基地到批次的双层建档</h3>
+            <p>基地信息与批次记录分层管理，地块、负责人、种源、面积与材料可持续复用。</p>
+          </article>
+          <article class="feature-card">
+            <h3>农事与质检节点独立留痕</h3>
+            <p>巡田、施肥、病虫监测、抽样检测分别归档，便于后续核验和责任追溯。</p>
+          </article>
+          <article class="feature-card">
+            <h3>加工仓储流程可视化</h3>
+            <p>净选、切制、分级、包装、入库、出库按节点回放，关键状态和责任人一目了然。</p>
+          </article>
+          <article class="feature-card">
+            <h3>扫码对外展示可信信息</h3>
+            <p>把内部过程数据沉淀为外部可查询的批次页，让采购方和监管方看见同一套依据。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="workflow reveal" id="workflow">
+        <div class="section-heading">
+          <p class="eyebrow">流程可视化</p>
+          <h2>从种源入场，到对外扫码，每一个节点都能回放。</h2>
+        </div>
+        <div class="workflow-track">
+          <article class="workflow-step">
+            <span>01</span>
+            <h3>基地建档</h3>
+            <p>建立基地档案、坐标信息、负责人信息和现场材料。</p>
+          </article>
+          <article class="workflow-step">
+            <span>02</span>
+            <h3>种源登记</h3>
+            <p>记录种苗来源、供应单位、到货时间和抽检结论。</p>
+          </article>
+          <article class="workflow-step">
+            <span>03</span>
+            <h3>农事追踪</h3>
+            <p>归档巡田、施肥、用药、病虫监测与过程图片。</p>
+          </article>
+          <article class="workflow-step">
+            <span>04</span>
+            <h3>采收加工</h3>
+            <p>把采收批次、净选切制、分级包装与工序质控连成过程链。</p>
+          </article>
+          <article class="workflow-step">
+            <span>05</span>
+            <h3>仓储流通</h3>
+            <p>沉淀入库、仓位、出库、交接与库存巡检信息。</p>
+          </article>
+          <article class="workflow-step">
+            <span>06</span>
+            <h3>扫码回溯</h3>
+            <p>输出可查询的批次页面，对外展示来源、检测和关键流通节点。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-section reveal" id="roles">
+        <div class="section-heading">
+          <p class="eyebrow">适用角色</p>
+          <h2>让不同角色都围绕同一条数据链协同，而不是各自维护一套表。</h2>
+        </div>
+        <div class="role-grid">
+          <article class="role-card">
+            <h3>种植基地</h3>
+            <p>快速完成基地建档、农事记录与批次关联，减少资料散落和补录压力。</p>
+          </article>
+          <article class="role-card">
+            <h3>加工企业</h3>
+            <p>把到货、检测、加工、包装、入库流程串起来，提升批次管理可见性。</p>
+          </article>
+          <article class="role-card">
+            <h3>监管单位</h3>
+            <p>按基地、批次或企业查看留痕记录，缩短抽查核验与问题回溯时间。</p>
+          </article>
+          <article class="role-card">
+            <h3>B 端采购商</h3>
+            <p>通过扫码查看来源与质检信息，增强对供应链稳定性和真实性的信任。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="compliance reveal" id="compliance">
+        <div class="compliance-panel">
+          <div class="section-heading">
+            <p class="eyebrow">数据可信 / 合规监管</p>
+            <h2>把“看起来完整”变成“有证据、有时间、有责任人”。</h2>
+            <p>
+              每个节点都能记录时间、责任人、图片、附件与结果，支持按批次回溯、按流程复盘、按角色核验。
+            </p>
+          </div>
+          <div class="compliance-metrics">
+            <div>
+              <span>节点覆盖率</span>
+              <strong>18 个关键节点</strong>
+            </div>
+            <div>
+              <span>质检留痕</span>
+              <strong>报告、照片、判定同步归集</strong>
+            </div>
+            <div>
+              <span>异常处理</span>
+              <strong>支持问题批次反查与责任回看</strong>
+            </div>
+          </div>
+        </div>
+        <div class="trace-board">
+          <div class="trace-board-head">
+            <span>批次视图</span>
+            <strong>DS-2026-0318</strong>
+          </div>
+          <ul>
+            <li><span>基地建档</span><strong>已完成</strong></li>
+            <li><span>农事巡田</span><strong>3 次记录</strong></li>
+            <li><span>质检抽样</span><strong>合格</strong></li>
+            <li><span>净选切制</span><strong>2 道工序</strong></li>
+            <li><span>入库交接</span><strong>仓位 A-03-08</strong></li>
+            <li><span>外部扫码</span><strong>已发布</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="cta reveal" id="cta">
+        <div class="cta-copy">
+          <p class="eyebrow">申请演示</p>
+          <h2>把你现有的纸质记录、表格台账和扫码页，整理成一条可信的数据主线。</h2>
+          <p>
+            先从基地、种源和质检三个关键节点开始建档，再逐步扩展到加工、仓储与流通，不需要一次性重做整套流程。
+          </p>
+        </div>
+        <div class="cta-side">
+          <div class="audio-card" id="audio-card">
+            <span>首页介绍音频</span>
+            <strong>中文旁白 / 约 30 秒</strong>
+            <p>适合接入首页首屏或产品演示流程。</p>
+            <button class="button button-primary" id="audio-toggle-secondary" type="button">
+              播放旁白
+            </button>
+          </div>
+          <a class="button button-secondary button-block" href="mailto:demo@example.com">
+            联系团队获取试用方案
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>中药材溯源平台首页 Demo</span>
+      <span id="footer-year"></span>
+    </footer>
+  </div>
+
+  <audio id="intro-audio" preload="metadata">
+    <source src="assets/audio/intro-herb-trace-openai.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="assets/herb-trace-home.js" defer></script>
+</body>
+</html>

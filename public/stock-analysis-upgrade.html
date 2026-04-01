@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eef1f6">
+  <meta name="stockdesk-api-base" content="">
+  <title>股票分析系统</title>
+  <link rel="stylesheet" href="assets/stock-analysis-upgrade.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar reveal">
+      <div class="brand-block">
+        <div class="brand-mark">SA</div>
+        <div class="brand-copy">
+          <h1>股票分析系统</h1>
+          <p>全部 A 股 · 真实数据 · 长期研究</p>
+        </div>
+      </div>
+      <div class="service-block">
+        <div class="service-line">
+          <span class="service-label">数据引擎</span>
+          <span class="status-badge" id="backend-status">检测中</span>
+        </div>
+        <p class="service-copy" id="data-source-note">准备连接真实数据与长期研究模型</p>
+      </div>
+    </header>
+
+    <section class="panel market-panel reveal" id="market-overview">
+      <div class="market-head">
+        <div>
+          <span class="section-tag">市场温度</span>
+          <h2>大盘与指数</h2>
+          <p class="market-summary" id="market-summary">等待真实指数和市场广度数据。</p>
+        </div>
+        <div class="market-score-box">
+          <span class="status-badge" id="market-temperature-label">等待数据</span>
+          <strong id="market-temperature-score">--</strong>
+          <small id="market-updated">等待数据</small>
+        </div>
+      </div>
+      <div class="market-notes" id="market-notes"></div>
+      <div class="market-content">
+        <div class="market-index-grid" id="market-index-grid"></div>
+        <div class="market-breadth-grid" id="market-breadth-grid"></div>
+      </div>
+    </section>
+
+    <main class="workspace">
+      <aside class="sidebar reveal">
+        <article class="panel input-panel">
+          <div class="panel-title">
+            <div>
+              <span class="section-tag">研究输入</span>
+              <h2>分析设置</h2>
+            </div>
+            <button class="button button-secondary button-small" id="refresh-universe" type="button">刷新</button>
+          </div>
+
+          <label class="field">
+            <span>股票代码 / 名称</span>
+            <input id="stock-search" type="text" value="000792" placeholder="支持全部 A 股代码或名称">
+          </label>
+
+          <div class="quick-tags">
+            <span class="chip">真实行情</span>
+            <span class="chip">批量分析</span>
+            <span class="chip">长期研究</span>
+          </div>
+
+          <label class="field">
+            <span>批量分析代码</span>
+            <textarea id="batch-input" rows="4" placeholder="000792&#10;601088&#10;300750"></textarea>
+          </label>
+
+          <div class="button-row">
+            <button class="button button-primary button-block" id="run-analysis" type="button">开始分析</button>
+            <button class="button button-secondary button-block" id="run-batch" type="button">批量分析</button>
+          </div>
+
+          <p class="helper-note" id="global-message">初始化中...</p>
+        </article>
+
+        <article class="panel log-panel" id="logs">
+          <div class="panel-title panel-title-compact">
+            <div>
+              <span class="section-tag">分析日志</span>
+              <h2>执行过程</h2>
+            </div>
+            <span class="panel-note" id="log-note">真实数据</span>
+          </div>
+          <div class="log-stream" id="log-stream"></div>
+        </article>
+
+        <article class="panel pool-panel">
+          <div class="panel-title panel-title-compact">
+            <div>
+              <span class="section-tag">A股候选池</span>
+              <h2>候选清单</h2>
+            </div>
+            <span class="panel-note" id="watchlist-note">等待候选池</span>
+          </div>
+          <div class="watchlist" id="watchlist"></div>
+        </article>
+      </aside>
+
+      <section class="content">
+        <article class="panel result-panel reveal" id="overview">
+          <div class="result-header">
+            <div class="result-main">
+              <span class="section-tag">分析结果</span>
+              <div class="title-line">
+                <h2 id="stock-title">等待载入</h2>
+                <span class="status-badge" id="market-session-badge">长期研究</span>
+              </div>
+              <p class="stock-meta" id="stock-meta">请先启动本地服务并载入真实股票数据</p>
+              <p class="data-note" id="hero-data-note">日期口径会分别标明行情、财务、新闻和研报对应的时间。</p>
+            </div>
+            <div class="result-side">
+              <div class="price-box">
+                <span class="price-label">最新价格</span>
+                <strong class="price-main" id="price-main">--</strong>
+                <p class="price-sub" id="price-sub">等待数据</p>
+              </div>
+              <button class="button button-secondary button-block" id="export-report" type="button">导出报告</button>
+            </div>
+          </div>
+
+          <p class="hero-summary" id="hero-summary">
+            这里会显示基于真实行情、财务、新闻和研报整理出来的研究摘要。
+          </p>
+
+          <div class="hero-tags" id="hero-tags"></div>
+
+          <div class="subsection-head">
+            <h3>核心评分</h3>
+          </div>
+          <div class="score-grid score-grid-main" id="score-grid"></div>
+
+          <div class="subsection-head subsection-head-inline">
+            <h3>数据质量指标</h3>
+            <span class="panel-note" id="confidence-note">等待数据</span>
+          </div>
+          <div class="hero-stats hero-stats-compact" id="hero-stats"></div>
+        </article>
+
+        <article class="panel analysis-panel analysis-panel-primary reveal">
+          <div class="panel-title">
+            <div>
+              <span class="section-tag">AI综合分析</span>
+              <h2>结构化结论</h2>
+            </div>
+          </div>
+          <div class="analysis-body">
+            <section class="analysis-block">
+              <h3>当前态势研判</h3>
+              <p id="analysis-current"></p>
+            </section>
+            <section class="analysis-block">
+              <h3>技术面分析</h3>
+              <ul id="analysis-technical"></ul>
+            </section>
+            <section class="analysis-block">
+              <h3>基本面分析</h3>
+              <ul id="analysis-fundamental"></ul>
+            </section>
+            <section class="analysis-block split-block">
+              <div>
+                <h3>催化因素</h3>
+                <ul id="analysis-catalysts"></ul>
+              </div>
+              <div>
+                <h3>核心风险</h3>
+                <ul id="analysis-risks"></ul>
+              </div>
+            </section>
+          </div>
+        </article>
+
+        <div class="supplemental-grid">
+          <div class="side-stack">
+            <article class="panel thesis-panel reveal">
+              <div class="thesis-head">
+                <div>
+                  <span class="section-tag">研究结论</span>
+                  <h3>长期判断</h3>
+                </div>
+              </div>
+              <div class="thesis-body">
+                <div class="ring" id="confidence-ring">
+                  <strong id="confidence-value">0</strong>
+                  <span>/100</span>
+                </div>
+                <div class="thesis-copy">
+                  <h4 id="stance-title">尚未载入</h4>
+                  <p id="stance-summary">候选池和单股研究结果会在真实数据载入后更新。</p>
+                </div>
+              </div>
+              <div class="thesis-metrics" id="thesis-metrics"></div>
+            </article>
+
+            <article class="panel factor-panel reveal">
+              <div class="panel-title panel-title-compact">
+                <div>
+                  <span class="section-tag">长期因子</span>
+                  <h2>因子拆解</h2>
+                </div>
+              </div>
+              <div class="factor-bars" id="factor-bars"></div>
+            </article>
+
+            <article class="panel evidence-panel reveal" id="evidence">
+              <div class="panel-title panel-title-compact">
+                <div>
+                  <span class="section-tag">证据链</span>
+                  <h2>原始依据</h2>
+                </div>
+              </div>
+              <div class="evidence-grid" id="evidence-grid"></div>
+            </article>
+          </div>
+
+          <div class="side-stack">
+            <article class="panel chart-panel reveal">
+              <div class="panel-title">
+                <div>
+                  <span class="section-tag">价格结构</span>
+                  <h2>走势概览</h2>
+                </div>
+                <div class="range-tabs" id="range-tabs"></div>
+              </div>
+              <div class="chart-stats">
+                <div class="mini-card">
+                  <span>区间表现</span>
+                  <strong id="range-performance">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>波动率</span>
+                  <strong id="range-volatility">--</strong>
+                </div>
+              </div>
+              <svg class="price-chart" id="price-chart" viewBox="0 0 760 360" preserveAspectRatio="none" aria-label="价格走势图">
+                <defs>
+                  <linearGradient id="chartFill" x1="0%" x2="0%" y1="0%" y2="100%">
+                    <stop offset="0%" stop-color="#7f95ff" stop-opacity="0.28"></stop>
+                    <stop offset="100%" stop-color="#7f95ff" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
+                <g id="chart-grid"></g>
+                <path id="chart-area"></path>
+                <path id="chart-line"></path>
+                <g id="chart-bars"></g>
+              </svg>
+              <div class="axis-labels">
+                <span id="axis-start">--</span>
+                <span id="axis-end">--</span>
+              </div>
+              <div class="mini-grid" id="chart-metrics"></div>
+              <div class="heatmap-panel">
+                <div class="panel-title panel-title-compact">
+                  <div>
+                    <span class="section-tag">市场情绪</span>
+                    <h2>热度分布</h2>
+                  </div>
+                  <span class="panel-note" id="flow-tone">等待数据</span>
+                </div>
+                <div class="heatmap" id="heatmap"></div>
+              </div>
+            </article>
+
+            <article class="panel timeline-panel reveal" id="timeline">
+              <div class="panel-title panel-title-compact">
+                <div>
+                  <span class="section-tag">事件时间线</span>
+                  <h2>近期变化</h2>
+                </div>
+              </div>
+              <div class="timeline" id="timeline-list"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/stock-analysis-upgrade.js" defer></script>
+</body>
+</html>

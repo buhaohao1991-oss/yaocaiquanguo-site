@@ -1,0 +1,153 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: SA
+      - generic [ref=e6]:
+        - heading "股票分析系统" [level=1] [ref=e7]
+        - paragraph [ref=e8]: 全部 A 股 · 真实数据 · 长期研究
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: 数据引擎
+        - generic [ref=e12]: 检测中
+      - paragraph [ref=e13]: 准备连接真实数据与长期研究模型
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - text: 市场温度
+      - heading "大盘与指数" [level=2] [ref=e17]
+      - paragraph [ref=e18]: 市场温度会基于真实指数和涨跌家数自动更新。
+    - generic [ref=e19]:
+      - generic [ref=e20]: 等待数据
+      - strong [ref=e21]: "--"
+      - generic [ref=e22]: 未连接
+  - main [ref=e23]:
+    - complementary [ref=e24]:
+      - article [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - text: 研究输入
+            - heading "分析设置" [level=2] [ref=e28]
+          - button "刷新" [ref=e29] [cursor=pointer]
+        - generic [ref=e30]:
+          - generic [ref=e31]: 股票代码 / 名称
+          - textbox "股票代码 / 名称" [ref=e32]:
+            - /placeholder: 支持全部 A 股代码或名称
+            - text: "000792"
+        - generic [ref=e33]:
+          - generic [ref=e34]: 真实行情
+          - generic [ref=e35]: 批量分析
+          - generic [ref=e36]: 长期研究
+        - generic [ref=e37]:
+          - generic [ref=e38]: 批量分析代码
+          - textbox "批量分析代码" [ref=e39]:
+            - /placeholder: "000792\n601088\n300750"
+            - text: 000792 601088 300750
+        - generic [ref=e40]:
+          - button "开始分析" [ref=e41] [cursor=pointer]
+          - button "批量分析" [ref=e42] [cursor=pointer]
+        - paragraph [ref=e43]: 正在连接本地研究服务...
+      - article [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - text: 分析日志
+            - heading "执行过程" [level=2] [ref=e47]
+          - generic [ref=e48]: 未连接
+        - generic [ref=e50]:
+          - generic [ref=e51]: 18:28:37
+          - generic [ref=e52]: INFO 本地服务未连接。
+      - article [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - text: A股候选池
+            - heading "候选清单" [level=2] [ref=e56]
+          - generic [ref=e57]: 等待候选池
+        - paragraph [ref=e59]: 服务启动后会显示全部 A 股长期候选池。
+    - generic [ref=e60]:
+      - article [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - text: 分析结果
+            - generic [ref=e64]:
+              - heading "等待载入" [level=2] [ref=e65]
+              - generic [ref=e66]: 未连接
+            - paragraph [ref=e67]: 请先启动本地服务并载入真实股票数据
+            - paragraph [ref=e68]: 日期口径会分别标明行情、财务、新闻和研报对应的时间。
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]: 最新价格
+              - strong [ref=e72]: "--"
+              - paragraph [ref=e73]: 运行本地服务后可用
+            - button "导出报告" [ref=e74] [cursor=pointer]
+        - paragraph [ref=e75]: 这个页面只做两件事：先看全市场长期候选池，再对单只 A 股生成真实研究结论。
+        - generic [ref=e76]:
+          - generic [ref=e77]: 全部A股
+          - generic [ref=e78]: 长期主义
+          - generic [ref=e79]: 真实数据
+        - heading "核心评分" [level=3] [ref=e81]
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - text: 研究结论
+              - heading "长期判断" [level=3] [ref=e85]
+            - generic [ref=e86]: 等待数据
+          - generic [ref=e87]:
+            - generic [ref=e88]:
+              - strong [ref=e89]: "0"
+              - generic [ref=e90]: /100
+            - generic [ref=e91]:
+              - heading "尚未载入" [level=4] [ref=e92]
+              - paragraph [ref=e93]: 候选池和个股研究结果会在服务可用后自动显示。
+      - generic [ref=e94]:
+        - article [ref=e95]:
+          - generic [ref=e97]:
+            - text: AI综合分析
+            - heading "结构化结论" [level=2] [ref=e98]
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - heading "当前态势研判" [level=3] [ref=e101]
+              - paragraph [ref=e102]: 未载入
+            - generic [ref=e103]:
+              - heading "技术面分析" [level=3] [ref=e104]
+              - list
+            - generic [ref=e105]:
+              - heading "基本面分析" [level=3] [ref=e106]
+              - list
+            - generic [ref=e107]:
+              - generic [ref=e108]:
+                - heading "催化因素" [level=3] [ref=e109]
+                - list
+              - generic [ref=e110]:
+                - heading "核心风险" [level=3] [ref=e111]
+                - list
+        - generic [ref=e112]:
+          - article [ref=e113]:
+            - generic [ref=e115]:
+              - text: 价格结构
+              - heading "走势概览" [level=2] [ref=e116]
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - generic [ref=e119]: 区间表现
+                - strong [ref=e120]: "--"
+              - generic [ref=e121]:
+                - generic [ref=e122]: 波动率
+                - strong [ref=e123]: "--"
+            - img "价格走势图" [ref=e124]
+            - generic [ref=e125]:
+              - generic [ref=e126]: "--"
+              - generic [ref=e127]: "--"
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - text: 市场情绪
+                - heading "热度分布" [level=2] [ref=e131]
+              - generic [ref=e132]: 等待数据
+          - article [ref=e133]:
+            - generic [ref=e135]:
+              - text: 长期因子
+              - heading "因子拆解" [level=2] [ref=e136]
+          - article [ref=e137]:
+            - generic [ref=e139]:
+              - text: 事件时间线
+              - heading "近期变化" [level=2] [ref=e140]
+          - article [ref=e141]:
+            - generic [ref=e143]:
+              - text: 证据链
+              - heading "原始依据" [level=2] [ref=e144]

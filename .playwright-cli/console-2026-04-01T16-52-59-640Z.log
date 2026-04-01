@@ -1,0 +1,2 @@
+[  220615ms] Uncaught TypeError: Cannot read properties of undefined (reading 'extend')
+    at <anonymous> (http://api.tianditu.gov.cn/v4.0/military.js:0:35845)

@@ -1,0 +1,93 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - link "返回赋码台账" [ref=e6] [cursor=pointer]:
+        - /url: trace-code-management.html
+      - generic [ref=e7]: 中药材溯源码查询页
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: TRACE-20261008-0001
+        - heading "党参切制成品码" [level=1] [ref=e11]
+        - paragraph [ref=e12]: 党参切片 · 甘肃岷县党参基地 · 岷县一号仓
+        - generic [ref=e13]:
+          - generic [ref=e14]: 甘肃岷县党参基地
+          - generic [ref=e15]: SEED-20260402-001
+          - generic [ref=e16]: PLANT-20260402-001
+          - generic [ref=e17]: HV-20261001-001
+          - generic [ref=e18]: PP-20261006-001
+          - generic [ref=e19]: 岷县一号仓
+      - generic [ref=e20]:
+        - strong [ref=e21]: 查询状态
+        - generic [ref=e22]: 当前链路已可回查
+        - generic [ref=e23]:
+          - article [ref=e24]:
+            - generic [ref=e25]: 药材
+            - strong [ref=e26]: 党参切片
+          - article [ref=e27]:
+            - generic [ref=e28]: 仓库
+            - strong [ref=e29]: 岷县一号仓
+          - article [ref=e30]:
+            - generic [ref=e31]: 采收批次
+            - strong [ref=e32]: HV-20261001-001
+          - article [ref=e33]:
+            - generic [ref=e34]: 加工批次
+            - strong [ref=e35]: PP-20261006-001
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: 基地与种源
+          - heading "源头信息" [level=2] [ref=e40]
+        - generic [ref=e41]:
+          - article [ref=e42]:
+            - generic [ref=e43]: 基地档案
+            - strong [ref=e44]: 甘肃岷县党参基地
+            - strong [ref=e45]: BASE-20260402-001
+            - strong [ref=e46]: 甘肃省定西市岷县 · 岷阳镇西寨村五社
+          - article [ref=e47]:
+            - generic [ref=e48]: 种源备案
+            - strong [ref=e49]: SEED-20260402-001
+            - strong [ref=e50]: 岷州种苗中心
+            - strong [ref=e51]: 岷州良种
+        - generic [ref=e53]: 地图加载中...
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]: 过程留痕
+          - heading "种植与农事" [level=2] [ref=e57]
+        - article [ref=e59]:
+          - strong [ref=e60]: 施肥
+          - generic [ref=e61]: 2026-04-10 至 2026-04-10
+          - paragraph [ref=e62]: 完成春季追肥与田间巡查。
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: 采收与加工
+          - heading "批次加工链" [level=2] [ref=e66]
+        - generic [ref=e67]:
+          - article [ref=e68]:
+            - generic [ref=e69]: 采收批次
+            - strong [ref=e70]: 党参秋季采收
+            - strong [ref=e71]: HV-20261001-001
+            - strong [ref=e72]: 860 kg
+          - article [ref=e73]:
+            - generic [ref=e74]: 加工过程
+            - strong [ref=e75]: 党参切制工艺
+            - strong [ref=e76]: PP-20261006-001
+            - strong [ref=e77]: 310 kg
+        - article [ref=e79]:
+          - strong [ref=e80]: 净选
+          - generic [ref=e81]: 2026-10-06 至 2026-10-06
+          - paragraph [ref=e82]: 去除杂质并完成净选。
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]: 仓储落点
+          - heading "当前仓储信息" [level=2] [ref=e86]
+        - generic [ref=e87]:
+          - article [ref=e88]:
+            - generic [ref=e89]: 仓库
+            - strong [ref=e90]: 岷县一号仓
+            - strong [ref=e91]: 阴凉干燥
+            - strong [ref=e92]: 货架分层
+          - article [ref=e93]:
+            - generic [ref=e94]: 查询地址
+            - strong [ref=e95]: http://127.0.0.1:4173/trace-query.html?code=TRACE-20...
+            - strong [ref=e96]: 该地址由后台自动生成
+            - strong [ref=e97]: 适合扫码查询与链接分享

@@ -1,0 +1,274 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e13]:
+        - generic [ref=e14]: BOTANICAL TRACE
+        - strong [ref=e15]: 中药材溯源平台
+        - generic [ref=e16]: 链路驱动的工作台原型
+    - navigation [ref=e17]:
+      - link "首页 总览与待办 0" [ref=e18] [cursor=pointer]:
+        - /url: index.html
+        - img [ref=e20]
+        - generic [ref=e25]:
+          - strong [ref=e26]: 首页
+          - generic [ref=e27]: 总览与待办
+        - generic [ref=e28]: "0"
+      - link "基地溯源 种植基地主档 0" [ref=e29] [cursor=pointer]:
+        - /url: base-trace.html
+        - img [ref=e31]
+        - generic [ref=e34]:
+          - strong [ref=e35]: 基地溯源
+          - generic [ref=e36]: 种植基地主档
+        - generic [ref=e37]: "0"
+      - link "种源备案 种苗与供应商 0" [ref=e38] [cursor=pointer]:
+        - /url: seed-trace.html
+        - img [ref=e40]
+        - generic [ref=e42]:
+          - strong [ref=e43]: 种源备案
+          - generic [ref=e44]: 种苗与供应商
+        - generic [ref=e45]: "0"
+      - link "种植与农事 过程与田间留痕 0" [ref=e46] [cursor=pointer]:
+        - /url: farming-trace.html
+        - img [ref=e48]
+        - generic [ref=e50]:
+          - strong [ref=e51]: 种植与农事
+          - generic [ref=e52]: 过程与田间留痕
+        - generic [ref=e53]: "0"
+      - link "采收追溯 采收批次管理 0" [ref=e54] [cursor=pointer]:
+        - /url: harvest-trace.html
+        - img [ref=e56]
+        - generic [ref=e59]:
+          - strong [ref=e60]: 采收追溯
+          - generic [ref=e61]: 采收批次管理
+        - generic [ref=e62]: "0"
+      - link "初加工与工艺 加工过程与步骤 0" [ref=e63] [cursor=pointer]:
+        - /url: processing-trace.html
+        - img [ref=e65]
+        - generic [ref=e66]:
+          - strong [ref=e67]: 初加工与工艺
+          - generic [ref=e68]: 加工过程与步骤
+        - generic [ref=e69]: "0"
+      - link "药材档案 物料规格与成品档 0" [ref=e70] [cursor=pointer]:
+        - /url: herb-management.html
+        - img [ref=e72]
+        - generic [ref=e74]:
+          - strong [ref=e75]: 药材档案
+          - generic [ref=e76]: 物料规格与成品档
+        - generic [ref=e77]: "0"
+      - link "赋码与查询 溯源码与查询页 0" [ref=e78] [cursor=pointer]:
+        - /url: trace-code-management.html
+        - img [ref=e80]
+        - generic [ref=e85]:
+          - strong [ref=e86]: 赋码与查询
+          - generic [ref=e87]: 溯源码与查询页
+        - generic [ref=e88]: "0"
+      - link "仓库管理 仓库主档与使用 0" [ref=e89] [cursor=pointer]:
+        - /url: warehouse-management.html
+        - img [ref=e91]
+        - generic [ref=e95]:
+          - strong [ref=e96]: 仓库管理
+          - generic [ref=e97]: 仓库主档与使用
+        - generic [ref=e98]: "0"
+  - main [ref=e99]:
+    - generic [ref=e100]:
+      - generic [ref=e101]:
+        - generic [ref=e102]: BASE TRACE
+        - heading "基地溯源" [level=1] [ref=e103]
+        - paragraph [ref=e104]: 先把种植主体、基地资料和地理信息建成主档，后续种源、采收、加工都会从这里接上。
+      - generic [ref=e105]:
+        - article [ref=e106]:
+          - generic [ref=e107]: 基地档案
+          - strong [ref=e108]: "0"
+        - article [ref=e109]:
+          - generic [ref=e110]: 已完备主档
+          - strong [ref=e111]: "0"
+        - article [ref=e112]:
+          - generic [ref=e113]: 已关联种源
+          - strong [ref=e114]: "0"
+    - generic [ref=e115]:
+      - searchbox "搜索基地名称、负责人、药材或地区" [ref=e117]
+      - generic [ref=e118]:
+        - generic [ref=e119]: 0 条
+        - button "新建基地档案" [ref=e120] [cursor=pointer]
+    - generic [ref=e121]:
+      - generic [ref=e122]:
+        - generic [ref=e124]:
+          - generic [ref=e125]: MODULE TABLE
+          - heading "基地溯源台账" [level=2] [ref=e126]
+        - generic [ref=e128]:
+          - strong [ref=e129]: 当前还没有基地溯源记录
+          - generic [ref=e130]: 你可以直接新建第一条记录，系统会自动串起后续链路。
+      - complementary [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e134]:
+            - generic [ref=e135]: SELECTED RECORD
+            - heading "当前详情" [level=2] [ref=e136]
+          - generic [ref=e138]:
+            - strong [ref=e139]: 当前没有可展示的记录
+            - generic [ref=e140]: 新增第一条数据后，这里会展示它的链路关系、状态和下一步操作。
+    - dialog [ref=e141]:
+      - generic [ref=e142]:
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]: NEW RECORD
+            - heading "新建基地档案" [level=3] [ref=e146]
+          - button "关闭" [ref=e147] [cursor=pointer]: ✕
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - generic [ref=e150]:
+              - generic [ref=e151]:
+                - heading "基础档案" [level=4] [ref=e153]
+                - generic [ref=e154]:
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: 基地名称
+                    - textbox "基地名称" [ref=e157]:
+                      - /placeholder: 例如：甘肃岷县党参基地
+                      - text: 甘肃岷县党参基地
+                  - generic [ref=e158]:
+                    - generic [ref=e159]: 基地编号
+                    - textbox "基地编号" [ref=e160]:
+                      - /placeholder: 例如：BASE-202604-001
+                      - text: BASE-20260402-001
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: 负责人
+                    - textbox "负责人" [ref=e163]:
+                      - /placeholder: 例如：赵青林
+                      - text: 赵青林
+                  - generic [ref=e164]:
+                    - generic [ref=e165]: 主栽药材
+                    - textbox "主栽药材" [active] [ref=e166]:
+                      - /placeholder: 例如：党参
+                      - text: 党参
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: 基地类型
+                    - combobox "基地类型" [ref=e169]:
+                      - option "请选择"
+                      - option "一般基地" [selected]
+                      - option "GAP 基地"
+                      - option "GACP 基地"
+                      - option "共建基地"
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: 合作模式
+                    - combobox "合作模式" [ref=e172]:
+                      - option "请选择" [selected]
+                      - option "自建"
+                      - option "共建"
+                      - option "合作社联营"
+                      - option "委托种植"
+                  - generic [ref=e173]:
+                    - generic [ref=e174]: 基地面积（亩）
+                    - spinbutton "基地面积（亩）" [ref=e175]
+              - generic [ref=e176]:
+                - heading "地理与资料" [level=4] [ref=e178]
+                - generic [ref=e179]:
+                  - generic [ref=e180]:
+                    - generic [ref=e181]: 地区
+                    - generic [ref=e182]:
+                      - textbox "地区 地图定位" [ref=e183]:
+                        - /placeholder: 例如：甘肃省定西市岷县
+                      - button "地图定位" [ref=e184] [cursor=pointer]
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: 详细地址
+                    - textbox "详细地址" [ref=e187]:
+                      - /placeholder: 例如：岷阳镇西寨村五社
+                  - generic [ref=e188]:
+                    - generic [ref=e189]: 土地证明
+                    - combobox "土地证明" [ref=e190]:
+                      - option "请选择"
+                      - option "待补充" [selected]
+                      - option "已归档"
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: 环境检测
+                    - combobox "环境检测" [ref=e193]:
+                      - option "请选择"
+                      - option "待补充" [selected]
+                      - option "已归档"
+                  - generic [ref=e194]:
+                    - generic [ref=e195]: 经度
+                    - spinbutton "经度" [ref=e196]
+                  - generic [ref=e197]:
+                    - generic [ref=e198]: 纬度
+                    - spinbutton "纬度" [ref=e199]
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: 海拔（m）
+                    - spinbutton "海拔（m）" [ref=e202]
+                  - generic [ref=e203]:
+                    - generic [ref=e204]: 年均温（℃）
+                    - spinbutton "年均温（℃）" [ref=e205]
+                  - generic [ref=e206]:
+                    - generic [ref=e207]: 土壤 pH
+                    - spinbutton "土壤 pH" [ref=e208]
+                  - generic [ref=e209]:
+                    - generic [ref=e210]: 土壤 EC
+                    - spinbutton "土壤 EC" [ref=e211]
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: 基地介绍
+                    - textbox "基地介绍" [ref=e214]:
+                      - /placeholder: 一句话说明基地背景、管理标准或产区特点
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - heading "基地照片" [level=4] [ref=e217]
+                  - generic [ref=e218]:
+                    - generic [ref=e219] [cursor=pointer]: 0 张
+                    - button "增加照片" [ref=e220] [cursor=pointer]
+                - generic [ref=e222]: 暂未添加照片
+            - complementary [ref=e223]:
+              - generic [ref=e224]:
+                - heading "卫星定位" [level=4] [ref=e226]
+                - generic [ref=e227]:
+                  - searchbox "搜索地址或地名" [ref=e228]
+                  - button "搜索" [ref=e229] [cursor=pointer]
+                - generic [ref=e230]:
+                  - generic [ref=e231]: 地图加载中...
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                      - generic:
+                        - generic:
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                          - img
+                  - generic [ref=e233]:
+                    - img [ref=e234]
+                    - text: GS (2025) 1508号 - 甲测资字11110974
+                - generic [ref=e235]: 点击地图即可回填经纬度；保留我们自己的地图风格和展示方式。
+          - generic [ref=e236]:
+            - generic [ref=e237]: 保存后会立即更新链路关系和首页待办。
+            - generic [ref=e238]:
+              - button "取消" [ref=e239] [cursor=pointer]
+              - button "保存" [ref=e240] [cursor=pointer]
