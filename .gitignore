@@ -1,3 +1,6 @@
 /中药材全国追踪-Excel模板.xlsx
 /output/stockdesk-cache/
 /output/reports/
+
+.playwright-cli/
+output/
