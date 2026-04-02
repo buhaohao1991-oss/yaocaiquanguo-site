@@ -293,6 +293,25 @@ function renderAndBind(root, pageId) {
   const shared = buildSharedData(readWorkflowStore());
 
   if (pageId === "trace-query") {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const code = params.get("code");
+
+    if (id) {
+      const view = shared.views.qrCodes.find((q) => q.id === id);
+      if (view) {
+        root.innerHTML = renderTracePublicDetail(view, shared);
+        return;
+      }
+    }
+    if (code) {
+      const view = shared.views.qrCodes.find((q) => q.traceCode === code);
+      if (view) {
+        root.innerHTML = renderTracePublicDetail(view, shared);
+        return;
+      }
+    }
+
     document.title = "中药材溯源码查询";
     root.innerHTML = renderTraceQueryPage(shared);
     bindTraceQuery(root, shared);
@@ -334,304 +353,6 @@ function renderMobileHeader(title) {
       <strong>${escapeHtml(title)}</strong>
       <div style="width: 32px"></div>
     </header>
-  `;
-}
-
-function renderHomePage(shared) {
-  const modules = NAV_ITEMS.filter((item) => item.id !== "home");
-
-  // Stats & Calculations
-  const totalBases = shared.views.bases.length;
-  const totalQr = shared.views.qrCodes.length;
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-  const monthlyActive = shared.store.activities.filter((a) => {
-    const d = new Date(a.timestamp || a.createdAt);
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  }).length;
-
-  const completeQr = shared.views.qrCodes.filter((qr) => qr.primaryProcessId && qr.warehouseId).length;
-  const healthScore = shared.views.qrCodes.length > 0 ? Math.round((completeQr / shared.views.qrCodes.length) * 100) : 0;
-  const recentActs = shared.store.activities.slice(0, 10);
-
-  return `
-    <div class="app-shell">
-      ${renderMobileHeader("灵草数智 · 溯源指挥中心")}
-      ${renderSidebar("home", shared)}
-      <main class="main home-main">
-        <header class="home-hero-v3">
-          <span class="kicker">INTELLIGENCE COMMAND V3.0</span>
-          <h1 class="font-display">灵草数智溯源指挥中心</h1>
-          <p>基于数字孪生与全程追溯逻辑的智慧管理中枢。当前全链路数据健康度评级：<strong style="color:var(--primary); font-size:1.2em;">${healthScore}%</strong></p>
-        </header>
-
-        <div class="bento-grid">
-          <!-- Premium Stats Row -->
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Production Bases</span>
-              <div class="value">${totalBases}</div>
-              <div class="footer">
-                <span class="badge-v3">基地资产</span>
-                <span class="text-faint">运行中</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Traceable Units</span>
-              <div class="value">${totalQr}</div>
-              <div class="footer">
-                <span class="badge-v3">赋码批次</span>
-                <span class="text-faint">已存证</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Monthly Activity</span>
-              <div class="value">${monthlyActive}</div>
-              <div class="footer">
-                <span class="badge-v3">活跃交互</span>
-                <span class="text-faint">本月新增</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">System Health</span>
-              <div class="value">${healthScore}%</div>
-              <div class="footer">
-                <span class="badge-v3">完备度</span>
-                <span class="text-faint">链条评分</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Feature Navigation -->
-          <div class="bento-card span-8">
-            <div style="margin-bottom: 24px;">
-              <h3 class="font-display" style="font-size: 24px; color: var(--primary-deep); margin: 0;">溯源核心业务矩阵</h3>
-              <p style="color: var(--text-soft); font-size: 14px; margin-top: 8px;">快速进入各环节管理模块，维护全链路数据资产。</p>
-            </div>
-            <div class="home-module-grid-v2">
-              ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
-            </div>
-          </div>
-
-          <!-- Live Activity Stream -->
-          <div class="bento-card span-4">
-            <div style="margin-bottom: 24px;">
-              <h3 class="font-display" style="font-size: 24px; color: var(--primary-deep); margin: 0;">实时存证脉络</h3>
-            </div>
-            <div class="timeline-v3">
-              ${recentActs.length > 0 ? recentActs.map((a) => `
-                <div class="timeline-v3-item">
-                  <div class="timeline-v3-marker" style="box-shadow: 0 0 0 4px var(--primary-soft);"></div>
-                  <div class="timeline-v3-content">
-                    <h4 style="margin: 0; font-size: 15px; font-family: var(--font-body);">${escapeHtml(a.title)}</h4>
-                    <p style="margin: 4px 0 8px; font-size: 13px; color: var(--text-soft); line-height: 1.4;">${escapeHtml(a.description)}</p>
-                    <time style="font-size: 11px; color: var(--text-faint); font-weight: 600;">${formatActivityTime(a.timestamp || a.createdAt)}</time>
-                  </div>
-                </div>
-              `).join("") : `<div class="empty-state-small">等待数据同步中...</div>`}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  `;
-}
-
-function renderEntityPage(pageId, config, shared, allViews, filteredViews, selected) {
-  const stats = config.getStats(shared, allViews);
-  return `
-    <div class="app-shell">
-      ${renderMobileHeader(config.title)}
-      ${renderSidebar(pageId, shared)}
-      <main class="main module-main">
-        <section class="page-hero">
-          <div class="page-copy">
-            <h1>${escapeHtml(config.title)}</h1>
-          </div>
-          ${shouldShowStats(stats) ? `
-            <div class="stat-grid">
-              ${stats.map((stat) => renderStatCard(stat)).join("")}
-            </div>
-          ` : ""}
-        </section>
-
-        <section class="panel command-panel">
-          <div class="search-wrap">
-            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-          <div class="command-actions">
-            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
-            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
-          </div>
-        </section>
-
-        <section class="content-layout">
-          <section class="panel table-panel">
-            <div class="panel-headline">
-              <h2>${escapeHtml(config.title)}台账</h2>
-            </div>
-            <div class="panel-body">
-              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
-            </div>
-          </section>
-
-          <aside class="detail-rail">
-            <section class="panel detail-panel">
-              <div class="panel-headline">
-                <h2>当前详情</h2>
-              </div>
-              <div class="panel-body">
-                ${selected ? config.renderDetail(selected, shared) : `
-                  <div class="empty-state">
-                    <strong>当前没有可展示的记录</strong>
-                    <span>新增第一条数据后，这里会展示它的链路关系、状态和下一步操作。</span>
-                  </div>
-                `}
-              </div>
-            </section>
-          </aside>
-        </section>
-
-        ${renderPageDialogs(pageId, shared, selected)}
-      </main>
-    </div>
-  `;
-}
-
-function renderCompoundPage(pageId, config, shared, allViews, filteredViews, selected) {
-  const secondaryItems = config.getSecondaryViews(selected, shared);
-  const stats = config.getStats(shared, allViews);
-  return `
-    <div class="app-shell">
-      ${renderMobileHeader(config.title)}
-      ${renderSidebar(pageId, shared)}
-      <main class="main module-main">
-        <section class="page-hero">
-          <div class="page-copy">
-            <h1>${escapeHtml(config.title)}</h1>
-          </div>
-          ${shouldShowStats(stats) ? `
-            <div class="stat-grid">
-              ${stats.map((stat) => renderStatCard(stat)).join("")}
-            </div>
-          ` : ""}
-        </section>
-
-        <section class="panel command-panel">
-          <div class="search-wrap">
-            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-          <div class="command-actions">
-            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
-            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
-          </div>
-        </section>
-
-        <section class="content-layout">
-          <section class="panel table-panel">
-            <div class="panel-headline">
-              <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
-            </div>
-            <div class="panel-body">
-              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
-            </div>
-          </section>
-
-          <aside class="detail-rail">
-            <section class="panel detail-panel">
-              <div class="panel-headline">
-                <h2>当前详情</h2>
-              </div>
-              <div class="panel-body">
-                ${selected ? config.renderDetail(selected, shared) : `
-                  <div class="empty-state">
-                    <strong>先选择一条主线记录</strong>
-                    <span>选中种植或加工过程后，右侧会展开它的关系链、状态和推进动作。</span>
-                  </div>
-                `}
-              </div>
-            </section>
-          </aside>
-        </section>
-
-        <section class="panel">
-          <div class="panel-headline">
-            <h2>${pageId === "farming-trace" ? "农事记录时间轴" : "工艺步骤时间轴"}</h2>
-            <div class="panel-tools">
-              ${secondaryItems.length ? `<span class="result-count">${secondaryItems.length} 条</span>` : ""}
-              <button class="button secondary" type="button" data-open-dialog="secondary" ${selected ? "" : "disabled"}>
-                ${escapeHtml(config.secondaryActionLabel)}
-              </button>
-            </div>
-          </div>
-          <div class="panel-body">
-            ${selected
-              ? (secondaryItems.length
-                ? config.renderSecondaryDetail(secondaryItems, shared)
-                : `
-                  <div class="empty-state compact">
-                    <strong>${pageId === "farming-trace" ? "还没有农事记录" : "还没有工艺步骤"}</strong>
-                    <span>${pageId === "farming-trace" ? "可以继续在这条种植过程下补充农事操作。" : "可以继续补充这条加工过程的步骤和工艺细节。"}</span>
-                  </div>
-                `)
-              : `
-                <div class="empty-state compact">
-                  <strong>还没有选中主线记录</strong>
-                  <span>先从上方台账中点选一条种植或加工过程，再继续补充下方时间轴。</span>
-                </div>
-              `}
-          </div>
-        </section>
-
-        ${renderPageDialogs(pageId, shared, selected)}
-      </main>
-    </div>
-  `;
-}
-
-function renderTraceQueryPage(shared) {
-  const code = new URLSearchParams(window.location.search).get("code") || "";
-  const target = code ? shared.views.qrCodes.find((item) => item.traceCode === code) : null;
-  const options = shared.views.qrCodes.slice(0, 12);
-
-  return `
-    <main class="trace-public">
-      <section class="trace-public-shell">
-        ${target ? renderTracePublicDetail(target, shared) : `
-          <header class="public-v3-hero">
-            <span class="badge">V3.0 PREVIEW</span>
-            <h1>中药材溯源码查询</h1>
-            <p>请输入或选择一条溯源码以查看全链路信息</p>
-          </header>
-          
-          <section class="public-v3-section">
-            <h2>${code ? "未找到对应溯源码" : "请选择预览记录"}</h2>
-            <p style="color: var(--text-soft); margin-bottom: 24px;">${code ? "该溯源码在当前系统中不存在数据。" : "您可以从下方列表中选择一条已生成的赋码记录进行视觉预览。"}</p>
-            
-            <div class="public-code-grid">
-              ${options.map((item) => `
-                <a class="public-code-card" href="${escapeAttribute(`${TRACE_QUERY_PAGE}?code=${encodeURIComponent(item.traceCode)}`)}">
-                  <strong>${escapeHtml(item.name)}</strong>
-                  <span>${escapeHtml(item.traceCode)}</span>
-                  <em>${escapeHtml(item.materialName)}</em>
-                </a>
-              `).join("")}
-            </div>
-          </section>
-        `}
-        <footer class="public-v3-footer">
-          <p>© 2026 灵草数智 · 全链路质量追溯体系</p>
-          <p>数据通过加密上链存储，确保真实不可篡改</p>
-        </footer>
-      </section>
-    </main>
   `;
 }
 
@@ -748,6 +469,81 @@ function renderHomePage(shared) {
     </div>
   `;
 }
+
+/**
+ * 溯源查询入口页 (V3.0 沉浸式查询)
+ */
+function renderTraceQueryPage(shared) {
+  return `
+    <div class="query-v3-container">
+      <div class="query-v3-card animate-up">
+        <div style="text-align:center; margin-bottom:40px;">
+          <div style="font-size:12px; font-weight:800; color:var(--primary); letter-spacing:4px; margin-bottom:12px;">LINGCAO SHUZHI</div>
+          <h1 class="font-display" style="font-size:32px; color:var(--primary-deep);">中药材全链路溯源查询</h1>
+          <p style="color:var(--text-soft); font-size:14px; margin-top:8px;">请输入防伪溯源码或扫描包装上的二维码</p>
+        </div>
+        
+        <div class="query-v3-input-group">
+          <input type="text" id="trace-code-input" class="query-v3-input" placeholder="输入 12-16 位溯源码..." maxlength="32">
+          <button onclick="handleTraceQuery()" class="query-v3-btn">立即查询</button>
+        </div>
+
+        <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <div class="query-v3-tip">
+            <div style="color:var(--primary); font-weight:700; margin-bottom:4px;">区块链存证</div>
+            <div style="font-size:12px; opacity:0.6;">数据一经上链不可篡改</div>
+          </div>
+          <div class="query-v3-tip">
+            <div style="color:var(--primary); font-weight:700; margin-bottom:4px;">道地保障</div>
+            <div style="font-size:12px; opacity:0.6;">严格执行 GAP 生产标准</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * 绑定查询页事件
+ */
+function bindTraceQuery(root, shared) {
+  const input = root.querySelector("#trace-code-input");
+  if (input) {
+    input.focus();
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") handleTraceQuery();
+    });
+  }
+}
+
+/**
+ * 全局查询处理器
+ */
+window.handleTraceQuery = function() {
+  const input = document.getElementById("trace-code-input");
+  const code = input ? input.value.trim() : "";
+  if (!code) {
+    alert("请输入溯源码");
+    return;
+  }
+  
+  // 重新加载数据以确保实时性
+  const shared = buildSharedData(readWorkflowStore());
+  const found = shared.views.qrCodes.find(q => q.traceCode === code);
+  
+  if (found) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("id", found.id);
+    window.location.href = url.toString();
+  } else {
+    alert("未找到该溯源码对应的记录，请核对后重试。");
+  }
+};
+
+/**
+ * 溯源公号详情页 (V3.0 叙事化数字证书)
+ */
+function renderTracePublicDetail(view, shared) {
   const farmRecords = shared.views.farmRecords.filter((r) => r.plantId === view.plantId);
   
   return `
