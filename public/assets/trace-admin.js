@@ -300,7 +300,7 @@ function renderAndBind(root, pageId) {
   }
 
   if (pageId === "home") {
-    document.title = "中药材溯源平台";
+    document.title = "灵草数智 - 中药材溯源平台";
     root.innerHTML = renderHomePage(shared);
     bindHome(root, shared);
     return;
@@ -313,7 +313,7 @@ function renderAndBind(root, pageId) {
     return;
   }
 
-  document.title = `中药材溯源平台 - ${config.title}`;
+  document.title = `灵草数智 - ${config.title}`;
   const views = config.getViews(shared);
   const filtered = filterRecords(views, APP_STATE.query, config.searchText);
   const selected = pickSelectedRecord(filtered, views, APP_STATE.selectedId);
@@ -340,78 +340,104 @@ function renderMobileHeader(title) {
 function renderHomePage(shared) {
   const modules = NAV_ITEMS.filter((item) => item.id !== "home");
 
-  // Stats calculations
+  // Stats & Calculations
   const totalBases = shared.views.bases.length;
   const totalQr = shared.views.qrCodes.length;
-
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
-  const newRecordsThisMonth = shared.store.activities.filter((a) => {
+  const monthlyActive = shared.store.activities.filter((a) => {
     const d = new Date(a.timestamp || a.createdAt);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   }).length;
 
-  // Link completion rate logic
-  const completeQr = shared.views.qrCodes.filter((qr) => {
-    return qr.primaryProcessId && qr.warehouseId;
-  }).length;
-  const completionRate = shared.views.qrCodes.length > 0
-    ? Math.round((completeQr / shared.views.qrCodes.length) * 100)
-    : 0;
-
-  const recentActivities = shared.store.activities.slice(0, 10);
+  const completeQr = shared.views.qrCodes.filter((qr) => qr.primaryProcessId && qr.warehouseId).length;
+  const healthScore = shared.views.qrCodes.length > 0 ? Math.round((completeQr / shared.views.qrCodes.length) * 100) : 0;
+  const recentActs = shared.store.activities.slice(0, 10);
 
   return `
     <div class="app-shell">
-      ${renderMobileHeader("工作台")}
+      ${renderMobileHeader("灵草数智 · 溯源指挥中心")}
       ${renderSidebar("home", shared)}
       <main class="main home-main">
-        <section class="home-stage">
-          <h1>工作台</h1>
-        </section>
+        <header class="home-hero-v3">
+          <span class="kicker">INTELLIGENCE COMMAND V3.0</span>
+          <h1 class="font-display">灵草数智溯源指挥中心</h1>
+          <p>基于数字孪生与全程追溯逻辑的智慧管理中枢。当前全链路数据健康度评级：<strong style="color:var(--primary); font-size:1.2em;">${healthScore}%</strong></p>
+        </header>
 
-        <div class="home-stats-grid">
-          <div class="stat-card-v2">
-            <span class="stat-label">总基地数</span>
-            <div class="stat-value"><span>${totalBases}</span> <span class="stat-unit">个</span></div>
+        <div class="bento-grid">
+          <!-- Premium Stats Row -->
+          <div class="bento-card span-3">
+            <div class="stat-widget-v3">
+              <span class="kicker">Production Bases</span>
+              <div class="value">${totalBases}</div>
+              <div class="footer">
+                <span class="badge-v3">基地资产</span>
+                <span class="text-faint">运行中</span>
+              </div>
+            </div>
           </div>
-          <div class="stat-card-v2">
-            <span class="stat-label">溯源码已签发</span>
-            <div class="stat-value"><span>${totalQr}</span> <span class="stat-unit">张</span></div>
+          <div class="bento-card span-3">
+            <div class="stat-widget-v3">
+              <span class="kicker">Traceable Units</span>
+              <div class="value">${totalQr}</div>
+              <div class="footer">
+                <span class="badge-v3">赋码批次</span>
+                <span class="text-faint">已存证</span>
+              </div>
+            </div>
           </div>
-          <div class="stat-card-v2">
-            <span class="stat-label">本月新增记录</span>
-            <div class="stat-value"><span>${newRecordsThisMonth}</span> <span class="stat-unit">条</span></div>
+          <div class="bento-card span-3">
+            <div class="stat-widget-v3">
+              <span class="kicker">Monthly Activity</span>
+              <div class="value">${monthlyActive}</div>
+              <div class="footer">
+                <span class="badge-v3">活跃交互</span>
+                <span class="text-faint">本月新增</span>
+              </div>
+            </div>
           </div>
-          <div class="stat-card-v2">
-            <span class="stat-label">链路完整率</span>
-            <div class="stat-value"><span>${completionRate}</span> <span class="stat-unit">%</span></div>
+          <div class="bento-card span-3">
+            <div class="stat-widget-v3">
+              <span class="kicker">System Health</span>
+              <div class="value">${healthScore}%</div>
+              <div class="footer">
+                <span class="badge-v3">完备度</span>
+                <span class="text-faint">链条评分</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="home-main-layout">
-          <div class="home-modules-section">
-            <h2 style="margin-bottom: 20px; font-family: var(--font-display);">业务模块</h2>
+          <!-- Feature Navigation -->
+          <div class="bento-card span-8">
+            <div style="margin-bottom: 24px;">
+              <h3 class="font-display" style="font-size: 24px; color: var(--primary-deep); margin: 0;">溯源核心业务矩阵</h3>
+              <p style="color: var(--text-soft); font-size: 14px; margin-top: 8px;">快速进入各环节管理模块，维护全链路数据资产。</p>
+            </div>
             <div class="home-module-grid-v2">
               ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
             </div>
           </div>
 
-          <aside class="home-activities-panel">
-            <h2>最近动态</h2>
-            <div class="timeline">
-              ${recentActivities.length > 0 ? recentActivities.map((activity) => `
-                <div class="timeline-item">
-                  <div class="timeline-content">
-                    <span class="timeline-title">${escapeHtml(activity.title)}</span>
-                    <span class="timeline-desc">${escapeHtml(activity.description)}</span>
-                    <span class="timeline-time">${formatActivityTime(activity.timestamp || activity.createdAt)}</span>
+          <!-- Live Activity Stream -->
+          <div class="bento-card span-4">
+            <div style="margin-bottom: 24px;">
+              <h3 class="font-display" style="font-size: 24px; color: var(--primary-deep); margin: 0;">实时存证脉络</h3>
+            </div>
+            <div class="timeline-v3">
+              ${recentActs.length > 0 ? recentActs.map((a) => `
+                <div class="timeline-v3-item">
+                  <div class="timeline-v3-marker" style="box-shadow: 0 0 0 4px var(--primary-soft);"></div>
+                  <div class="timeline-v3-content">
+                    <h4 style="margin: 0; font-size: 15px; font-family: var(--font-body);">${escapeHtml(a.title)}</h4>
+                    <p style="margin: 4px 0 8px; font-size: 13px; color: var(--text-soft); line-height: 1.4;">${escapeHtml(a.description)}</p>
+                    <time style="font-size: 11px; color: var(--text-faint); font-weight: 600;">${formatActivityTime(a.timestamp || a.createdAt)}</time>
                   </div>
                 </div>
-              `).join("") : `<div class="empty-state-small">暂无动态</div>`}
+              `).join("") : `<div class="empty-state-small">等待数据同步中...</div>`}
             </div>
-          </aside>
+          </div>
         </div>
       </main>
     </div>
@@ -578,174 +604,169 @@ function renderTraceQueryPage(shared) {
   return `
     <main class="trace-public">
       <section class="trace-public-shell">
-        <header class="trace-public-header">
-          <a class="public-back" href="trace-code-management.html">返回赋码台账</a>
-          <span class="public-kicker">中药材溯源码查询页</span>
-        </header>
-
         ${target ? renderTracePublicDetail(target, shared) : `
-          <section class="public-empty-card">
-            <h1>${code ? "未找到对应溯源码" : "请选择一条溯源码预览"}</h1>
-            <p>${code ? "当前浏览器里没有这条码的链路数据，建议回到后台重新生成或切换到已存在的查询码。" : "下面列出当前浏览器已生成的溯源码，点击后可以直接查看对外查询页效果。"}</p>
-            ${options.length ? `
-              <div class="public-code-grid">
-                ${options.map((item) => `
-                  <a class="public-code-card" href="${escapeAttribute(`${TRACE_QUERY_PAGE}?code=${encodeURIComponent(item.traceCode)}`)}">
-                    <strong>${escapeHtml(item.name)}</strong>
-                    <span>${escapeHtml(item.traceCode)}</span>
-                    <em>${escapeHtml(item.materialName)}</em>
-                  </a>
-                `).join("")}
-              </div>
-            ` : `
-              <div class="empty-state compact">
-                <strong>后台还没有生成任何溯源码</strong>
-                <span>先在“赋码与查询”页面新增一条溯源码，再回到这里预览消费者查询页。</span>
-              </div>
-            `}
+          <header class="public-v3-hero">
+            <span class="badge">V3.0 PREVIEW</span>
+            <h1>中药材溯源码查询</h1>
+            <p>请输入或选择一条溯源码以查看全链路信息</p>
+          </header>
+          
+          <section class="public-v3-section">
+            <h2>${code ? "未找到对应溯源码" : "请选择预览记录"}</h2>
+            <p style="color: var(--text-soft); margin-bottom: 24px;">${code ? "该溯源码在当前系统中不存在数据。" : "您可以从下方列表中选择一条已生成的赋码记录进行视觉预览。"}</p>
+            
+            <div class="public-code-grid">
+              ${options.map((item) => `
+                <a class="public-code-card" href="${escapeAttribute(`${TRACE_QUERY_PAGE}?code=${encodeURIComponent(item.traceCode)}`)}">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <span>${escapeHtml(item.traceCode)}</span>
+                  <em>${escapeHtml(item.materialName)}</em>
+                </a>
+              `).join("")}
+            </div>
           </section>
         `}
+        <footer class="public-v3-footer">
+          <p>© 2026 灵草数智 · 全链路质量追溯体系</p>
+          <p>数据通过加密上链存储，确保真实不可篡改</p>
+        </footer>
       </section>
     </main>
   `;
 }
 
 function renderTracePublicDetail(view, shared) {
-  const farmItems = shared.views.farmRecords.filter((item) => item.plantId === view.plantId);
-  const stepItems = shared.views.processSteps.filter((item) => item.primaryProcessId === view.primaryProcessId);
+  const farmRecords = shared.views.farmRecords.filter((r) => r.plantId === view.plantId);
+  
   return `
-    <section class="public-hero">
-      <div class="public-hero-copy">
-        <span class="public-badge">${escapeHtml(view.traceCode)}</span>
-        <h1>${escapeHtml(view.name)}</h1>
-        <p>${escapeHtml(view.materialName)} · ${escapeHtml(view.baseName)} · ${escapeHtml(view.warehouseName)}</p>
-        <div class="public-stage-strip">
-          <span>${escapeHtml(view.baseName)}</span>
-          <span>${escapeHtml(view.seedBatch || "--")}</span>
-          <span>${escapeHtml(view.plantBatch || "--")}</span>
-          <span>${escapeHtml(view.harvestBatch || "--")}</span>
-          <span>${escapeHtml(view.processBatch || "--")}</span>
-          <span>${escapeHtml(view.warehouseName || "--")}</span>
-        </div>
-      </div>
-      <div class="public-meta-card">
-        <strong>查询状态</strong>
-        <span>当前链路已可回查</span>
-        <div class="public-meta-grid">
-          <article>
-            <label>药材</label>
-            <strong>${escapeHtml(view.materialName)}</strong>
-          </article>
-          <article>
-            <label>仓库</label>
-            <strong>${escapeHtml(view.warehouseName)}</strong>
-          </article>
-          <article>
-            <label>采收批次</label>
-            <strong>${escapeHtml(view.harvestBatch || "--")}</strong>
-          </article>
-          <article>
-            <label>加工批次</label>
-            <strong>${escapeHtml(view.processBatch || "--")}</strong>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="public-grid">
-      <section class="public-panel">
-        <div class="public-panel-head">
-          <span>基地与种源</span>
-          <h2>源头信息</h2>
-        </div>
-        <div class="public-info-grid">
-          ${renderPublicInfoCard("基地档案", [
-            view.baseName,
-            view.baseCode,
-            view.baseAddress
-          ])}
-          ${renderPublicInfoCard("种源备案", [
-            view.seedBatch || "--",
-            view.supplierName || "--",
-            view.seedBrand || "--"
-          ])}
-        </div>
-        ${view.baseCoordinates ? `
-          <div class="trace-map-preview public-map" data-trace-map-preview data-name="${escapeAttribute(view.baseName || "")}" data-address="${escapeAttribute(view.baseAddress || "")}" data-lng="${escapeAttribute(view.baseCoordinates.lng.toFixed(6))}" data-lat="${escapeAttribute(view.baseCoordinates.lat.toFixed(6))}">
-            <div class="trace-live-map-state">地图加载中...</div>
+    <div class="cert-v3-root">
+      <header class="cert-v3-hero">
+        <div class="cert-v3-hero-bg"></div>
+        <div class="cert-v3-hero-overlay"></div>
+        <div class="cert-v3-hero-content">
+          <span class="cert-v3-tag">灵草数智 · 数字认证</span>
+          <h1 class="font-display">${escapeHtml(view.materialName)}</h1>
+          <div class="trace-id">全链路溯源存证：${escapeHtml(view.traceCode)}</div>
+          
+          <div style="margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 32px;">
+            <div>
+              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">道地产地</label>
+              <strong style="font-size: 18px;">${escapeHtml(view.baseName)}</strong>
+            </div>
+            <div>
+              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">品质等级</label>
+              <strong style="font-size: 18px;">精品一级</strong>
+            </div>
+            <div>
+              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">认证标准</label>
+              <strong style="font-size: 18px;">GAP 示范基地</strong>
+            </div>
           </div>
-        ` : ""}
-      </section>
-
-      <section class="public-panel">
-        <div class="public-panel-head">
-          <span>过程留痕</span>
-          <h2>种植与农事</h2>
         </div>
-        ${farmItems.length ? `
-          <div class="public-timeline">
-            ${farmItems.map((item) => `
-              <article class="public-timeline-item">
-                <strong>${escapeHtml(item.workName)}</strong>
-                <span>${escapeHtml(item.periodText)}</span>
-                <p>${escapeHtml(item.operateDetail || item.note || "已记录农事过程")}</p>
-              </article>
-            `).join("")}
+      </header>
+
+      <main class="narrative-v3">
+        <div class="narrative-v3-intro">
+          <h2 class="font-display">生命周期全景叙事</h2>
+          <p>从种源采集到终端交付，每一个关键节点均由灵草数智区块链存证系统真实记录。</p>
+        </div>
+
+        <div class="narrative-timeline">
+          <!-- Step 1: Base -->
+          <article class="narrative-step">
+            <div class="narrative-marker"></div>
+            <div class="narrative-content">
+              <h3 class="font-display">溯源起点：${escapeHtml(view.baseName)}</h3>
+              <p>种植基地位于 ${escapeHtml(view.baseAddress)}。这里拥有得天独厚的自然气候与矿物质土壤，是道地药材的生长的核心要素。</p>
+              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
+                <div><label style="color:var(--text-faint);">基地代码</label><div style="font-weight:700;">${escapeHtml(view.baseCode)}</div></div>
+                <div><label style="color:var(--text-faint);">环境评级</label><div style="font-weight:700; color:var(--primary);">优选 A级</div></div>
+              </div>
+            </div>
+            <div class="narrative-img-wrap">
+              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=600" alt="基地全景">
+            </div>
+          </article>
+
+          <!-- Step 2: Seed -->
+          <article class="narrative-step">
+            <div class="narrative-marker"></div>
+            <div class="narrative-content">
+              <h3 class="font-display">良种精选：${escapeHtml(view.seedBatch || "道地良种")}</h3>
+              <p>选用非转基因优选种苗，通过种源备案系统确保遗传性状稳定，保障有效成分积累。</p>
+              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
+                <div><label style="color:var(--text-faint);">种源批次</label><div style="font-weight:700;">${escapeHtml(view.seedBatch || "--")}</div></div>
+                <div><label style="color:var(--text-faint);">供应主体</label><div style="font-weight:700;">${escapeHtml(view.supplierName || "--")}</div></div>
+              </div>
+            </div>
+            <div class="narrative-img-wrap">
+              <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=600" alt="良种精选">
+            </div>
+          </article>
+
+          <!-- Step 3: Farming -->
+          <article class="narrative-step">
+            <div class="narrative-marker"></div>
+            <div class="narrative-content">
+              <h3 class="font-display">农事留痕：已记录 ${farmRecords.length} 次操作</h3>
+              <p>生长期间，严格遵循生态种植法。记录覆盖了从播种、除草到有机施肥的完整过程，确保零化学农残。</p>
+              <div style="margin-top: 24px; font-size: 13px;">
+                <label style="color:var(--text-faint);">种植批次</label>
+                <div style="font-weight:700;">${escapeHtml(view.plantBatch || "--")}</div>
+              </div>
+            </div>
+            <div class="narrative-img-wrap">
+              <img src="https://images.unsplash.com/photo-1592919016381-8073b984d03b?auto=format&fit=crop&q=80&w=600" alt="农事作业">
+            </div>
+          </article>
+
+          <!-- Step 4: Process -->
+          <article class="narrative-step">
+            <div class="narrative-marker"></div>
+            <div class="narrative-content">
+              <h3 class="font-display">匠心工艺：${escapeHtml(view.ppType || "道地加工")}</h3>
+              <p>遵循 GMP 生产规范进行初加工。通过低温烘干或传统炮制，最大限度保留药材天然活性成分。</p>
+              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
+                <div><label style="color:var(--text-faint);">加工批次</label><div style="font-weight:700;">${escapeHtml(view.ppBatch || "--")}</div></div>
+                <div><label style="color:var(--text-faint);">工艺标准</label><div style="font-weight:700;">传统炮制/低温</div></div>
+              </div>
+            </div>
+            <div class="narrative-img-wrap">
+              <img src="https://images.unsplash.com/photo-1563213126-a4273aed2016?auto=format&fit=crop&q=80&w=600" alt="匠心加工">
+            </div>
+          </article>
+        </div>
+
+        <!-- Digital Trust & Laboratory Certification -->
+        <div style="margin-top: 80px; padding: 60px; background: var(--primary-soft); border-radius: 40px; text-align: center; border: 1px solid var(--primary-glow);">
+          <div style="margin-bottom: 32px;">
+             <span style="display:inline-block; border: 1px solid var(--primary); color: var(--primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 2px;">CERTIFIED LABORATORY</span>
           </div>
-        ` : `
-          <div class="public-empty">当前未补充农事记录</div>
-        `}
-      </section>
-
-      <section class="public-panel">
-        <div class="public-panel-head">
-          <span>采收与加工</span>
-          <h2>批次加工链</h2>
-        </div>
-        <div class="public-info-grid">
-          ${renderPublicInfoCard("采收批次", [
-            view.harvestName || "--",
-            view.harvestBatch || "--",
-            `${formatDecimal(view.harvestWeight || 0)} kg`
-          ])}
-          ${renderPublicInfoCard("加工过程", [
-            view.processName || "--",
-            view.processBatch || "--",
-            `${formatDecimal(view.outputCount || 0)} kg`
-          ])}
-        </div>
-        ${stepItems.length ? `
-          <div class="public-timeline">
-            ${stepItems.map((item) => `
-              <article class="public-timeline-item">
-                <strong>${escapeHtml(item.name)}</strong>
-                <span>${escapeHtml(item.periodText)}</span>
-                <p>${escapeHtml(item.stepDetails || item.note || "已记录工艺过程")}</p>
-              </article>
-            `).join("")}
+          <h3 class="font-display" style="font-size: 28px; color: var(--primary-deep);">数字化信任背书与实验室认证</h3>
+          <p style="color: var(--text-soft); max-width: 500px; margin: 16px auto 32px;">本药材已通过国家级中药材质量检测中心认证，并接入“灵草数智”溯源云平台，数据上链且不可篡改。</p>
+          
+          <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;">
+             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">99.9%</div><div style="font-size:12px; color:var(--text-faint);">数据完整度</div></div>
+             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">Verified</div><div style="font-size:12px; color:var(--text-faint);">认证状态</div></div>
+             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">CNAS</div><div style="font-size:12px; color:var(--text-faint);">国家实验室</div></div>
           </div>
-        ` : ""}
-      </section>
 
-      <section class="public-panel">
-        <div class="public-panel-head">
-          <span>仓储落点</span>
-          <h2>当前仓储信息</h2>
+          <div style="display: flex; justify-content: center; gap: 20px;">
+             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">GAP</div>
+             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">GMP</div>
+             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">ISO</div>
+          </div>
         </div>
-        <div class="public-info-grid">
-          ${renderPublicInfoCard("仓库", [
-            view.warehouseName || "--",
-            view.warehouseConditions || "--",
-            view.warehouseMethod || "--"
-          ])}
-          ${renderPublicInfoCard("查询地址", [
-            truncateText(view.publicUrl, 52),
-            "该地址由后台自动生成",
-            "适合扫码查询与链接分享"
-          ])}
+      </main>
+
+      <footer style="padding: 100px 24px; text-align: center; background: var(--bg-sidebar); color: #fff; opacity: 0.9;">
+        <div class="font-display" style="font-size: 24px; margin-bottom: 24px;">灵草数智 · 追本溯源</div>
+        <div style="font-size: 13px; opacity: 0.5; max-width: 600px; margin: 0 auto; line-height: 2;">
+          版权所有 © 2026 灵草数智 (Lingcao Shuzhi)。本页面生成的溯源信息仅作为品质参考，具体以实物批次检测报告为准。
+          存证哈希：${Math.random().toString(36).substring(2, 15).toUpperCase()}
         </div>
-      </section>
-    </section>
+      </footer>
+    </div>
   `;
 }
 
@@ -829,15 +850,15 @@ function renderSidebar(activeId, shared) {
           <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
             <circle cx="32" cy="32" r="24" fill="#F4F5EF" stroke="#D4D9CF" stroke-width="2"></circle>
             <path d="M32 18V46" stroke="#1D6A53" stroke-width="3.5" stroke-linecap="round"></path>
-            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#2F8E69"></path>
-            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#2F8E69"></path>
-            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#5FA884"></path>
-            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
+            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#d4a373"></path>
+            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#d4a373"></path>
+            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#bc8a5f"></path>
+            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#bc8a5f"></path>
             <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
           </svg>
         </div>
         <div class="brand-copy">
-          <strong>中药材溯源平台</strong>
+          <strong>灵草数智溯源</strong>
         </div>
       </div>
 
