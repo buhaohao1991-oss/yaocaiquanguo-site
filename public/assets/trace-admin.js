@@ -293,25 +293,6 @@ function renderAndBind(root, pageId) {
   const shared = buildSharedData(readWorkflowStore());
 
   if (pageId === "trace-query") {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-    const code = params.get("code");
-
-    if (id) {
-      const view = shared.views.qrCodes.find((q) => q.id === id);
-      if (view) {
-        root.innerHTML = renderTracePublicDetail(view, shared);
-        return;
-      }
-    }
-    if (code) {
-      const view = shared.views.qrCodes.find((q) => q.traceCode === code);
-      if (view) {
-        root.innerHTML = renderTracePublicDetail(view, shared);
-        return;
-      }
-    }
-
     document.title = "中药材溯源码查询";
     root.innerHTML = renderTraceQueryPage(shared);
     bindTraceQuery(root, shared);
@@ -319,7 +300,7 @@ function renderAndBind(root, pageId) {
   }
 
   if (pageId === "home") {
-    document.title = "灵草数智 - 中药材溯源平台";
+    document.title = "中药材溯源平台";
     root.innerHTML = renderHomePage(shared);
     bindHome(root, shared);
     return;
@@ -332,7 +313,7 @@ function renderAndBind(root, pageId) {
     return;
   }
 
-  document.title = `灵草数智 - ${config.title}`;
+  document.title = `中药材溯源平台 - ${config.title}`;
   const views = config.getViews(shared);
   const filtered = filterRecords(views, APP_STATE.query, config.searchText);
   const selected = pickSelectedRecord(filtered, views, APP_STATE.selectedId);
@@ -342,339 +323,351 @@ function renderAndBind(root, pageId) {
   bindModule(root, pageId, config, shared, selected);
 }
 
-function renderMobileHeader(title) {
-  return `
-    <header class="mobile-header">
-      <button class="hamburger" data-action="toggle-sidebar">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <strong>${escapeHtml(title)}</strong>
-      <div style="width: 32px"></div>
-    </header>
-  `;
-}
-
 function renderHomePage(shared) {
   const modules = NAV_ITEMS.filter((item) => item.id !== "home");
 
-  // Stats & Calculations
-  const totalBases = shared.views.bases.length;
-  const totalQr = shared.views.qrCodes.length;
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-  const monthlyActive = shared.store.activities.filter((a) => {
-    const d = new Date(a.timestamp || a.createdAt);
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  }).length;
-
-  const completeQr = shared.views.qrCodes.filter((qr) => qr.primaryProcessId && qr.warehouseId).length;
-  const healthScore = shared.views.qrCodes.length > 0 ? Math.round((completeQr / shared.views.qrCodes.length) * 100) : 0;
-
   return `
     <div class="app-shell">
-      ${renderMobileHeader("灵草数智 · 溯源指挥中心")}
       ${renderSidebar("home", shared)}
-      <main class="main home-main animate-up">
-        <header class="home-hero-v3">
-          <span class="kicker">INTELLIGENCE COMMAND V3.0</span>
-          <h1 class="font-display">灵草数智溯源指挥中心</h1>
-          <p>基于数字孪生与全程追溯逻辑的智慧管理中枢。当前全链路数据健康度评级：<strong style="color:var(--primary); font-size:1.2em;">${healthScore}%</strong></p>
+      <main class="main home-main">
+        <section class="home-stage">
+          <h1>工作台</h1>
+        </section>
+
+        <section class="module-card-grid home-module-grid">
+          ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
+        </section>
+      </main>
+    </div>
+  `;
+}
+
+function renderEntityPage(pageId, config, shared, allViews, filteredViews, selected) {
+  const stats = config.getStats(shared, allViews);
+  return `
+    <div class="app-shell">
+      ${renderSidebar(pageId, shared)}
+      <main class="main module-main">
+        <section class="page-hero">
+          <div class="page-copy">
+            <h1>${escapeHtml(config.title)}</h1>
+          </div>
+          ${shouldShowStats(stats) ? `
+            <div class="stat-grid">
+              ${stats.map((stat) => renderStatCard(stat)).join("")}
+            </div>
+          ` : ""}
+        </section>
+
+        <section class="panel command-panel">
+          <div class="search-wrap">
+            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
+          </div>
+          <div class="command-actions">
+            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
+            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
+          </div>
+        </section>
+
+        <section class="content-layout">
+          <section class="panel table-panel">
+            <div class="panel-headline">
+              <h2>${escapeHtml(config.title)}台账</h2>
+            </div>
+            <div class="panel-body">
+              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
+            </div>
+          </section>
+
+          <aside class="detail-rail">
+            <section class="panel detail-panel">
+              <div class="panel-headline">
+                <h2>当前详情</h2>
+              </div>
+              <div class="panel-body">
+                ${selected ? config.renderDetail(selected, shared) : `
+                  <div class="empty-state">
+                    <strong>当前没有可展示的记录</strong>
+                    <span>新增第一条数据后，这里会展示它的链路关系、状态和下一步操作。</span>
+                  </div>
+                `}
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        ${renderPageDialogs(pageId, shared, selected)}
+      </main>
+    </div>
+  `;
+}
+
+function renderCompoundPage(pageId, config, shared, allViews, filteredViews, selected) {
+  const secondaryItems = config.getSecondaryViews(selected, shared);
+  const stats = config.getStats(shared, allViews);
+  return `
+    <div class="app-shell">
+      ${renderSidebar(pageId, shared)}
+      <main class="main module-main">
+        <section class="page-hero">
+          <div class="page-copy">
+            <h1>${escapeHtml(config.title)}</h1>
+          </div>
+          ${shouldShowStats(stats) ? `
+            <div class="stat-grid">
+              ${stats.map((stat) => renderStatCard(stat)).join("")}
+            </div>
+          ` : ""}
+        </section>
+
+        <section class="panel command-panel">
+          <div class="search-wrap">
+            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
+          </div>
+          <div class="command-actions">
+            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
+            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
+          </div>
+        </section>
+
+        <section class="content-layout">
+          <section class="panel table-panel">
+            <div class="panel-headline">
+              <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
+            </div>
+            <div class="panel-body">
+              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
+            </div>
+          </section>
+
+          <aside class="detail-rail">
+            <section class="panel detail-panel">
+              <div class="panel-headline">
+                <h2>当前详情</h2>
+              </div>
+              <div class="panel-body">
+                ${selected ? config.renderDetail(selected, shared) : `
+                  <div class="empty-state">
+                    <strong>先选择一条主线记录</strong>
+                    <span>选中种植或加工过程后，右侧会展开它的关系链、状态和推进动作。</span>
+                  </div>
+                `}
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="panel">
+          <div class="panel-headline">
+            <h2>${pageId === "farming-trace" ? "农事记录时间轴" : "工艺步骤时间轴"}</h2>
+            <div class="panel-tools">
+              ${secondaryItems.length ? `<span class="result-count">${secondaryItems.length} 条</span>` : ""}
+              <button class="button secondary" type="button" data-open-dialog="secondary" ${selected ? "" : "disabled"}>
+                ${escapeHtml(config.secondaryActionLabel)}
+              </button>
+            </div>
+          </div>
+          <div class="panel-body">
+            ${selected
+              ? (secondaryItems.length
+                ? config.renderSecondaryDetail(secondaryItems, shared)
+                : `
+                  <div class="empty-state compact">
+                    <strong>${pageId === "farming-trace" ? "还没有农事记录" : "还没有工艺步骤"}</strong>
+                    <span>${pageId === "farming-trace" ? "可以继续在这条种植过程下补充农事操作。" : "可以继续补充这条加工过程的步骤和工艺细节。"}</span>
+                  </div>
+                `)
+              : `
+                <div class="empty-state compact">
+                  <strong>还没有选中主线记录</strong>
+                  <span>先从上方台账中点选一条种植或加工过程，再继续补充下方时间轴。</span>
+                </div>
+              `}
+          </div>
+        </section>
+
+        ${renderPageDialogs(pageId, shared, selected)}
+      </main>
+    </div>
+  `;
+}
+
+function renderTraceQueryPage(shared) {
+  const code = new URLSearchParams(window.location.search).get("code") || "";
+  const target = code ? shared.views.qrCodes.find((item) => item.traceCode === code) : null;
+  const options = shared.views.qrCodes.slice(0, 12);
+
+  return `
+    <main class="trace-public">
+      <section class="trace-public-shell">
+        <header class="trace-public-header">
+          <a class="public-back" href="trace-code-management.html">返回赋码台账</a>
+          <span class="public-kicker">中药材溯源码查询页</span>
         </header>
 
-        <div class="bento-grid">
-          <!-- Premium Stats Row -->
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Production Bases</span>
-              <div class="value">${totalBases}</div>
-              <div class="footer">
-                <span class="badge-v3">基地资产</span>
-                <span class="text-faint">运行中</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Traceable Units</span>
-              <div class="value">${totalQr}</div>
-              <div class="footer">
-                <span class="badge-v3">赋码批次</span>
-                <span class="text-faint">已存证</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">Monthly Activity</span>
-              <div class="value">${monthlyActive}</div>
-              <div class="footer">
-                <span class="badge-v3">活跃交互</span>
-                <span class="text-faint">本月新增</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento-card span-3">
-            <div class="stat-widget-v3">
-              <span class="kicker">System Health</span>
-              <div class="value">${healthScore}%</div>
-              <div class="footer">
-                <span class="badge-v3">完备度</span>
-                <span class="text-faint">链条评分</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Feature Navigation -->
-          <div class="bento-card span-8">
-            <div style="margin-bottom: 24px;">
-              <h3 class="font-display">业务模块中心</h3>
-              <p class="text-faint">管控全生命周期的每一个核心节点</p>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-              ${modules.map((item) => `
-                <a href="${escapeAttribute(item.href)}" style="text-decoration:none; display:flex; flex-direction:column; align-items:center; padding:20px; border-radius:var(--radius-inner); background:var(--bg-main); transition:var(--transition-smooth);" class="v3-nav-item">
-                  <div style="font-size:32px; margin-bottom:12px;">${renderNavIcon(item.id)}</div>
-                  <div style="font-weight:700; color:var(--text-main); font-size:14px;">${escapeHtml(item.title)}</div>
-                  <div style="font-size:11px; color:var(--text-faint); margin-top:4px;">${navCountFor(item.id, shared)} 记录</div>
-                </a>
-              `).join("")}
-            </div>
-          </div>
-
-          <!-- Activity/Logs -->
-          <div class="bento-card span-4">
-            <div style="margin-bottom: 24px;">
-               <h3 class="font-display">最近存证动态</h3>
-               <p class="text-faint">实时区块链交易存证记录</p>
-            </div>
-            <div class="v3-timeline" style="display:flex; flex-direction:column; gap:20px;">
-              ${shared.store.activities.slice(0, 10).length === 0 
-                ? `<div style="padding:40px; text-align:center; color:var(--text-faint);">暂无存证记录</div>` 
-                : shared.store.activities.slice(0, 10).map(a => `
-                  <div style="display:flex; gap:16px;">
-                    <div style="width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:6px; flex-shrink:0;"></div>
-                    <div>
-                      <div style="font-size:11px; font-weight:700; color:var(--accent); margin-bottom:4px;">${formatActivityTime(a.timestamp || a.createdAt)}</div>
-                      <div style="font-size:13px; color:var(--text-main); line-height:1.4;">${escapeHtml(a.message)}</div>
-                    </div>
-                  </div>
+        ${target ? renderTracePublicDetail(target, shared) : `
+          <section class="public-empty-card">
+            <h1>${code ? "未找到对应溯源码" : "请选择一条溯源码预览"}</h1>
+            <p>${code ? "当前浏览器里没有这条码的链路数据，建议回到后台重新生成或切换到已存在的查询码。" : "下面列出当前浏览器已生成的溯源码，点击后可以直接查看对外查询页效果。"}</p>
+            ${options.length ? `
+              <div class="public-code-grid">
+                ${options.map((item) => `
+                  <a class="public-code-card" href="${escapeAttribute(`${TRACE_QUERY_PAGE}?code=${encodeURIComponent(item.traceCode)}`)}">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <span>${escapeHtml(item.traceCode)}</span>
+                    <em>${escapeHtml(item.materialName)}</em>
+                  </a>
                 `).join("")}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+              </div>
+            ` : `
+              <div class="empty-state compact">
+                <strong>后台还没有生成任何溯源码</strong>
+                <span>先在“赋码与查询”页面新增一条溯源码，再回到这里预览消费者查询页。</span>
+              </div>
+            `}
+          </section>
+        `}
+      </section>
+    </main>
   `;
 }
 
-/**
- * 溯源查询入口页 (V3.0 沉浸式查询)
- */
-function renderTraceQueryPage(shared) {
+function renderTracePublicDetail(view, shared) {
+  const farmItems = shared.views.farmRecords.filter((item) => item.plantId === view.plantId);
+  const stepItems = shared.views.processSteps.filter((item) => item.primaryProcessId === view.primaryProcessId);
   return `
-    <div class="query-v3-container">
-      <div class="query-v3-card animate-up">
-        <div style="text-align:center; margin-bottom:40px;">
-          <div style="font-size:12px; font-weight:800; color:var(--primary); letter-spacing:4px; margin-bottom:12px;">LINGCAO SHUZHI</div>
-          <h1 class="font-display" style="font-size:32px; color:var(--primary-deep);">中药材全链路溯源查询</h1>
-          <p style="color:var(--text-soft); font-size:14px; margin-top:8px;">请输入防伪溯源码或扫描包装上的二维码</p>
-        </div>
-        
-        <div class="query-v3-input-group">
-          <input type="text" id="trace-code-input" class="query-v3-input" placeholder="输入 12-16 位溯源码..." maxlength="32">
-          <button onclick="handleTraceQuery()" class="query-v3-btn">立即查询</button>
-        </div>
-
-        <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-          <div class="query-v3-tip">
-            <div style="color:var(--primary); font-weight:700; margin-bottom:4px;">区块链存证</div>
-            <div style="font-size:12px; opacity:0.6;">数据一经上链不可篡改</div>
-          </div>
-          <div class="query-v3-tip">
-            <div style="color:var(--primary); font-weight:700; margin-bottom:4px;">道地保障</div>
-            <div style="font-size:12px; opacity:0.6;">严格执行 GAP 生产标准</div>
-          </div>
+    <section class="public-hero">
+      <div class="public-hero-copy">
+        <span class="public-badge">${escapeHtml(view.traceCode)}</span>
+        <h1>${escapeHtml(view.name)}</h1>
+        <p>${escapeHtml(view.materialName)} · ${escapeHtml(view.baseName)} · ${escapeHtml(view.warehouseName)}</p>
+        <div class="public-stage-strip">
+          <span>${escapeHtml(view.baseName)}</span>
+          <span>${escapeHtml(view.seedBatch || "--")}</span>
+          <span>${escapeHtml(view.plantBatch || "--")}</span>
+          <span>${escapeHtml(view.harvestBatch || "--")}</span>
+          <span>${escapeHtml(view.processBatch || "--")}</span>
+          <span>${escapeHtml(view.warehouseName || "--")}</span>
         </div>
       </div>
-    </div>
-  `;
-}
-
-/**
- * 绑定查询页事件
- */
-function bindTraceQuery(root, shared) {
-  const input = root.querySelector("#trace-code-input");
-  if (input) {
-    input.focus();
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") handleTraceQuery();
-    });
-  }
-}
-
-/**
- * 全局查询处理器
- */
-window.handleTraceQuery = function() {
-  const input = document.getElementById("trace-code-input");
-  const code = input ? input.value.trim() : "";
-  if (!code) {
-    alert("请输入溯源码");
-    return;
-  }
-  
-  // 重新加载数据以确保实时性
-  const shared = buildSharedData(readWorkflowStore());
-  const found = shared.views.qrCodes.find(q => q.traceCode === code);
-  
-  if (found) {
-    const url = new URL(window.location.href);
-    url.searchParams.set("id", found.id);
-    window.location.href = url.toString();
-  } else {
-    alert("未找到该溯源码对应的记录，请核对后重试。");
-  }
-};
-
-/**
- * 溯源公号详情页 (V3.0 叙事化数字证书)
- */
-function renderTracePublicDetail(view, shared) {
-  const farmRecords = shared.views.farmRecords.filter((r) => r.plantId === view.plantId);
-  
-  return `
-    <div class="cert-v3-root">
-      <header class="cert-v3-hero">
-        <div class="cert-v3-hero-bg"></div>
-        <div class="cert-v3-hero-overlay"></div>
-        <div class="cert-v3-hero-content">
-          <span class="cert-v3-tag">灵草数智 · 数字认证</span>
-          <h1 class="font-display">${escapeHtml(view.materialName)}</h1>
-          <div class="trace-id">全链路溯源存证：${escapeHtml(view.traceCode)}</div>
-          
-          <div style="margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 32px;">
-            <div>
-              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">道地产地</label>
-              <strong style="font-size: 18px;">${escapeHtml(view.baseName)}</strong>
-            </div>
-            <div>
-              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">品质等级</label>
-              <strong style="font-size: 18px;">精品一级</strong>
-            </div>
-            <div>
-              <label style="display:block; font-size: 12px; opacity: 0.6; margin-bottom: 8px;">认证标准</label>
-              <strong style="font-size: 18px;">GAP 示范基地</strong>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main class="narrative-v3">
-        <div class="narrative-v3-intro">
-          <h2 class="font-display">生命周期全景叙事</h2>
-          <p>从种源采集到终端交付，每一个关键节点均由灵草数智区块链存证系统真实记录。</p>
-        </div>
-
-        <div class="narrative-timeline">
-          <!-- Step 1: Base -->
-          <article class="narrative-step">
-            <div class="narrative-marker"></div>
-            <div class="narrative-content">
-              <h3 class="font-display">溯源起点：${escapeHtml(view.baseName)}</h3>
-              <p>种植基地位于 ${escapeHtml(view.baseAddress)}。这里拥有得天独厚的自然气候与矿物质土壤，是道地药材的生长的核心要素。</p>
-              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
-                <div><label style="color:var(--text-faint);">基地代码</label><div style="font-weight:700;">${escapeHtml(view.baseCode)}</div></div>
-                <div><label style="color:var(--text-faint);">环境评级</label><div style="font-weight:700; color:var(--primary);">优选 A级</div></div>
-              </div>
-            </div>
-            <div class="narrative-img-wrap">
-              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=600" alt="基地全景">
-            </div>
+      <div class="public-meta-card">
+        <strong>查询状态</strong>
+        <span>当前链路已可回查</span>
+        <div class="public-meta-grid">
+          <article>
+            <label>药材</label>
+            <strong>${escapeHtml(view.materialName)}</strong>
           </article>
-
-          <!-- Step 2: Seed -->
-          <article class="narrative-step">
-            <div class="narrative-marker"></div>
-            <div class="narrative-content">
-              <h3 class="font-display">良种精选：${escapeHtml(view.seedBatch || "道地良种")}</h3>
-              <p>选用非转基因优选种苗，通过种源备案系统确保遗传性状稳定，保障有效成分积累。</p>
-              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
-                <div><label style="color:var(--text-faint);">种源批次</label><div style="font-weight:700;">${escapeHtml(view.seedBatch || "--")}</div></div>
-                <div><label style="color:var(--text-faint);">供应主体</label><div style="font-weight:700;">${escapeHtml(view.supplierName || "--")}</div></div>
-              </div>
-            </div>
-            <div class="narrative-img-wrap">
-              <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=600" alt="良种精选">
-            </div>
+          <article>
+            <label>仓库</label>
+            <strong>${escapeHtml(view.warehouseName)}</strong>
           </article>
-
-          <!-- Step 3: Farming -->
-          <article class="narrative-step">
-            <div class="narrative-marker"></div>
-            <div class="narrative-content">
-              <h3 class="font-display">农事留痕：已记录 ${farmRecords.length} 次操作</h3>
-              <p>生长期间，严格遵循生态种植法。记录覆盖了从播种、除草到有机施肥的完整过程，确保零化学农残。</p>
-              <div style="margin-top: 24px; font-size: 13px;">
-                <label style="color:var(--text-faint);">种植批次</label>
-                <div style="font-weight:700;">${escapeHtml(view.plantBatch || "--")}</div>
-              </div>
-            </div>
-            <div class="narrative-img-wrap">
-              <img src="https://images.unsplash.com/photo-1592919016381-8073b984d03b?auto=format&fit=crop&q=80&w=600" alt="农事作业">
-            </div>
+          <article>
+            <label>采收批次</label>
+            <strong>${escapeHtml(view.harvestBatch || "--")}</strong>
           </article>
-
-          <!-- Step 4: Process -->
-          <article class="narrative-step">
-            <div class="narrative-marker"></div>
-            <div class="narrative-content">
-              <h3 class="font-display">匠心工艺：${escapeHtml(view.ppType || "道地加工")}</h3>
-              <p>遵循 GMP 生产规范进行初加工。通过低温烘干或传统炮制，最大限度保留药材天然活性成分。</p>
-              <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px;">
-                <div><label style="color:var(--text-faint);">加工批次</label><div style="font-weight:700;">${escapeHtml(view.ppBatch || "--")}</div></div>
-                <div><label style="color:var(--text-faint);">工艺标准</label><div style="font-weight:700;">传统炮制/低温</div></div>
-              </div>
-            </div>
-            <div class="narrative-img-wrap">
-              <img src="https://images.unsplash.com/photo-1563213126-a4273aed2016?auto=format&fit=crop&q=80&w=600" alt="匠心加工">
-            </div>
+          <article>
+            <label>加工批次</label>
+            <strong>${escapeHtml(view.processBatch || "--")}</strong>
           </article>
         </div>
+      </div>
+    </section>
 
-        <!-- Digital Trust & Laboratory Certification -->
-        <div style="margin-top: 80px; padding: 60px; background: var(--primary-soft); border-radius: 40px; text-align: center; border: 1px solid var(--primary-glow);">
-          <div style="margin-bottom: 32px;">
-             <span style="display:inline-block; border: 1px solid var(--primary); color: var(--primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 2px;">CERTIFIED LABORATORY</span>
-          </div>
-          <h3 class="font-display" style="font-size: 28px; color: var(--primary-deep);">数字化信任背书与实验室认证</h3>
-          <p style="color: var(--text-soft); max-width: 500px; margin: 16px auto 32px;">本药材已通过国家级中药材质量检测中心认证，并接入“灵草数智”溯源云平台，数据上链且不可篡改。</p>
-          
-          <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;">
-             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">99.9%</div><div style="font-size:12px; color:var(--text-faint);">数据完整度</div></div>
-             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">Verified</div><div style="font-size:12px; color:var(--text-faint);">认证状态</div></div>
-             <div style="text-align:center;"><div style="font-weight:900; color:var(--primary); font-size:24px;">CNAS</div><div style="font-size:12px; color:var(--text-faint);">国家实验室</div></div>
-          </div>
-
-          <div style="display: flex; justify-content: center; gap: 20px;">
-             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">GAP</div>
-             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">GMP</div>
-             <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 10px; font-weight: 900; color: var(--accent);">ISO</div>
-          </div>
+    <section class="public-grid">
+      <section class="public-panel">
+        <div class="public-panel-head">
+          <span>基地与种源</span>
+          <h2>源头信息</h2>
         </div>
-      </main>
-
-      <footer style="padding: 100px 24px; text-align: center; background: var(--bg-sidebar); color: #fff; opacity: 0.9;">
-        <div class="font-display" style="font-size: 24px; margin-bottom: 24px;">灵草数智 · 追本溯源</div>
-        <div style="font-size: 13px; opacity: 0.5; max-width: 600px; margin: 0 auto; line-height: 2;">
-          版权所有 © 2026 灵草数智 (Lingcao Shuzhi)。本页面生成的溯源信息仅作为品质参考，具体以实物批次检测报告为准。
-          存证哈希：${Math.random().toString(36).substring(2, 15).toUpperCase()}
+        <div class="public-info-grid">
+          ${renderPublicInfoCard("基地档案", [
+            view.baseName,
+            view.baseCode,
+            view.baseAddress
+          ])}
+          ${renderPublicInfoCard("种源备案", [
+            view.seedBatch || "--",
+            view.supplierName || "--",
+            view.seedBrand || "--"
+          ])}
         </div>
-      </footer>
-    </div>
+        ${view.baseCoordinates ? `
+          <div class="trace-map-preview public-map" data-trace-map-preview data-name="${escapeAttribute(view.baseName || "")}" data-address="${escapeAttribute(view.baseAddress || "")}" data-lng="${escapeAttribute(view.baseCoordinates.lng.toFixed(6))}" data-lat="${escapeAttribute(view.baseCoordinates.lat.toFixed(6))}">
+            <div class="trace-live-map-state">地图加载中...</div>
+          </div>
+        ` : ""}
+      </section>
+
+      <section class="public-panel">
+        <div class="public-panel-head">
+          <span>过程留痕</span>
+          <h2>种植与农事</h2>
+        </div>
+        ${farmItems.length ? `
+          <div class="public-timeline">
+            ${farmItems.map((item) => `
+              <article class="public-timeline-item">
+                <strong>${escapeHtml(item.workName)}</strong>
+                <span>${escapeHtml(item.periodText)}</span>
+                <p>${escapeHtml(item.operateDetail || item.note || "已记录农事过程")}</p>
+              </article>
+            `).join("")}
+          </div>
+        ` : `
+          <div class="public-empty">当前未补充农事记录</div>
+        `}
+      </section>
+
+      <section class="public-panel">
+        <div class="public-panel-head">
+          <span>采收与加工</span>
+          <h2>批次加工链</h2>
+        </div>
+        <div class="public-info-grid">
+          ${renderPublicInfoCard("采收批次", [
+            view.harvestName || "--",
+            view.harvestBatch || "--",
+            `${formatDecimal(view.harvestWeight || 0)} kg`
+          ])}
+          ${renderPublicInfoCard("加工过程", [
+            view.processName || "--",
+            view.processBatch || "--",
+            `${formatDecimal(view.outputCount || 0)} kg`
+          ])}
+        </div>
+        ${stepItems.length ? `
+          <div class="public-timeline">
+            ${stepItems.map((item) => `
+              <article class="public-timeline-item">
+                <strong>${escapeHtml(item.name)}</strong>
+                <span>${escapeHtml(item.periodText)}</span>
+                <p>${escapeHtml(item.stepDetails || item.note || "已记录工艺过程")}</p>
+              </article>
+            `).join("")}
+          </div>
+        ` : ""}
+      </section>
+
+      <section class="public-panel">
+        <div class="public-panel-head">
+          <span>仓储落点</span>
+          <h2>当前仓储信息</h2>
+        </div>
+        <div class="public-info-grid">
+          ${renderPublicInfoCard("仓库", [
+            view.warehouseName || "--",
+            view.warehouseConditions || "--",
+            view.warehouseMethod || "--"
+          ])}
+          ${renderPublicInfoCard("查询地址", [
+            truncateText(view.publicUrl, 52),
+            "该地址由后台自动生成",
+            "适合扫码查询与链接分享"
+          ])}
+        </div>
+      </section>
+    </section>
   `;
 }
 
@@ -690,67 +683,20 @@ function renderPublicInfoCard(title, lines) {
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
   return `
-    <a class="module-card-compact" href="${escapeAttribute(item.href)}">
-      <div class="module-icon-box">
-        ${renderNavIcon(item.id)}
+    <a class="module-card" href="${escapeAttribute(item.href)}">
+      <div class="module-card-head">
+        <span class="module-icon">${renderNavIcon(item.id)}</span>
+        ${count ? `<span class="module-card-count">${count}</span>` : ""}
       </div>
-      <div class="module-info-box">
-        <strong class="module-name">${escapeHtml(item.title)}</strong>
-        <span class="module-count">${count || 0} 条记录</span>
+      <strong class="module-card-title">${escapeHtml(item.title)}</strong>
+      <div class="module-card-foot">
+        <em>进入</em>
       </div>
     </a>
   `;
 }
 
-function calculateStorageUsage() {
-  const used = JSON.stringify(localStorage).length;
-  const limit = 5 * 1024 * 1024;
-  const percentage = Math.min(100, Math.round((used / limit) * 100));
-  let tone = "";
-  if (percentage > 95) tone = "danger";
-  else if (percentage > 80) tone = "warning";
-  return { used, percentage, tone };
-}
-
-function exportData() {
-  const store = localStorage.getItem(STORE_KEY);
-  if (!store) {
-    alert("当前没有任何数据可以导出。");
-    return;
-  }
-  const blob = new Blob([store], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  const now = new Date();
-  const dateStr = now.toISOString().split("T")[0];
-  a.href = url;
-  a.download = `溯源数据备份_${dateStr}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importData(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.bases || !data.activities) {
-        throw new Error("无效的数据格式");
-      }
-      if (confirm("导入将覆盖当前所有数据且不可撤销，是否继续？")) {
-        localStorage.setItem(STORE_KEY, e.target.result);
-        window.location.reload();
-      }
-    } catch (err) {
-      alert("导入失败：请提供正确的溯源数据 JSON 文件。");
-    }
-  };
-  reader.readAsText(file);
-}
-
 function renderSidebar(activeId, shared) {
-  const storage = calculateStorageUsage();
   return `
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -758,38 +704,21 @@ function renderSidebar(activeId, shared) {
           <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
             <circle cx="32" cy="32" r="24" fill="#F4F5EF" stroke="#D4D9CF" stroke-width="2"></circle>
             <path d="M32 18V46" stroke="#1D6A53" stroke-width="3.5" stroke-linecap="round"></path>
-            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#d4a373"></path>
-            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#d4a373"></path>
-            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#bc8a5f"></path>
-            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#bc8a5f"></path>
+            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#2F8E69"></path>
+            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#2F8E69"></path>
+            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#5FA884"></path>
+            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
             <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
           </svg>
         </div>
         <div class="brand-copy">
-          <strong>灵草数智溯源</strong>
+          <strong>中药材溯源平台</strong>
         </div>
       </div>
 
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderSidebarItem(item, activeId, shared)).join("")}
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="storage-monitor">
-          <div class="storage-label">
-            <span>存储空间占用</span>
-            <span>${storage.percentage}%</span>
-          </div>
-          <div class="storage-bar-bg">
-            <div class="storage-bar-fill ${storage.tone}" style="width: ${storage.percentage}%"></div>
-          </div>
-        </div>
-        <div class="sidebar-actions">
-          <button class="button-sidebar" data-action="export-data" title="导出数据备份">导出数据</button>
-          <button class="button-sidebar" data-action="trigger-import" title="导入数据备份">导入数据</button>
-          <input type="file" id="import-input" accept=".json" style="display:none">
-        </div>
-      </div>
     </aside>
   `;
 }
@@ -846,28 +775,10 @@ function renderTable(columns, rows, selected) {
 }
 
 function renderEmptyState(moduleTitle, totalCount) {
-  if (totalCount > 0) {
-    return `
-      <div class="empty-state">
-        <strong>没有找到符合条件的${escapeHtml(moduleTitle)}记录</strong>
-        <span>可以调整搜索词，或继续新增一条记录。</span>
-      </div>
-    `;
-  }
-
   return `
-    <div class="empty-state-v2">
-      <div class="empty-illustration">
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <h3>开始建立${escapeHtml(moduleTitle)}</h3>
-      <p>当前还没有记录。建立第一条记录后，系统会自动关联上下游链路，形成完整的溯源闭环。</p>
-      <div class="empty-actions">
-        <button class="button primary" type="button" data-open-dialog="primary">立即新建</button>
-        <a href="index.html" class="button-outline">查看引导</a>
-      </div>
+    <div class="empty-state">
+      <strong>${totalCount ? `没有找到符合条件的${escapeHtml(moduleTitle)}记录` : `当前还没有${escapeHtml(moduleTitle)}记录`}</strong>
+      <span>${totalCount ? "可以调整搜索词，或继续新增一条记录。" : "你可以直接新建第一条记录，系统会自动串起后续链路。"} </span>
     </div>
   `;
 }
@@ -943,7 +854,7 @@ function renderBaseDialog(shared, draft) {
           fieldNumber("soilEc", "土壤 EC", "例如：0.38", false, draft.soilEc),
           fieldTextarea("intro", "基地介绍", "一句话说明基地背景、管理标准或产区特点", false, draft.intro)
         ])}
-        ${renderGenericPhotoSection("基地照片")}
+        ${renderBasePhotoSection()}
       </div>
       <aside class="dialog-map-column">
         ${renderBaseMapEditor()}
@@ -952,63 +863,14 @@ function renderBaseDialog(shared, draft) {
   `;
 }
 
-function getPhotoSectionTitle(pageId, kind) {
-  if (pageId === "base-trace") return "基地照片";
-  if (pageId === "farming-trace" && kind === "primary") return "现场照片";
-  if (pageId === "harvest-trace") return "采收照片";
-  if (pageId === "processing-trace" && kind === "primary") return "加工环节照片";
-  return null;
-}
-
-function renderGenericPhotoSection(title) {
-  return `
-    <section class="form-section form-section-photo">
-      <div class="form-section-head section-flex">
-        <h4>${escapeHtml(title)}</h4>
-        <div class="photo-section-actions">
-          <span class="chip neutral" data-photo-count>0 张</span>
-          <button class="button ghost button-inline" type="button" data-open-photo-window>增加照片</button>
-        </div>
-      </div>
-      <input type="hidden" name="photos" value="[]" data-photo-store>
-      <div class="photo-strip" data-photo-grid>
-        <div class="photo-empty">暂未添加照片</div>
-      </div>
-      <div class="photo-window-shell" data-photo-window hidden>
-        <div class="photo-window-backdrop" data-close-photo-window></div>
-        <div class="photo-window-panel" role="dialog" aria-modal="true" aria-label="${escapeAttribute(title)}">
-          <div class="photo-window-header">
-            <h5>${escapeHtml(title)}</h5>
-            <button class="dialog-close" type="button" data-close-photo-window aria-label="关闭">✕</button>
-          </div>
-          <div class="photo-window-body">
-            <label class="button secondary photo-picker-button">
-              选择照片
-              <input type="file" accept="image/*" multiple hidden data-photo-input>
-            </label>
-            <div class="photo-window-grid" data-photo-dialog-grid>
-              <div class="photo-empty">暂未添加照片</div>
-            </div>
-          </div>
-          <div class="photo-window-foot">
-            <button class="button primary" type="button" data-close-photo-window>完成</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-}
-
 function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   const sections = getDialogSections(pageId, kind, shared, draft, selected);
   const hiddenFields = getHiddenDialogFields(pageId, kind, selected);
-  const photoTitle = getPhotoSectionTitle(pageId, kind);
   return `
     <div class="dialog-standard-layout">
       <div class="dialog-standard-main">
         ${hiddenFields}
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
-        ${photoTitle ? renderGenericPhotoSection(photoTitle) : ""}
       </div>
       <aside class="dialog-context" data-form-context>
         ${renderInitialFormContext(pageId, kind, shared, draft, selected)}
@@ -1039,28 +901,25 @@ function renderField(field) {
   if (field.full) {
     classes.push("is-full");
   }
-  if (field.required) {
-    classes.push("required");
-  }
   const requiredText = field.required ? "required" : "";
   const dataAttrs = [];
   if (field.mapSearch) {
-    dataAttrs.push("data-map-address-input");
+    dataAttrs.push('data-map-address-input');
   }
   if (field.mapLongitude) {
-    dataAttrs.push("data-map-longitude-input");
+    dataAttrs.push('data-map-longitude-input');
     dataAttrs.push('inputmode="decimal"');
   }
   if (field.mapLatitude) {
-    dataAttrs.push("data-map-latitude-input");
+    dataAttrs.push('data-map-latitude-input');
     dataAttrs.push('inputmode="decimal"');
   }
 
   if (field.type === "textarea") {
     return `
       <label class="${classes.join(" ")}">
-        <span class="field-label">${escapeHtml(field.label)}</span>
-        <textarea class="form-control" name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText}>${escapeHtml(field.value || "")}</textarea>
+        <span>${escapeHtml(field.label)}</span>
+        <textarea name="${escapeAttribute(field.name)}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText}>${escapeHtml(field.value || "")}</textarea>
       </label>
     `;
   }
@@ -1068,8 +927,8 @@ function renderField(field) {
   if (field.type === "select") {
     return `
       <label class="${classes.join(" ")}">
-        <span class="field-label">${escapeHtml(field.label)}</span>
-        <select class="form-control" name="${escapeAttribute(field.name)}" ${requiredText}>
+        <span>${escapeHtml(field.label)}</span>
+        <select name="${escapeAttribute(field.name)}" ${requiredText}>
           <option value="">请选择</option>
           ${field.options.map((option) => `
             <option value="${escapeAttribute(option.value)}" ${String(option.value) === String(field.value || "") ? "selected" : ""}>
@@ -1084,9 +943,9 @@ function renderField(field) {
   if (field.mapSearch) {
     return `
       <label class="${classes.join(" ")}">
-        <span class="field-label">${escapeHtml(field.label)}</span>
+        <span>${escapeHtml(field.label)}</span>
         <div class="field-inline">
-          <input class="form-control" name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
+          <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
           <button class="button ghost button-inline" type="button" data-open-map-search>地图定位</button>
         </div>
       </label>
@@ -1095,8 +954,8 @@ function renderField(field) {
 
   return `
     <label class="${classes.join(" ")}">
-      <span class="field-label">${escapeHtml(field.label)}</span>
-      <input class="form-control" name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
+      <span>${escapeHtml(field.label)}</span>
+      <input name="${escapeAttribute(field.name)}" type="${escapeAttribute(field.type || "text")}" value="${escapeAttribute(field.value || "")}" placeholder="${escapeAttribute(field.placeholder || "")}" ${requiredText} ${dataAttrs.join(" ")}>
     </label>
   `;
 }
@@ -1368,36 +1227,7 @@ function renderDialogContextFallback() {
   `;
 }
 
-function bindShell(root) {
-  const sidebar = root.querySelector(".sidebar");
-  const hamburger = root.querySelector('[data-action="toggle-sidebar"]');
-  if (hamburger && sidebar) {
-    hamburger.addEventListener("click", () => {
-      sidebar.classList.toggle("is-open");
-    });
-    // Close sidebar when clicking outside on mobile
-    root.addEventListener("click", (e) => {
-      if (sidebar.classList.contains("is-open") && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-        sidebar.classList.remove("is-open");
-      }
-    });
-  }
-
-  const exportBtn = root.querySelector('[data-action="export-data"]');
-  if (exportBtn) {
-    exportBtn.addEventListener("click", exportData);
-  }
-
-  const triggerImportBtn = root.querySelector('[data-action="trigger-import"]');
-  const importInput = root.querySelector("#import-input");
-  if (triggerImportBtn && importInput) {
-    triggerImportBtn.addEventListener("click", () => importInput.click());
-    importInput.addEventListener("change", (e) => importData(e.target.files[0]));
-  }
-}
-
 function bindHome(root, shared) {
-  bindShell(root);
   root.addEventListener("click", (event) => {
     const clearButton = event.target.closest("[data-clear-workflow]");
     if (clearButton) {
@@ -1420,7 +1250,6 @@ function bindTraceQuery(root, shared) {
 }
 
 function bindModule(root, pageId, config, shared, selected) {
-  bindShell(root);
   const searchInput = root.querySelector("[data-search-input]");
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
@@ -1507,8 +1336,8 @@ function bindModule(root, pageId, config, shared, selected) {
       if (!form.reportValidity()) {
         return;
       }
-      if (form._photoController) {
-        await form._photoController.waitUntilReady();
+      if (form._baseTracePhotoController) {
+        await form._baseTracePhotoController.waitUntilReady();
       }
       const kind = form.dataset.formKind || "primary";
       const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
@@ -1523,20 +1352,8 @@ function bindModule(root, pageId, config, shared, selected) {
   if (pageId === "base-trace") {
     const dialog = root.querySelector('[data-dialog="primary"]');
     bindBaseTraceMap(root, dialog);
-    bindPhotoUpload(root, dialog);
+    bindBaseTracePhotos(root, dialog);
     bindBaseTracePreviewMaps(root);
-  } else {
-    // Check if other pages need photo upload
-    const primaryTitle = getPhotoSectionTitle(pageId, "primary");
-    if (primaryTitle) {
-      const dialog = root.querySelector('[data-dialog="primary"]');
-      bindPhotoUpload(root, dialog, "primary");
-    }
-    const secondaryTitle = getPhotoSectionTitle(pageId, "secondary");
-    if (secondaryTitle) {
-      const dialog = root.querySelector('[data-dialog="secondary"]');
-      bindPhotoUpload(root, dialog, "secondary");
-    }
   }
 
   const shouldAutoOpen = new URLSearchParams(window.location.search).get("action") === "create";
@@ -1812,7 +1629,6 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         unit: values.unit || "kg",
         managementStandard: values.managementStandard,
         plantExperience: values.plantExperience,
-        photos: normalizeTracePhotoList(values.photos),
         createdAt: isoDate()
       };
       store.plantProcesses.unshift(record);
@@ -1855,7 +1671,6 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         endDate: values.endDate || values.startDate || isoDate(),
         harvestWeight: toNumber(values.harvestWeight),
         harvestManager: values.harvestManager,
-        photos: normalizeTracePhotoList(values.photos),
         note: values.note,
         createdAt: isoDate()
       };
@@ -1880,7 +1695,6 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         startDate: values.startDate || isoDate(),
         endDate: values.endDate || values.startDate || isoDate(),
         processAddress: values.processAddress,
-        photos: normalizeTracePhotoList(values.photos),
         note: values.note,
         createdAt: isoDate(),
         materialName: material ? material.name : "",
@@ -2562,7 +2376,7 @@ function renderBaseDetail(view, shared) {
       infoCard("资料状态", [view.landCertStatus || "待补土地证明", view.envReportStatus || "待补环境检测", `${view.photoCount} 张基地照片`])
     ])}
     ${renderBaseMap(view)}
-    ${renderPhotoGallery(view, "基地照片")}
+    ${renderBasePhotos(view)}
   `;
 }
 
@@ -2608,7 +2422,6 @@ function renderPlantDetail(view, shared) {
       infoCard("种植管理", [view.plantMethod, view.managementStandard || "--", view.plantExperience || "--"])
     ])}
     ${renderNarrativeBlock("种植说明", view.previewMat ? `前茬作物：${view.previewMat}` : "当前没有补充前茬作物。")}
-    ${renderPhotoGallery(view, "现场照片")}
   `;
 }
 
@@ -2640,7 +2453,6 @@ function renderHarvestDetail(view, shared) {
       infoCard("来源主线", [view.baseName, view.plantBatch, view.herb])
     ])}
     ${renderNarrativeBlock("采收备注", view.note || "当前没有补充备注。")}
-    ${renderPhotoGallery(view, "采收现场照片")}
   `;
 }
 
@@ -2672,7 +2484,6 @@ function renderProcessDetail(view, shared) {
       infoCard("加工信息", [view.manager, formatPeriod(view.startDate, view.endDate), view.processAddress || "--"])
     ])}
     ${renderNarrativeBlock("工艺备注", view.note || "当前没有补充说明。")}
-    ${renderPhotoGallery(view, "加工现场照片")}
   `;
 }
 
@@ -2708,7 +2519,6 @@ function renderQrDetail(view, shared) {
       { label: "加工批次", value: view.processBatch }
     ])}
     ${renderActionBar([
-      { label: "打印溯源码", action: `window.printCode('${view.id}')`, tone: "primary", icon: "print" },
       externalLinkAction("查询页预览", view.publicUrl),
       subtleTextAction("查询地址", truncateText(view.publicUrl, 40))
     ])}
@@ -2716,27 +2526,9 @@ function renderQrDetail(view, shared) {
       infoCard("链路摘要", [view.baseName, view.seedBatch, view.plantBatch]),
       infoCard("落仓信息", [view.warehouseName, view.warehouseConditions, view.warehouseMethod])
     ])}
-    ${renderNarrativeBlock("查询说明", "这条码已经绑定到完整链路，支持打印成贴纸或在线扫码预览。")}
-
-    <div id="print-area-${view.id}" class="print-only">
-      <div class="printable-qr-card">
-        <h1>中药材溯源码</h1>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(view.publicUrl)}" alt="QR Code">
-        <div class="printable-qr-info">
-          <div class="printable-qr-row"><span>药材名称：</span><strong>${escapeHtml(view.materialName)}</strong></div>
-          <div class="printable-qr-row"><span>溯源码号：</span><strong>${escapeHtml(view.traceCode)}</strong></div>
-          <div class="printable-qr-row"><span>生产批次：</span><strong>${escapeHtml(view.ppBatch)}</strong></div>
-          <div class="printable-qr-row"><span>生产日期：</span><strong>${escapeHtml(view.createdAt.split("T")[0])}</strong></div>
-          <div class="printable-qr-row"><span>企业名称：</span><strong>中药材全国追踪平台</strong></div>
-        </div>
-      </div>
-    </div>
+    ${renderNarrativeBlock("查询说明", "这条码已经绑定到完整链路，可以直接打开查询页预览消费者视角。")}
   `;
 }
-
-window.printCode = function(qrId) {
-  window.print();
-};
 
 function renderWarehouseDetail(view, shared) {
   const readyProcess = shared.views.processes.find((item) => item.stepCount > 0 && item.qrCount === 0);
@@ -3306,20 +3098,6 @@ function fillIfEmpty(element, value) {
   element.value = value == null ? "" : String(value);
 }
 
-function formatActivityTime(timestamp) {
-  if (!timestamp) return "";
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now - date) / 1000);
-
-  if (diffInSeconds < 60) return "刚刚";
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}分钟前`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}小时前`;
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}天前`;
-
-  return DATE_DISPLAY.format(date);
-}
-
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -3381,27 +3159,77 @@ function renderBaseMap(record) {
   `;
 }
 
-function renderPhotoGallery(record, title = "现场照片") {
+function renderBasePhotos(record) {
   const photos = normalizeTracePhotoList(record.photos);
-  if (!photos.length) return "";
   return `
     <div class="subsection">
       <div class="subsection-head">
-        <h4>${escapeHtml(title)}</h4>
+        <h4>基地照片</h4>
         <span class="chip neutral">${photos.length} 张</span>
       </div>
-      <div class="detail-photo-grid">
-        ${photos.map((photo) => `
-          <figure class="detail-photo-card">
-            <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
-            <figcaption>${escapeHtml(photo.name)}</figcaption>
-          </figure>
-        `).join("")}
-      </div>
+      ${photos.length ? `
+        <div class="detail-photo-grid">
+          ${photos.map((photo) => `
+            <figure class="detail-photo-card">
+              <img src="${escapeAttribute(photo.url)}" alt="${escapeAttribute(photo.name)}">
+              <figcaption>${escapeHtml(photo.name)}</figcaption>
+            </figure>
+          `).join("")}
+        </div>
+      ` : `
+        <div class="empty-state compact">
+          <strong>还没有基地照片</strong>
+          <span>可以在建档弹窗里继续补充现场照片。</span>
+        </div>
+      `}
     </div>
   `;
 }
 
+function renderBasePhotoSection() {
+  return `
+    <section class="form-section form-section-photo">
+      <div class="form-section-head section-flex">
+        <h4>基地照片</h4>
+        <div class="photo-section-actions">
+          <span class="chip neutral" data-photo-count>0 张</span>
+          <button class="button ghost button-inline" type="button" data-open-photo-window>增加照片</button>
+        </div>
+      </div>
+      <input type="hidden" name="photos" value="[]" data-photo-store>
+      <div class="photo-strip" data-photo-grid>
+        <div class="photo-empty">暂未添加照片</div>
+      </div>
+      ${renderBasePhotoWindow()}
+    </section>
+  `;
+}
+
+function renderBasePhotoWindow() {
+  return `
+    <div class="photo-window-shell" data-photo-window hidden>
+      <div class="photo-window-backdrop" data-close-photo-window></div>
+      <div class="photo-window-panel" role="dialog" aria-modal="true" aria-label="基地照片">
+        <div class="photo-window-header">
+          <h5>基地照片</h5>
+          <button class="dialog-close" type="button" data-close-photo-window aria-label="关闭">✕</button>
+        </div>
+        <div class="photo-window-body">
+          <label class="button secondary photo-picker-button">
+            选择照片
+            <input type="file" accept="image/*" multiple hidden data-photo-input>
+          </label>
+          <div class="photo-window-grid" data-photo-dialog-grid>
+            <div class="photo-empty">暂未添加照片</div>
+          </div>
+        </div>
+        <div class="photo-window-foot">
+          <button class="button primary" type="button" data-close-photo-window>完成</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 function renderBaseMapEditor() {
   const config = getTraceMapConfig();
@@ -3712,9 +3540,11 @@ function activateBaseTraceMap(root) {
   }
 }
 
-function bindPhotoUpload(root, dialog, kind = "primary") {
-  const form = root.querySelector(`form[data-form-kind="${kind}"]`);
-  if (!form) return;
+function bindBaseTracePhotos(root, dialog) {
+  const form = root.querySelector('form[data-form-kind="primary"]');
+  if (!form) {
+    return;
+  }
   const storeInput = form.querySelector("[data-photo-store]");
   const openButton = form.querySelector("[data-open-photo-window]");
   const shell = form.querySelector("[data-photo-window]");
@@ -3723,9 +3553,9 @@ function bindPhotoUpload(root, dialog, kind = "primary") {
   const grid = form.querySelector("[data-photo-grid]");
   const dialogGrid = form.querySelector("[data-photo-dialog-grid]");
   const countPill = form.querySelector("[data-photo-count]");
-  if (!storeInput || !shell || !grid || !dialogGrid) return;
-
-  const maxPhotos = 12;
+  if (!storeInput || !shell || !grid || !dialogGrid) {
+    return;
+  }
 
   const state = {
     photos: normalizeTracePhotoList(storeInput.value),
@@ -3734,7 +3564,9 @@ function bindPhotoUpload(root, dialog, kind = "primary") {
 
   const syncStore = () => {
     storeInput.value = JSON.stringify(state.photos);
-    if (countPill) countPill.textContent = `${state.photos.length} 张`;
+    if (countPill) {
+      countPill.textContent = `${state.photos.length} 张`;
+    }
   };
 
   const renderGrid = (container, removable) => {
@@ -3769,17 +3601,23 @@ function bindPhotoUpload(root, dialog, kind = "primary") {
 
   const appendPhotos = async (files) => {
     const candidates = Array.from(files || []).filter((file) => String(file.type || "").startsWith("image/"));
-    const room = Math.max(0, maxPhotos - state.photos.length);
-    if (!candidates.length || !room) return;
+    const room = Math.max(0, BASE_TRACE_MAX_PHOTOS - state.photos.length);
+    if (!candidates.length || !room) {
+      return;
+    }
     const nextPhotos = await Promise.all(candidates.slice(0, room).map(createTracePhotoRecord));
     state.photos = [...state.photos, ...nextPhotos];
     render();
   };
 
-  if (openButton) openButton.addEventListener("click", openWindow);
+  if (openButton) {
+    openButton.addEventListener("click", openWindow);
+  }
   closeButtons.forEach((button) => button.addEventListener("click", closeWindow));
   shell.addEventListener("click", (event) => {
-    if (event.target === shell || event.target.closest("[data-close-photo-window]")) closeWindow();
+    if (event.target === shell || event.target.closest("[data-close-photo-window]")) {
+      closeWindow();
+    }
   });
 
   if (photoInput) {
@@ -3793,7 +3631,9 @@ function bindPhotoUpload(root, dialog, kind = "primary") {
 
   dialogGrid.addEventListener("click", (event) => {
     const removeButton = event.target.closest("[data-remove-photo]");
-    if (!removeButton) return;
+    if (!removeButton) {
+      return;
+    }
     const photoId = removeButton.dataset.removePhoto || "";
     state.photos = state.photos.filter((photo) => photo.id !== photoId);
     render();
@@ -3803,7 +3643,7 @@ function bindPhotoUpload(root, dialog, kind = "primary") {
     dialog.addEventListener("close", closeWindow);
   }
 
-  form._photoController = {
+  form._baseTracePhotoController = {
     waitUntilReady: async () => {
       await state.pendingTask;
     }
