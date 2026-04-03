@@ -13,8 +13,10 @@ const NAV_ITEMS = [
 const STORE_KEY = "trace-admin-workflow-v2";
 const DRAFT_KEY_PREFIX = "trace-admin-draft-v2:";
 const TRACE_QUERY_PAGE = "trace-query.html";
+const TRACE_PUBLIC_SNAPSHOT_PARAM = "p";
 const TRACE_MAP_PAGE_ID = "base-trace";
 const TRACE_MAP_SCRIPT_ID = "trace-map-sdk";
+const TRACE_QR_LIBRARY_URL = "assets/vendor/qrcode.min.js";
 const TRACE_MAP_CONFIG_DEFAULTS = {
   provider: "tianditu",
   tk: "",
@@ -28,6 +30,9 @@ const BASE_TRACE_PHOTO_MAX_EDGE = 1440;
 const BASE_TRACE_PHOTO_QUALITY = 0.84;
 const TRACE_MAP_RUNTIME = {
   sdkPromise: null
+};
+const TRACE_QR_RUNTIME = {
+  libraryPromise: null
 };
 
 const BASE_TYPES = ["一般基地", "GAP 基地", "GACP 基地", "共建基地"];
@@ -364,7 +369,6 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
           </div>
           <div class="command-actions">
-            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
             <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
@@ -382,13 +386,12 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
           <aside class="detail-rail">
             <section class="panel detail-panel">
               <div class="panel-headline">
-                <h2>当前详情</h2>
+                <h2>详情</h2>
               </div>
               <div class="panel-body">
                 ${selected ? config.renderDetail(selected, shared) : `
                   <div class="empty-state">
-                    <strong>当前没有可展示的记录</strong>
-                    <span>新增第一条数据后，这里会展示它的链路关系、状态和下一步操作。</span>
+                    <strong>暂无记录</strong>
                   </div>
                 `}
               </div>
@@ -425,7 +428,6 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
           </div>
           <div class="command-actions">
-            ${filteredViews.length ? `<span class="result-count">${filteredViews.length} 条</span>` : ""}
             <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
@@ -443,13 +445,12 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
           <aside class="detail-rail">
             <section class="panel detail-panel">
               <div class="panel-headline">
-                <h2>当前详情</h2>
+                <h2>详情</h2>
               </div>
               <div class="panel-body">
                 ${selected ? config.renderDetail(selected, shared) : `
                   <div class="empty-state">
-                    <strong>先选择一条主线记录</strong>
-                    <span>选中种植或加工过程后，右侧会展开它的关系链、状态和推进动作。</span>
+                    <strong>请选择记录</strong>
                   </div>
                 `}
               </div>
@@ -459,9 +460,8 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
 
         <section class="panel">
           <div class="panel-headline">
-            <h2>${pageId === "farming-trace" ? "农事记录时间轴" : "工艺步骤时间轴"}</h2>
+            <h2>${pageId === "farming-trace" ? "农事记录" : "工艺步骤"}</h2>
             <div class="panel-tools">
-              ${secondaryItems.length ? `<span class="result-count">${secondaryItems.length} 条</span>` : ""}
               <button class="button secondary" type="button" data-open-dialog="secondary" ${selected ? "" : "disabled"}>
                 ${escapeHtml(config.secondaryActionLabel)}
               </button>
@@ -473,14 +473,12 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
                 ? config.renderSecondaryDetail(secondaryItems, shared)
                 : `
                   <div class="empty-state compact">
-                    <strong>${pageId === "farming-trace" ? "还没有农事记录" : "还没有工艺步骤"}</strong>
-                    <span>${pageId === "farming-trace" ? "可以继续在这条种植过程下补充农事操作。" : "可以继续补充这条加工过程的步骤和工艺细节。"}</span>
+                    <strong>${pageId === "farming-trace" ? "暂无农事记录" : "暂无工艺步骤"}</strong>
                   </div>
                 `)
               : `
                 <div class="empty-state compact">
-                  <strong>还没有选中主线记录</strong>
-                  <span>先从上方台账中点选一条种植或加工过程，再继续补充下方时间轴。</span>
+                  <strong>请选择主线记录</strong>
                 </div>
               `}
           </div>
@@ -493,8 +491,14 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
 }
 
 function renderTraceQueryPage(shared) {
-  const code = new URLSearchParams(window.location.search).get("code") || "";
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code") || "";
+  const publicSnapshotToken = params.get(TRACE_PUBLIC_SNAPSHOT_PARAM) || "";
+  const publicSnapshot = publicSnapshotToken ? decodePublicTraceSnapshot(publicSnapshotToken) : null;
   const target = code ? shared.views.qrCodes.find((item) => item.traceCode === code) : null;
+  const traceData = publicSnapshot
+    ? buildPublicTraceDetailFromSnapshot(publicSnapshot, code, publicSnapshotToken)
+    : (target ? buildPublicTraceDetailFromView(target, shared) : null);
   const options = shared.views.qrCodes.slice(0, 12);
 
   return `
@@ -505,10 +509,10 @@ function renderTraceQueryPage(shared) {
           <span class="public-kicker">中药材溯源码查询页</span>
         </header>
 
-        ${target ? renderTracePublicDetail(target, shared) : `
+        ${traceData ? renderTracePublicDetail(traceData) : `
           <section class="public-empty-card">
-            <h1>${code ? "未找到对应溯源码" : "请选择一条溯源码预览"}</h1>
-            <p>${code ? "当前浏览器里没有这条码的链路数据，建议回到后台重新生成或切换到已存在的查询码。" : "下面列出当前浏览器已生成的溯源码，点击后可以直接查看对外查询页效果。"}</p>
+            <h1>${code ? "未找到溯源码" : "选择溯源码"}</h1>
+            <p>${code ? "请返回赋码页处理。" : "从后台选择一条码查看。"}</p>
             ${options.length ? `
               <div class="public-code-grid">
                 ${options.map((item) => `
@@ -521,8 +525,7 @@ function renderTraceQueryPage(shared) {
               </div>
             ` : `
               <div class="empty-state compact">
-                <strong>后台还没有生成任何溯源码</strong>
-                <span>先在“赋码与查询”页面新增一条溯源码，再回到这里预览消费者查询页。</span>
+                <strong>暂无溯源码</strong>
               </div>
             `}
           </section>
@@ -532,22 +535,22 @@ function renderTraceQueryPage(shared) {
   `;
 }
 
-function renderTracePublicDetail(view, shared) {
-  const farmItems = shared.views.farmRecords.filter((item) => item.plantId === view.plantId);
-  const stepItems = shared.views.processSteps.filter((item) => item.primaryProcessId === view.primaryProcessId);
+function renderTracePublicDetail(traceData) {
+  const farmItems = Array.isArray(traceData.farmItems) ? traceData.farmItems : [];
+  const stepItems = Array.isArray(traceData.stepItems) ? traceData.stepItems : [];
   return `
     <section class="public-hero">
       <div class="public-hero-copy">
-        <span class="public-badge">${escapeHtml(view.traceCode)}</span>
-        <h1>${escapeHtml(view.name)}</h1>
-        <p>${escapeHtml(view.materialName)} · ${escapeHtml(view.baseName)} · ${escapeHtml(view.warehouseName)}</p>
+        <span class="public-badge">${escapeHtml(traceData.traceCode)}</span>
+        <h1>${escapeHtml(traceData.name)}</h1>
+        <p>${escapeHtml(traceData.materialName)} · ${escapeHtml(traceData.baseName)} · ${escapeHtml(traceData.warehouseName)}</p>
         <div class="public-stage-strip">
-          <span>${escapeHtml(view.baseName)}</span>
-          <span>${escapeHtml(view.seedBatch || "--")}</span>
-          <span>${escapeHtml(view.plantBatch || "--")}</span>
-          <span>${escapeHtml(view.harvestBatch || "--")}</span>
-          <span>${escapeHtml(view.processBatch || "--")}</span>
-          <span>${escapeHtml(view.warehouseName || "--")}</span>
+          <span>${escapeHtml(traceData.baseName)}</span>
+          <span>${escapeHtml(traceData.seedBatch || "--")}</span>
+          <span>${escapeHtml(traceData.plantBatch || "--")}</span>
+          <span>${escapeHtml(traceData.harvestBatch || "--")}</span>
+          <span>${escapeHtml(traceData.processBatch || "--")}</span>
+          <span>${escapeHtml(traceData.warehouseName || "--")}</span>
         </div>
       </div>
       <div class="public-meta-card">
@@ -556,19 +559,19 @@ function renderTracePublicDetail(view, shared) {
         <div class="public-meta-grid">
           <article>
             <label>药材</label>
-            <strong>${escapeHtml(view.materialName)}</strong>
+            <strong>${escapeHtml(traceData.materialName)}</strong>
           </article>
           <article>
             <label>仓库</label>
-            <strong>${escapeHtml(view.warehouseName)}</strong>
+            <strong>${escapeHtml(traceData.warehouseName)}</strong>
           </article>
           <article>
             <label>采收批次</label>
-            <strong>${escapeHtml(view.harvestBatch || "--")}</strong>
+            <strong>${escapeHtml(traceData.harvestBatch || "--")}</strong>
           </article>
           <article>
             <label>加工批次</label>
-            <strong>${escapeHtml(view.processBatch || "--")}</strong>
+            <strong>${escapeHtml(traceData.processBatch || "--")}</strong>
           </article>
         </div>
       </div>
@@ -582,18 +585,18 @@ function renderTracePublicDetail(view, shared) {
         </div>
         <div class="public-info-grid">
           ${renderPublicInfoCard("基地档案", [
-            view.baseName,
-            view.baseCode,
-            view.baseAddress
+            traceData.baseName,
+            traceData.baseCode,
+            traceData.baseAddress
           ])}
           ${renderPublicInfoCard("种源备案", [
-            view.seedBatch || "--",
-            view.supplierName || "--",
-            view.seedBrand || "--"
+            traceData.seedBatch || "--",
+            traceData.supplierName || "--",
+            traceData.seedBrand || "--"
           ])}
         </div>
-        ${view.baseCoordinates ? `
-          <div class="trace-map-preview public-map" data-trace-map-preview data-name="${escapeAttribute(view.baseName || "")}" data-address="${escapeAttribute(view.baseAddress || "")}" data-lng="${escapeAttribute(view.baseCoordinates.lng.toFixed(6))}" data-lat="${escapeAttribute(view.baseCoordinates.lat.toFixed(6))}">
+        ${traceData.baseCoordinates ? `
+          <div class="trace-map-preview public-map" data-trace-map-preview data-name="${escapeAttribute(traceData.baseName || "")}" data-address="${escapeAttribute(traceData.baseAddress || "")}" data-lng="${escapeAttribute(traceData.baseCoordinates.lng.toFixed(6))}" data-lat="${escapeAttribute(traceData.baseCoordinates.lat.toFixed(6))}">
             <div class="trace-live-map-state">地图加载中...</div>
           </div>
         ` : ""}
@@ -608,9 +611,9 @@ function renderTracePublicDetail(view, shared) {
           <div class="public-timeline">
             ${farmItems.map((item) => `
               <article class="public-timeline-item">
-                <strong>${escapeHtml(item.workName)}</strong>
-                <span>${escapeHtml(item.periodText)}</span>
-                <p>${escapeHtml(item.operateDetail || item.note || "已记录农事过程")}</p>
+                <strong>${escapeHtml(item.workName || "--")}</strong>
+                <span>${escapeHtml(item.periodText || "--")}</span>
+                <p>${escapeHtml(item.detailText || item.operateDetail || item.note || "已记录农事过程")}</p>
               </article>
             `).join("")}
           </div>
@@ -626,23 +629,23 @@ function renderTracePublicDetail(view, shared) {
         </div>
         <div class="public-info-grid">
           ${renderPublicInfoCard("采收批次", [
-            view.harvestName || "--",
-            view.harvestBatch || "--",
-            `${formatDecimal(view.harvestWeight || 0)} kg`
+            traceData.harvestName || "--",
+            traceData.harvestBatch || "--",
+            `${formatDecimal(traceData.harvestWeight || 0)} kg`
           ])}
           ${renderPublicInfoCard("加工过程", [
-            view.processName || "--",
-            view.processBatch || "--",
-            `${formatDecimal(view.outputCount || 0)} kg`
+            traceData.processName || "--",
+            traceData.processBatch || "--",
+            `${formatDecimal(traceData.outputCount || 0)} kg`
           ])}
         </div>
         ${stepItems.length ? `
           <div class="public-timeline">
             ${stepItems.map((item) => `
               <article class="public-timeline-item">
-                <strong>${escapeHtml(item.name)}</strong>
-                <span>${escapeHtml(item.periodText)}</span>
-                <p>${escapeHtml(item.stepDetails || item.note || "已记录工艺过程")}</p>
+                <strong>${escapeHtml(item.name || "--")}</strong>
+                <span>${escapeHtml(item.periodText || "--")}</span>
+                <p>${escapeHtml(item.detailText || item.stepDetails || item.note || "已记录工艺过程")}</p>
               </article>
             `).join("")}
           </div>
@@ -656,14 +659,12 @@ function renderTracePublicDetail(view, shared) {
         </div>
         <div class="public-info-grid">
           ${renderPublicInfoCard("仓库", [
-            view.warehouseName || "--",
-            view.warehouseConditions || "--",
-            view.warehouseMethod || "--"
+            traceData.warehouseName || "--",
+            traceData.warehouseConditions || "--",
+            traceData.warehouseMethod || "--"
           ])}
           ${renderPublicInfoCard("查询地址", [
-            truncateText(view.publicUrl, 52),
-            "该地址由后台自动生成",
-            "适合扫码查询与链接分享"
+            truncateText(traceData.publicUrl, 52)
           ])}
         </div>
       </section>
@@ -683,15 +684,12 @@ function renderPublicInfoCard(title, lines) {
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
   return `
-    <a class="module-card" href="${escapeAttribute(item.href)}">
+    <a class="module-card" data-module="${escapeAttribute(item.id)}" href="${escapeAttribute(item.href)}">
       <div class="module-card-head">
         <span class="module-icon">${renderNavIcon(item.id)}</span>
         ${count ? `<span class="module-card-count">${count}</span>` : ""}
       </div>
       <strong class="module-card-title">${escapeHtml(item.title)}</strong>
-      <div class="module-card-foot">
-        <em>进入</em>
-      </div>
     </a>
   `;
 }
@@ -726,7 +724,7 @@ function renderSidebar(activeId, shared) {
 function renderSidebarItem(item, activeId, shared) {
   const count = navCountFor(item.id, shared);
   return `
-    <a class="nav-item ${item.id === activeId ? "is-active" : ""}" href="${escapeAttribute(item.href)}">
+    <a class="nav-item ${item.id === activeId ? "is-active" : ""}" data-module="${escapeAttribute(item.id)}" href="${escapeAttribute(item.href)}">
       <span class="nav-icon">${renderNavIcon(item.id)}</span>
       <span class="nav-copy"><strong>${escapeHtml(item.title)}</strong></span>
       ${count ? `<span class="nav-count">${count}</span>` : ""}
@@ -777,8 +775,7 @@ function renderTable(columns, rows, selected) {
 function renderEmptyState(moduleTitle, totalCount) {
   return `
     <div class="empty-state">
-      <strong>${totalCount ? `没有找到符合条件的${escapeHtml(moduleTitle)}记录` : `当前还没有${escapeHtml(moduleTitle)}记录`}</strong>
-      <span>${totalCount ? "可以调整搜索词，或继续新增一条记录。" : "你可以直接新建第一条记录，系统会自动串起后续链路。"} </span>
+      <strong>${totalCount ? `没有匹配的${escapeHtml(moduleTitle)}` : `暂无${escapeHtml(moduleTitle)}`}</strong>
     </div>
   `;
 }
@@ -816,7 +813,6 @@ function renderDialogShell(kind, title, body, wide = false) {
         <form class="dialog-form" data-form-kind="${escapeAttribute(kind)}">
           ${body}
           <div class="dialog-foot">
-            <span>保存后会立即更新链路关系和首页待办。</span>
             <div class="dialog-actions">
               <button class="button ghost" type="button" data-close-dialog="${escapeAttribute(kind)}">取消</button>
               <button class="button primary" type="submit">保存</button>
@@ -1218,10 +1214,9 @@ function renderDialogContextCard(title, lines) {
 function renderDialogContextFallback() {
   return `
     <div class="context-card">
-      <h4>等待选择上游记录</h4>
+      <h4>请选择上游记录</h4>
       <div class="context-lines">
-        <strong>先选择基地、种源、采收或加工记录</strong>
-        <strong>系统会在右侧实时显示链路摘要</strong>
+        <strong>选择后显示链路摘要</strong>
       </div>
     </div>
   `;
@@ -1259,6 +1254,22 @@ function bindModule(root, pageId, config, shared, selected) {
   }
 
   root.addEventListener("click", async (event) => {
+    const copyButton = event.target.closest("[data-copy-public-url]");
+    if (copyButton) {
+      event.preventDefault();
+      await copyTextWithFallback(copyButton.dataset.copyPublicUrl || "", "查询链接已复制");
+      return;
+    }
+
+    const downloadButton = event.target.closest("[data-download-qr]");
+    if (downloadButton) {
+      event.preventDefault();
+      const qrValue = downloadButton.dataset.downloadQr || "";
+      const qrName = downloadButton.dataset.downloadName || "trace-code";
+      await downloadTraceQrPng(qrValue, qrName);
+      return;
+    }
+
     const continueButton = event.target.closest("[data-continue-workflow]");
     if (continueButton) {
       handleContinueWorkflow(continueButton);
@@ -1354,6 +1365,10 @@ function bindModule(root, pageId, config, shared, selected) {
     bindBaseTraceMap(root, dialog);
     bindBaseTracePhotos(root, dialog);
     bindBaseTracePreviewMaps(root);
+  }
+
+  if (pageId === "trace-code-management") {
+    mountTraceQrPreviews(root);
   }
 
   const shouldAutoOpen = new URLSearchParams(window.location.search).get("action") === "create";
@@ -1949,9 +1964,14 @@ function buildSharedData(store) {
     materials: normalized.materials.map((item) => buildMaterialView(item, relations)).sort(sortByDateDesc("createdTime")),
     processes: normalized.primaryProcesses.map((item) => buildProcessView(item, maps, relations)).sort(sortByDateDesc("createdAt")),
     processSteps: normalized.processSteps.map((item) => buildProcessStepView(item)).sort((a, b) => a.orderSort - b.orderSort || sortByDateDesc("createdAt")(a, b)),
-    qrCodes: normalized.qrCodes.map((item) => buildQrView(item, maps, relations)).sort(sortByDateDesc("createdAt")),
+    qrCodes: [],
     warehouses: normalized.warehouses.map((item) => buildWarehouseView(item, relations)).sort(sortByDateDesc("createdAt"))
   };
+
+  views.qrCodes = normalized.qrCodes
+    .map((item) => buildQrView(item, maps))
+    .map((item) => finalizeQrView(item, views))
+    .sort(sortByDateDesc("createdAt"));
 
   const viewMaps = {
     baseById: indexBy(views.bases),
@@ -2313,7 +2333,6 @@ function buildQrView(item, maps) {
   const plant = harvest ? maps.plantById.get(harvest.plantId) : null;
   const seed = plant ? maps.seedById.get(plant.seedId) : null;
   const base = plant ? maps.baseById.get(plant.baseId) : null;
-  const publicUrl = item.publicUrl || buildTraceQueryUrl(item.traceCode);
   return {
     ...item,
     primaryProcessId: item.primaryProcessId,
@@ -2339,8 +2358,18 @@ function buildQrView(item, maps) {
     warehouseConditions: warehouse ? warehouse.conditions : "--",
     warehouseMethod: warehouse ? warehouse.method : "--",
     statusLabel: "可查询",
-    statusTone: "good",
-    publicUrl
+    statusTone: "good"
+  };
+}
+
+function finalizeQrView(view, views) {
+  const publicSnapshot = buildPublicTraceSnapshot(view, views);
+  const publicSnapshotToken = encodePublicTraceSnapshot(publicSnapshot);
+  return {
+    ...view,
+    publicSnapshot,
+    publicSnapshotToken,
+    publicUrl: buildTraceQueryUrl(view.traceCode, publicSnapshotToken)
   };
 }
 
@@ -2397,7 +2426,7 @@ function renderSeedDetail(view, shared) {
       infoCard("上游基地", [view.baseName, view.baseCode, view.baseAddress]),
       infoCard("供应商信息", [view.supplierName, view.supplierPhone || "--", `${view.sourceType} / ${view.breedMaterial}`])
     ])}
-    ${renderNarrativeBlock("批次备注", view.note || "当前没有补充说明。")}
+    ${renderNarrativeBlock("批次备注", view.note)}
   `;
 }
 
@@ -2421,7 +2450,7 @@ function renderPlantDetail(view, shared) {
       infoCard("来源链路", [view.baseName, view.seedBatch, view.seedBrand || "--"]),
       infoCard("种植管理", [view.plantMethod, view.managementStandard || "--", view.plantExperience || "--"])
     ])}
-    ${renderNarrativeBlock("种植说明", view.previewMat ? `前茬作物：${view.previewMat}` : "当前没有补充前茬作物。")}
+    ${renderNarrativeBlock("前茬作物", view.previewMat)}
   `;
 }
 
@@ -2452,7 +2481,7 @@ function renderHarvestDetail(view, shared) {
       infoCard("采收信息", [view.harvestType, view.harvestMethod, formatPeriod(view.startDate, view.endDate)]),
       infoCard("来源主线", [view.baseName, view.plantBatch, view.herb])
     ])}
-    ${renderNarrativeBlock("采收备注", view.note || "当前没有补充备注。")}
+    ${renderNarrativeBlock("采收备注", view.note)}
   `;
 }
 
@@ -2483,7 +2512,7 @@ function renderProcessDetail(view, shared) {
       infoCard("药材信息", [view.materialName, view.materialNo, view.ppType]),
       infoCard("加工信息", [view.manager, formatPeriod(view.startDate, view.endDate), view.processAddress || "--"])
     ])}
-    ${renderNarrativeBlock("工艺备注", view.note || "当前没有补充说明。")}
+    ${renderNarrativeBlock("工艺备注", view.note)}
   `;
 }
 
@@ -2522,11 +2551,11 @@ function renderQrDetail(view, shared) {
       externalLinkAction("查询页预览", view.publicUrl),
       subtleTextAction("查询地址", truncateText(view.publicUrl, 40))
     ])}
+    ${renderQrShareCard(view)}
     ${renderInfoRack([
       infoCard("链路摘要", [view.baseName, view.seedBatch, view.plantBatch]),
       infoCard("落仓信息", [view.warehouseName, view.warehouseConditions, view.warehouseMethod])
     ])}
-    ${renderNarrativeBlock("查询说明", "这条码已经绑定到完整链路，可以直接打开查询页预览消费者视角。")}
   `;
 }
 
@@ -2555,6 +2584,31 @@ function renderWarehouseDetail(view, shared) {
       infoCard("仓储条件", [view.conditions, view.method, view.manager]),
       infoCard("地址信息", [view.address, view.detailAddress, view.note || "无补充说明"])
     ])}
+  `;
+}
+
+function renderQrShareCard(view) {
+  return `
+    <section class="qr-share-card">
+      <div class="qr-share-head">
+        <div>
+          <span>扫码查询</span>
+          <strong>真实二维码</strong>
+        </div>
+        <em>${escapeHtml(view.traceCode)}</em>
+      </div>
+      <div class="qr-share-layout">
+        <div class="qr-preview-shell" data-qr-preview data-qr-value="${escapeAttribute(view.publicUrl)}">
+          <div class="qr-preview-state">二维码生成中...</div>
+        </div>
+        <div class="qr-share-meta">
+          <div class="qr-share-actions">
+            <button class="button secondary button-inline" type="button" data-copy-public-url="${escapeAttribute(view.publicUrl)}">复制查询链接</button>
+            <button class="button ghost button-inline" type="button" data-download-qr="${escapeAttribute(view.publicUrl)}" data-download-name="${escapeAttribute(`${view.traceCode || "trace-code"}`)}">下载二维码</button>
+          </div>
+        </div>
+      </div>
+    </section>
   `;
 }
 
@@ -2632,7 +2686,7 @@ function renderAction(action) {
     return `<button class="button ${action.variant || "primary"}" type="button" data-continue-workflow ${workflowTriggerAttrs(action)}>${escapeHtml(action.label)}</button>`;
   }
   if (action.kind === "external-link") {
-    return `<a class="button secondary" href="${escapeAttribute(action.href)}">${escapeHtml(action.label)}</a>`;
+    return `<a class="button secondary" href="${escapeAttribute(action.href)}" target="_blank" rel="noreferrer">${escapeHtml(action.label)}</a>`;
   }
   return `<span class="detail-note">${escapeHtml(action.label)}：${escapeHtml(action.value || "--")}</span>`;
 }
@@ -2651,6 +2705,9 @@ function renderInfoRack(cards) {
 }
 
 function renderNarrativeBlock(title, text) {
+  if (!String(text || "").trim()) {
+    return "";
+  }
   return `
     <div class="narrative-block">
       <span>${escapeHtml(title)}</span>
@@ -2723,7 +2780,7 @@ function deleteActionButton(id) {
 }
 
 function publicPreviewLink(href) {
-  return `<a class="chip neutral" href="${escapeAttribute(href)}">查询页</a>`;
+  return `<a class="chip neutral" href="${escapeAttribute(href)}" target="_blank" rel="noreferrer">查询页</a>`;
 }
 
 function navCountFor(pageId, shared) {
@@ -2988,13 +3045,346 @@ function suggestTraceCode(index) {
   return `TRACE-${isoDate().replaceAll("-", "")}-${String(index).padStart(4, "0")}`;
 }
 
-function buildTraceQueryUrl(code) {
+function buildTraceQueryUrl(code, snapshotToken = "") {
   try {
     const url = new URL(TRACE_QUERY_PAGE, window.location.href);
     url.searchParams.set("code", code);
+    if (snapshotToken) {
+      url.searchParams.set(TRACE_PUBLIC_SNAPSHOT_PARAM, snapshotToken);
+    }
     return url.toString();
   } catch (error) {
-    return `${TRACE_QUERY_PAGE}?code=${encodeURIComponent(code)}`;
+    return snapshotToken
+      ? `${TRACE_QUERY_PAGE}?code=${encodeURIComponent(code)}&${TRACE_PUBLIC_SNAPSHOT_PARAM}=${encodeURIComponent(snapshotToken)}`
+      : `${TRACE_QUERY_PAGE}?code=${encodeURIComponent(code)}`;
+  }
+}
+
+function buildPublicTraceSnapshot(view, views) {
+  const farmItems = views.farmRecords
+    .filter((item) => item.plantId === view.plantId)
+    .slice(0, 8)
+    .map((item) => [
+      compactTraceText(item.workName, 20),
+      compactTraceText(item.periodText, 28),
+      compactTraceText(item.operateDetail || item.note || "已记录农事过程", 72)
+    ]);
+  const stepItems = views.processSteps
+    .filter((item) => item.primaryProcessId === view.primaryProcessId)
+    .slice(0, 8)
+    .map((item) => [
+      compactTraceText(item.name, 20),
+      compactTraceText(item.periodText, 28),
+      compactTraceText(item.stepDetails || item.note || "已记录工艺过程", 72)
+    ]);
+
+  return {
+    v: 1,
+    c: compactTraceText(view.traceCode, 40),
+    n: compactTraceText(view.name, 48),
+    m: compactTraceText(view.materialName, 32),
+    mn: compactTraceText(view.materialNo, 24),
+    b: [
+      compactTraceText(view.baseName, 32),
+      compactTraceText(view.baseCode, 24),
+      compactTraceText(view.baseAddress, 84)
+    ],
+    g: view.baseCoordinates ? [
+      Number(view.baseCoordinates.lng.toFixed(6)),
+      Number(view.baseCoordinates.lat.toFixed(6))
+    ] : [],
+    s: [
+      compactTraceText(view.seedBatch, 24),
+      compactTraceText(view.supplierName, 36),
+      compactTraceText(view.seedBrand, 24)
+    ],
+    p: compactTraceText(view.plantBatch, 24),
+    h: [
+      compactTraceText(view.harvestName, 32),
+      compactTraceText(view.harvestBatch, 24),
+      roundTraceNumber(view.harvestWeight || 0)
+    ],
+    pr: [
+      compactTraceText(view.processName, 32),
+      compactTraceText(view.processBatch, 24),
+      roundTraceNumber(view.outputCount || 0)
+    ],
+    w: [
+      compactTraceText(view.warehouseName, 32),
+      compactTraceText(view.warehouseConditions, 24),
+      compactTraceText(view.warehouseMethod, 24)
+    ],
+    f: farmItems,
+    ps: stepItems
+  };
+}
+
+function buildPublicTraceDetailFromView(view, shared) {
+  return {
+    traceCode: view.traceCode,
+    name: view.name,
+    materialName: view.materialName,
+    materialNo: view.materialNo,
+    baseName: view.baseName,
+    baseCode: view.baseCode,
+    baseAddress: view.baseAddress,
+    baseCoordinates: view.baseCoordinates,
+    seedBatch: view.seedBatch,
+    supplierName: view.supplierName,
+    seedBrand: view.seedBrand,
+    plantBatch: view.plantBatch,
+    harvestName: view.harvestName,
+    harvestBatch: view.harvestBatch,
+    harvestWeight: view.harvestWeight,
+    processName: view.processName,
+    processBatch: view.processBatch,
+    outputCount: view.outputCount,
+    warehouseName: view.warehouseName,
+    warehouseConditions: view.warehouseConditions,
+    warehouseMethod: view.warehouseMethod,
+    publicUrl: view.publicUrl,
+    farmItems: shared.views.farmRecords
+      .filter((item) => item.plantId === view.plantId)
+      .map((item) => ({
+        workName: item.workName,
+        periodText: item.periodText,
+        detailText: item.operateDetail || item.note || "已记录农事过程"
+      })),
+    stepItems: shared.views.processSteps
+      .filter((item) => item.primaryProcessId === view.primaryProcessId)
+      .map((item) => ({
+        name: item.name,
+        periodText: item.periodText,
+        detailText: item.stepDetails || item.note || "已记录工艺过程"
+      }))
+  };
+}
+
+function buildPublicTraceDetailFromSnapshot(snapshot, fallbackCode, snapshotToken) {
+  const baseInfo = Array.isArray(snapshot && snapshot.b) ? snapshot.b : [];
+  const seedInfo = Array.isArray(snapshot && snapshot.s) ? snapshot.s : [];
+  const harvestInfo = Array.isArray(snapshot && snapshot.h) ? snapshot.h : [];
+  const processInfo = Array.isArray(snapshot && snapshot.pr) ? snapshot.pr : [];
+  const warehouseInfo = Array.isArray(snapshot && snapshot.w) ? snapshot.w : [];
+  const baseCoordinates = Array.isArray(snapshot && snapshot.g) && snapshot.g.length === 2
+    ? {
+      lng: Number(snapshot.g[0]),
+      lat: Number(snapshot.g[1])
+    }
+    : null;
+  return {
+    traceCode: snapshot && snapshot.c ? snapshot.c : (fallbackCode || "--"),
+    name: snapshot && snapshot.n ? snapshot.n : "溯源码查询",
+    materialName: snapshot && snapshot.m ? snapshot.m : "--",
+    materialNo: snapshot && snapshot.mn ? snapshot.mn : "--",
+    baseName: baseInfo[0] || "--",
+    baseCode: baseInfo[1] || "--",
+    baseAddress: baseInfo[2] || "--",
+    baseCoordinates: Number.isFinite(baseCoordinates && baseCoordinates.lng) && Number.isFinite(baseCoordinates && baseCoordinates.lat) ? baseCoordinates : null,
+    seedBatch: seedInfo[0] || "--",
+    supplierName: seedInfo[1] || "--",
+    seedBrand: seedInfo[2] || "--",
+    plantBatch: snapshot && snapshot.p ? snapshot.p : "--",
+    harvestName: harvestInfo[0] || "--",
+    harvestBatch: harvestInfo[1] || "--",
+    harvestWeight: Number.isFinite(Number(harvestInfo[2])) ? Number(harvestInfo[2]) : 0,
+    processName: processInfo[0] || "--",
+    processBatch: processInfo[1] || "--",
+    outputCount: Number.isFinite(Number(processInfo[2])) ? Number(processInfo[2]) : 0,
+    warehouseName: warehouseInfo[0] || "--",
+    warehouseConditions: warehouseInfo[1] || "--",
+    warehouseMethod: warehouseInfo[2] || "--",
+    publicUrl: buildTraceQueryUrl((snapshot && snapshot.c) || fallbackCode || "", snapshotToken || ""),
+    farmItems: normalizePublicTimeline(snapshot && snapshot.f, "farm"),
+    stepItems: normalizePublicTimeline(snapshot && snapshot.ps, "step")
+  };
+}
+
+function normalizePublicTimeline(items, type) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  return items.map((item) => {
+    const values = Array.isArray(item) ? item : [];
+    return type === "farm"
+      ? {
+        workName: values[0] || "--",
+        periodText: values[1] || "--",
+        detailText: values[2] || "已记录农事过程"
+      }
+      : {
+        name: values[0] || "--",
+        periodText: values[1] || "--",
+        detailText: values[2] || "已记录工艺过程"
+      };
+  });
+}
+
+function compactTraceText(value, limit) {
+  const text = String(value || "--").replace(/\s+/g, " ").trim();
+  return text.length > limit ? `${text.slice(0, Math.max(0, limit - 1))}…` : text;
+}
+
+function roundTraceNumber(value) {
+  const number = Number(value || 0);
+  if (!Number.isFinite(number)) {
+    return 0;
+  }
+  return Math.round(number * 10) / 10;
+}
+
+function encodePublicTraceSnapshot(snapshot) {
+  try {
+    const json = JSON.stringify(snapshot || {});
+    const bytes = new TextEncoder().encode(json);
+    return base64UrlEncode(bytes);
+  } catch (error) {
+    return "";
+  }
+}
+
+function decodePublicTraceSnapshot(token) {
+  try {
+    const bytes = base64UrlDecode(token || "");
+    const json = new TextDecoder().decode(bytes);
+    const parsed = JSON.parse(json);
+    return parsed && typeof parsed === "object" ? parsed : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function base64UrlEncode(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function base64UrlDecode(value) {
+  const normalized = String(value || "").replace(/-/g, "+").replace(/_/g, "/");
+  const padding = normalized.length % 4 ? "=".repeat(4 - normalized.length % 4) : "";
+  const binary = window.atob(`${normalized}${padding}`);
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+async function mountTraceQrPreviews(root) {
+  const previews = root.querySelectorAll("[data-qr-preview]");
+  if (!previews.length) {
+    return;
+  }
+  for (const preview of previews) {
+    await renderTraceQrPreview(preview);
+  }
+}
+
+async function renderTraceQrPreview(container) {
+  const value = container.dataset.qrValue || "";
+  if (!value) {
+    container.innerHTML = '<div class="qr-preview-state">当前没有可生成的二维码</div>';
+    return;
+  }
+  try {
+    const svg = await buildTraceQrSvg(value, { cellSize: 5, margin: 2 });
+    container.innerHTML = svg;
+  } catch (error) {
+    container.innerHTML = '<div class="qr-preview-state">二维码生成失败，请重试。</div>';
+  }
+}
+
+async function loadTraceQrLibrary() {
+  if (window.qrcode) {
+    return window.qrcode;
+  }
+  if (TRACE_QR_RUNTIME.libraryPromise) {
+    return TRACE_QR_RUNTIME.libraryPromise;
+  }
+  TRACE_QR_RUNTIME.libraryPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = new URL(TRACE_QR_LIBRARY_URL, window.location.href).toString();
+    script.defer = true;
+    script.onload = () => {
+      if (window.qrcode) {
+        resolve(window.qrcode);
+        return;
+      }
+      reject(new Error("QR library unavailable"));
+    };
+    script.onerror = () => reject(new Error("QR library failed to load"));
+    document.head.append(script);
+  });
+  return TRACE_QR_RUNTIME.libraryPromise;
+}
+
+async function buildTraceQrSvg(value, options) {
+  const library = await loadTraceQrLibrary();
+  const qr = library(0, "L");
+  qr.addData(value, "Byte");
+  qr.make();
+  const cellSize = options && options.cellSize ? options.cellSize : 5;
+  const margin = options && options.margin !== undefined ? options.margin : 2;
+  return qr.createSvgTag(cellSize, margin);
+}
+
+async function downloadTraceQrPng(value, fileName) {
+  if (!value) {
+    return;
+  }
+  try {
+    const svg = await buildTraceQrSvg(value, { cellSize: 14, margin: 3 });
+    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    try {
+      const image = await loadImageFromDataUrl(objectUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const context = canvas.getContext("2d");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/png");
+      triggerDownload(dataUrl, `${fileName || "trace-code"}.png`);
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  } catch (error) {
+    window.alert("二维码下载失败，请稍后重试。");
+  }
+}
+
+function triggerDownload(href, fileName) {
+  const link = document.createElement("a");
+  link.href = href;
+  link.download = fileName;
+  link.rel = "noopener";
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
+async function copyTextWithFallback(text, successMessage) {
+  if (!text) {
+    return;
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "readonly");
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+    window.alert(successMessage || "已复制");
+  } catch (error) {
+    window.prompt("请手动复制下面的链接", text);
   }
 }
 
