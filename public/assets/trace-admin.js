@@ -336,13 +336,23 @@ function renderHomePage(shared) {
       ${renderSidebar("home", shared)}
       <main class="main home-main">
         <section class="home-stage">
-          <h1>工作台</h1>
+          ${renderHomeHero()}
         </section>
 
         <section class="module-card-grid home-module-grid">
           ${modules.map((item) => renderHomeModuleCard(item, shared)).join("")}
         </section>
       </main>
+    </div>
+  `;
+}
+
+function renderHomeHero() {
+  return `
+    <div class="home-stage-grid">
+      <div class="home-stage-brand">
+        ${renderBrandSignature("home-brand-panel")}
+      </div>
     </div>
   `;
 }
@@ -681,6 +691,33 @@ function renderPublicInfoCard(title, lines) {
   `;
 }
 
+function renderBrandSignature(className) {
+  return `
+    <div class="${className}">
+      <div class="brand-mark">
+        ${renderBrandMarkSvg()}
+      </div>
+      <div class="brand-copy">
+        <strong>中药材溯源平台</strong>
+      </div>
+    </div>
+  `;
+}
+
+function renderBrandMarkSvg() {
+  return `
+    <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
+      <circle cx="32" cy="32" r="24" fill="#F4F5EF" stroke="#D4D9CF" stroke-width="2"></circle>
+      <path d="M32 18V46" stroke="#1D6A53" stroke-width="3.5" stroke-linecap="round"></path>
+      <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#2F8E69"></path>
+      <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#2F8E69"></path>
+      <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#5FA884"></path>
+      <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
+      <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
+    </svg>
+  `;
+}
+
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
   return `
@@ -697,20 +734,9 @@ function renderHomeModuleCard(item, shared) {
 function renderSidebar(activeId, shared) {
   return `
     <aside class="sidebar">
-      <div class="sidebar-brand">
+      <div class="sidebar-brand sidebar-brand--compact">
         <div class="brand-mark">
-          <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
-            <circle cx="32" cy="32" r="24" fill="#F4F5EF" stroke="#D4D9CF" stroke-width="2"></circle>
-            <path d="M32 18V46" stroke="#1D6A53" stroke-width="3.5" stroke-linecap="round"></path>
-            <path d="M32 25C25.5 20 19.5 21.5 16 28C22.5 29.5 27 29 32 25Z" fill="#2F8E69"></path>
-            <path d="M32 25C38.5 20 44.5 21.5 48 28C41.5 29.5 37 29 32 25Z" fill="#2F8E69"></path>
-            <path d="M32 36C26.5 31.5 22 33 19.5 38.5C24.5 40 28 39.5 32 36Z" fill="#5FA884"></path>
-            <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
-            <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
-          </svg>
-        </div>
-        <div class="brand-copy">
-          <strong>中药材溯源平台</strong>
+          ${renderBrandMarkSvg()}
         </div>
       </div>
 
