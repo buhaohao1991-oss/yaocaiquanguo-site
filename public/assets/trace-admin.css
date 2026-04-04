@@ -3446,11 +3446,16 @@ body::before {
 }
 
 .main {
-  padding: 34px 42px 44px;
+  padding: 26px 42px 44px;
 }
 
 .home-main {
   max-width: none;
+}
+
+.home-main,
+.module-main {
+  align-content: start;
 }
 
 .home-stage {
@@ -3626,14 +3631,15 @@ body::before {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 20px;
-  align-items: end;
-  padding: 2px 0 18px;
+  align-items: start;
+  padding: 0 0 18px;
   border-bottom: 1px solid rgba(21, 54, 45, 0.08);
 }
 
 .page-copy {
   display: grid;
-  gap: 4px;
+  align-content: start;
+  gap: 2px;
   padding: 0;
   border-radius: 0;
   background: transparent;
@@ -3669,9 +3675,11 @@ body::before {
 
 .page-hero-side {
   display: grid;
+  align-content: start;
   justify-items: end;
-  gap: 12px;
+  gap: 10px;
   min-width: 260px;
+  padding-top: 2px;
 }
 
 .page-hero-actions {
@@ -3722,11 +3730,12 @@ body::before {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
+  max-width: 336px;
 }
 
 .stat-card {
   min-width: 108px;
-  padding: 12px 14px;
+  padding: 11px 13px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.74);
   border: 1px solid rgba(20, 49, 41, 0.09);
@@ -3745,7 +3754,7 @@ body::before {
 .stat-card strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
   letter-spacing: -0.04em;
   color: #13231f;
