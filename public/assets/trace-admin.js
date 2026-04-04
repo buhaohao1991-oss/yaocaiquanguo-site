@@ -370,23 +370,11 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
-        <section class="page-hero">
-          <div class="page-copy">
-            <h1>${escapeHtml(config.title)}</h1>
-          </div>
-          ${shouldShowStats(stats) ? `
-            <div class="stat-grid">
-              ${stats.map((stat) => renderStatCard(stat)).join("")}
-            </div>
-          ` : ""}
-        </section>
+        ${renderModuleHeader(pageId, config, stats)}
 
         <section class="panel command-panel">
           <div class="search-wrap">
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-          <div class="command-actions">
-            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
 
@@ -429,23 +417,11 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
-        <section class="page-hero">
-          <div class="page-copy">
-            <h1>${escapeHtml(config.title)}</h1>
-          </div>
-          ${shouldShowStats(stats) ? `
-            <div class="stat-grid">
-              ${stats.map((stat) => renderStatCard(stat)).join("")}
-            </div>
-          ` : ""}
-        </section>
+        ${renderModuleHeader(pageId, config, stats)}
 
         <section class="panel command-panel">
           <div class="search-wrap">
             <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-          <div class="command-actions">
-            <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
           </div>
         </section>
 
@@ -504,6 +480,29 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
         ${renderPageDialogs(pageId, shared, selected)}
       </main>
     </div>
+  `;
+}
+
+function renderModuleHeader(pageId, config, stats) {
+  const navItem = NAV_ITEMS.find((item) => item.id === pageId);
+  return `
+    <section class="page-hero module-header">
+      <div class="page-copy">
+        <span class="page-kicker">中药材溯源平台</span>
+        <h1>${escapeHtml(config.title)}</h1>
+        <p>${escapeHtml((navItem && navItem.subtitle) || config.title)}</p>
+      </div>
+      <div class="page-hero-side">
+        <div class="page-hero-actions">
+          <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
+        </div>
+        ${shouldShowStats(stats) ? `
+          <div class="stat-grid">
+            ${stats.map((stat) => renderStatCard(stat)).join("")}
+          </div>
+        ` : ""}
+      </div>
+    </section>
   `;
 }
 
