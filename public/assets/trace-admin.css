@@ -3591,6 +3591,36 @@ body::before {
   justify-content: flex-end;
 }
 
+.panel-headline.with-toolbar {
+  align-items: center;
+}
+
+.panel-tools-search {
+  flex: 0 1 360px;
+  width: min(360px, 100%);
+}
+
+.inline-search {
+  display: block;
+  width: 100%;
+}
+
+.inline-search input {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  color: #173129;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(20, 49, 41, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.inline-search input::placeholder {
+  color: #7a8883;
+}
+
 .metric-card,
 .panel {
   background:
@@ -3732,6 +3762,15 @@ body::before {
     justify-content: flex-start;
   }
 
+  .panel-headline.with-toolbar {
+    align-items: stretch;
+  }
+
+  .panel-tools-search {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
   .home-stage {
     padding: 2px 0 8px;
   }
@@ -3762,6 +3801,10 @@ body::before {
   .page-hero {
     gap: 14px;
     padding-bottom: 16px;
+  }
+
+  .panel-headline.with-toolbar {
+    gap: 12px;
   }
 
   .home-stage {

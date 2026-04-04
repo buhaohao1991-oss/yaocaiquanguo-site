@@ -233,7 +233,9 @@ const PAGE_CONFIGS = {
     kicker: "TRACE CODE",
     subtitle: "把溯源码绑定到加工过程和仓库上，并直接预览消费者查询页，这样每个码都有完整来源。",
     actionLabel: "新建溯源码",
+    searchMode: "toolbar",
     searchPlaceholder: "搜索溯源名称、溯源码、药材或仓库",
+    searchCompactPlaceholder: "按溯源码、药材或仓库检索",
     getViews: (shared) => shared.views.qrCodes,
     getStats: (shared, views) => [
       { label: "溯源码", value: String(views.length), tone: "primary" },
@@ -257,7 +259,9 @@ const PAGE_CONFIGS = {
     kicker: "WAREHOUSE",
     subtitle: "仓库主档与使用情况分开看，先把仓库条件建好，再把赋码后的批次落进去。",
     actionLabel: "新增仓库",
+    searchMode: "toolbar",
     searchPlaceholder: "搜索仓库名称、负责人、地区或条件",
+    searchCompactPlaceholder: "按仓库、负责人或地区检索",
     getViews: (shared) => shared.views.warehouses,
     getStats: (shared, views) => [
       { label: "仓库主档", value: String(views.length), tone: "primary" },
@@ -366,22 +370,18 @@ function renderHomeHero() {
 
 function renderEntityPage(pageId, config, shared, allViews, filteredViews, selected) {
   const stats = config.getStats(shared, allViews);
+  const tableTitle = config.tableTitle || `${config.title}台账`;
   return `
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         ${renderModuleHeader(pageId, config, stats)}
 
-        <section class="panel command-panel">
-          <div class="search-wrap">
-            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-        </section>
-
         <section class="content-layout">
           <section class="panel table-panel">
-            <div class="panel-headline">
-              <h2>${escapeHtml(config.title)}台账</h2>
+            <div class="panel-headline ${config.searchMode === "toolbar" ? "with-toolbar" : ""}">
+              <h2>${escapeHtml(tableTitle)}</h2>
+              ${renderPanelSearch(config)}
             </div>
             <div class="panel-body">
               ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
@@ -418,12 +418,6 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
       ${renderSidebar(pageId, shared)}
       <main class="main module-main">
         ${renderModuleHeader(pageId, config, stats)}
-
-        <section class="panel command-panel">
-          <div class="search-wrap">
-            <input type="search" value="${escapeAttribute(APP_STATE.query)}" placeholder="${escapeAttribute(config.searchPlaceholder)}" data-search-input>
-          </div>
-        </section>
 
         <section class="content-layout">
           <section class="panel table-panel">
@@ -503,6 +497,25 @@ function renderModuleHeader(pageId, config, stats) {
         ` : ""}
       </div>
     </section>
+  `;
+}
+
+function renderPanelSearch(config) {
+  if (config.searchMode !== "toolbar") {
+    return "";
+  }
+
+  return `
+    <div class="panel-tools panel-tools-search">
+      <label class="inline-search">
+        <input
+          type="search"
+          value="${escapeAttribute(APP_STATE.query)}"
+          placeholder="${escapeAttribute(config.searchCompactPlaceholder || config.searchPlaceholder || "输入关键词检索")}"
+          data-search-input
+        >
+      </label>
+    </div>
   `;
 }
 
