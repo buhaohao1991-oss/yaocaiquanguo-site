@@ -2931,11 +2931,45 @@ body::before {
   gap: 18px;
 }
 
+.dialog-standard-layout {
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.42fr);
+  align-items: start;
+}
+
+.dialog-standard-layout.is-context-empty {
+  grid-template-columns: minmax(0, 1fr) 208px;
+  gap: 14px;
+}
+
+.dialog-context {
+  width: 100%;
+  max-width: 312px;
+}
+
+.dialog-context.is-compact {
+  position: static;
+  max-width: 208px;
+}
+
 .context-card {
+  padding: 18px 18px 16px;
   border-radius: 20px;
   background: #1e2d29;
   color: #f4f0e8;
   box-shadow: none;
+}
+
+.context-card.is-empty {
+  gap: 6px;
+  padding: 16px 16px 14px;
+  border-radius: 18px;
+  background: rgba(255, 252, 246, 0.96);
+  color: #1f332c;
+  border: 1px dashed rgba(28, 72, 57, 0.14);
+}
+
+.context-card.is-empty::after {
+  display: none;
 }
 
 .context-card h4 {
@@ -2944,9 +2978,18 @@ body::before {
   font-weight: 800;
 }
 
+.context-card.is-empty h4 {
+  font-size: 18px;
+}
+
 .context-lines strong,
 .context-card p {
   color: rgba(244, 240, 232, 0.8);
+}
+
+.context-card.is-empty p {
+  color: #6a7a73;
+  line-height: 1.5;
 }
 
 .field > span {

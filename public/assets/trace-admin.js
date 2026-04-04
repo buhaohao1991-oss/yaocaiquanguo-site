@@ -888,14 +888,17 @@ function renderBaseDialog(shared, draft) {
 function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   const sections = getDialogSections(pageId, kind, shared, draft, selected);
   const hiddenFields = getHiddenDialogFields(pageId, kind, selected);
+  const contextState = getFormContextState(pageId, kind, normalizeValues(draft || {}), shared, selected);
   return `
-    <div class="dialog-standard-layout">
+    <div class="dialog-standard-layout ${contextState.variant === "empty" ? "is-context-empty" : ""}" data-dialog-layout>
       <div class="dialog-standard-main">
         ${hiddenFields}
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
       </div>
-      <aside class="dialog-context" data-form-context>
-        ${renderInitialFormContext(pageId, kind, shared, draft, selected)}
+      <aside class="dialog-context ${contextState.variant === "empty" ? "is-compact" : ""}" data-form-context-shell>
+        <div data-form-context>
+          ${contextState.html}
+        </div>
       </aside>
     </div>
   `;
@@ -1203,29 +1206,6 @@ function getHiddenDialogFields(pageId, kind, selected) {
   return "";
 }
 
-function renderInitialFormContext(pageId, kind, shared, draft, selected) {
-  const draftValues = draft || {};
-  if (pageId === "farming-trace" && kind === "secondary" && selected) {
-    return renderDialogContextCard("当前种植过程", [
-      selected.name,
-      `${selected.baseName} · ${selected.plantBatch}`,
-      `${selected.farmCount} 条农事记录`
-    ]);
-  }
-  if (pageId === "processing-trace" && kind === "secondary" && selected) {
-    return renderDialogContextCard("当前加工过程", [
-      selected.name,
-      `${selected.materialName} · ${selected.ppBatch}`,
-      `${selected.stepCount} 个工艺步骤`
-    ]);
-  }
-  if (pageId === "seed-trace" && draftValues.baseId) {
-    const base = shared.viewMaps.baseById.get(draftValues.baseId);
-    return base ? renderDialogContextCard("草稿来源", [base.name, base.code, base.herb]) : renderDialogContextFallback();
-  }
-  return renderDialogContextFallback();
-}
-
 function renderDialogContextCard(title, lines) {
   return `
     <div class="context-card">
@@ -1239,11 +1219,9 @@ function renderDialogContextCard(title, lines) {
 
 function renderDialogContextFallback() {
   return `
-    <div class="context-card">
-      <h4>请选择上游记录</h4>
-      <div class="context-lines">
-        <strong>选择后显示链路摘要</strong>
-      </div>
+    <div class="context-card is-empty">
+      <h4>先选上游</h4>
+      <p>选择后显示链路摘要</p>
     </div>
   `;
 }
@@ -1483,76 +1461,85 @@ function autoFillLinkedFields(form, pageId, fieldName, shared, selected) {
 
 function updateFormContext(form, pageId, shared, kind) {
   const context = form.querySelector("[data-form-context]");
+  const contextShell = form.querySelector("[data-form-context-shell]");
+  const layout = form.querySelector("[data-dialog-layout]");
   if (!context) {
     return;
   }
   const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
-  context.innerHTML = renderDynamicFormContext(pageId, kind, values, shared);
+  const contextState = getFormContextState(pageId, kind, values, shared);
+  context.innerHTML = contextState.html;
+  if (contextShell) {
+    contextShell.classList.toggle("is-compact", contextState.variant === "empty");
+  }
+  if (layout) {
+    layout.classList.toggle("is-context-empty", contextState.variant === "empty");
+  }
 }
 
-function renderDynamicFormContext(pageId, kind, values, shared) {
+function getFormContextState(pageId, kind, values, shared, selected) {
   if (pageId === "seed-trace") {
     const base = shared.viewMaps.baseById.get(values.baseId);
     return base
-      ? renderDialogContextCard("关联基地", [base.name, base.code, `${base.herb} · ${base.address}`])
-      : renderDialogContextFallback();
+      ? { variant: "full", html: renderDialogContextCard("关联基地", [base.name, base.code, `${base.herb} · ${base.address}`]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "farming-trace" && kind === "primary") {
     const seed = shared.viewMaps.seedById.get(values.seedId);
     const base = shared.viewMaps.baseById.get(values.baseId || (seed && seed.baseId));
     return (seed || base)
-      ? renderDialogContextCard("上游链路", [
+      ? { variant: "full", html: renderDialogContextCard("上游链路", [
         base ? `${base.name} · ${base.code}` : "未选择基地",
         seed ? `${seed.batchNo} · ${seed.supplierName}` : "未选择种源",
         "保存后可继续补充农事记录"
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "farming-trace" && kind === "secondary") {
-    const plant = shared.viewMaps.plantById.get(values.plantId);
+    const plant = shared.viewMaps.plantById.get(values.plantId || (selected && selected.id));
     return plant
-      ? renderDialogContextCard("农事挂载对象", [
+      ? { variant: "full", html: renderDialogContextCard("农事挂载对象", [
         plant.name,
         `${plant.baseName} · ${plant.plantBatch}`,
         `${plant.farmCount} 条现有记录`
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "harvest-trace") {
     const plant = shared.viewMaps.plantById.get(values.plantId);
     return plant
-      ? renderDialogContextCard("采收来源", [
+      ? { variant: "full", html: renderDialogContextCard("采收来源", [
         plant.name,
         `${plant.baseName} · ${plant.seedBatch}`,
         `${plant.harvestCount} 条采收已关联`
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "processing-trace" && kind === "primary") {
     const harvest = shared.viewMaps.harvestById.get(values.harvestId);
     const material = shared.viewMaps.materialById.get(values.materialId);
     return (harvest || material)
-      ? renderDialogContextCard("加工输入摘要", [
+      ? { variant: "full", html: renderDialogContextCard("加工输入摘要", [
         harvest ? `${harvest.name} · ${harvest.harvestBatch}` : "未选择采收",
         material ? `${material.name} · ${material.materialNo}` : "未选择药材",
         "保存后可以继续拆分工艺步骤"
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "processing-trace" && kind === "secondary") {
-    const process = shared.viewMaps.primaryProcessById.get(values.primaryProcessId);
+    const process = shared.viewMaps.primaryProcessById.get(values.primaryProcessId || (selected && selected.id));
     return process
-      ? renderDialogContextCard("工艺挂载对象", [
+      ? { variant: "full", html: renderDialogContextCard("工艺挂载对象", [
         process.name,
         `${process.ppBatch} · ${process.materialName}`,
         `${process.stepCount} 个现有步骤`
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "trace-code-management") {
@@ -1560,40 +1547,40 @@ function renderDynamicFormContext(pageId, kind, values, shared) {
     const warehouse = shared.viewMaps.warehouseById.get(values.warehouseId);
     const previewUrl = values.traceCode ? buildTraceQueryUrl(values.traceCode) : "";
     return (process || warehouse)
-      ? renderDialogContextCard("赋码预览", [
+      ? { variant: "full", html: renderDialogContextCard("赋码预览", [
         process ? `${process.name} · ${process.ppBatch}` : "未选择加工过程",
         warehouse ? `${warehouse.name} · ${warehouse.conditions}` : "未选择仓库",
         previewUrl ? truncateText(previewUrl, 44) : "保存后生成查询页"
-      ])
-      : renderDialogContextFallback();
+      ]) }
+      : { variant: "empty", html: renderDialogContextFallback() };
   }
 
   if (pageId === "warehouse-management") {
-    return renderDialogContextCard("仓库主档提示", [
+    return { variant: "full", html: renderDialogContextCard("仓库主档提示", [
       "仓库主档先行建立",
       "后续赋码时可直接绑定仓库",
       "建议完整填写面积、容量和条件"
-    ]);
+    ]) };
   }
 
   if (pageId === "base-trace") {
     const coordinateText = values.longitude && values.latitude ? `${values.longitude}, ${values.latitude}` : "未设置坐标";
-    return renderDialogContextCard("基地建档提示", [
+    return { variant: "full", html: renderDialogContextCard("基地建档提示", [
       values.name || "等待填写基地名称",
       coordinateText,
       values.landCertStatus || "待补土地证明"
-    ]);
+    ]) };
   }
 
   if (pageId === "herb-management") {
-    return renderDialogContextCard("药材档案提示", [
+    return { variant: "full", html: renderDialogContextCard("药材档案提示", [
       values.name || "等待填写药材名称",
       values.specification || "等待填写规格",
       values.materialType || "等待选择类型"
-    ]);
+    ]) };
   }
 
-  return renderDialogContextFallback();
+  return { variant: "empty", html: renderDialogContextFallback() };
 }
 
 function createRecordFromForm(pageId, kind, values, shared, selected) {
