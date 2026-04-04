@@ -3054,25 +3054,25 @@ body::before {
 
 /* 2026-04 color refresh: layered apothecary workspace */
 :root {
-  --bg: #edf3ee;
-  --bg-soft: #f7f2e7;
+  --bg: #f1f4ed;
+  --bg-soft: #fbf6ee;
   --bg-panel: rgba(255, 255, 255, 0.88);
   --bg-panel-strong: #fffdfa;
-  --bg-panel-muted: #f4efe6;
-  --bg-sidebar: #112523;
-  --bg-sidebar-deep: #0c1717;
-  --bg-sidebar-soft: rgba(255, 255, 255, 0.06);
-  --text: #12231f;
-  --text-soft: #5f6d67;
-  --text-faint: #8b9791;
-  --line: rgba(30, 68, 58, 0.1);
-  --line-strong: rgba(30, 68, 58, 0.18);
-  --accent: #1d8f74;
-  --accent-deep: #126652;
-  --accent-soft: rgba(29, 143, 116, 0.1);
-  --accent-glow: rgba(29, 143, 116, 0.2);
-  --gold: #b88633;
-  --gold-soft: rgba(184, 134, 51, 0.12);
+  --bg-panel-muted: #f6f2ea;
+  --bg-sidebar: #eef3ea;
+  --bg-sidebar-deep: #e5ede5;
+  --bg-sidebar-soft: rgba(28, 61, 49, 0.04);
+  --text: #15261f;
+  --text-soft: #617069;
+  --text-faint: #8a9691;
+  --line: rgba(30, 68, 58, 0.09);
+  --line-strong: rgba(30, 68, 58, 0.15);
+  --accent: #238d74;
+  --accent-deep: #155f4f;
+  --accent-soft: rgba(35, 141, 116, 0.1);
+  --accent-glow: rgba(35, 141, 116, 0.16);
+  --gold: #b89249;
+  --gold-soft: rgba(184, 146, 73, 0.1);
   --danger: #c35d47;
   --danger-soft: rgba(195, 93, 71, 0.12);
   --info-soft: rgba(52, 99, 144, 0.1);
@@ -3085,10 +3085,10 @@ body::before {
 
 body {
   background:
-    radial-gradient(circle at 0% 0%, rgba(54, 140, 115, 0.18), transparent 22%),
-    radial-gradient(circle at 100% 14%, rgba(184, 134, 51, 0.12), transparent 20%),
-    radial-gradient(circle at 78% 100%, rgba(61, 96, 153, 0.12), transparent 22%),
-    linear-gradient(180deg, #f7f2e8 0%, #edf3ee 46%, #e8efe8 100%);
+    radial-gradient(circle at 0% 0%, rgba(79, 164, 132, 0.12), transparent 22%),
+    radial-gradient(circle at 100% 12%, rgba(184, 146, 73, 0.1), transparent 20%),
+    radial-gradient(circle at 78% 100%, rgba(61, 96, 153, 0.08), transparent 22%),
+    linear-gradient(180deg, #fcf7ee 0%, #f1f4ed 48%, #edf2ec 100%);
 }
 
 body::before {
@@ -3109,11 +3109,13 @@ body::before {
   padding: 28px 18px 20px;
   gap: 0;
   background:
-    radial-gradient(circle at 0% 0%, rgba(67, 193, 149, 0.14), transparent 24%),
-    radial-gradient(circle at 100% 100%, rgba(184, 134, 51, 0.12), transparent 24%),
-    linear-gradient(180deg, #122725 0%, #0b1717 100%);
-  border-right: 1px solid rgba(214, 231, 224, 0.08);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.02);
+    radial-gradient(circle at 0% 0%, rgba(90, 182, 145, 0.16), transparent 26%),
+    radial-gradient(circle at 100% 0%, rgba(184, 146, 73, 0.08), transparent 22%),
+    linear-gradient(180deg, rgba(239, 244, 236, 0.98) 0%, rgba(229, 237, 229, 0.98) 100%);
+  border-right: 1px solid rgba(27, 61, 48, 0.08);
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    8px 0 24px rgba(24, 40, 33, 0.04);
 }
 
 .sidebar-brand {
@@ -3291,9 +3293,13 @@ body::before {
   position: relative;
   padding: 13px 12px;
   border-radius: 18px;
-  color: rgba(241, 246, 242, 0.88);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid transparent;
+  color: #1f362f;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(247, 250, 245, 0.54));
+  border: 1px solid rgba(24, 58, 47, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 6px 16px rgba(23, 41, 34, 0.03);
 }
 
 .nav-item::before {
@@ -3309,52 +3315,65 @@ body::before {
 }
 
 .nav-item:hover {
-  transform: translateX(4px);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(3px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 250, 246, 0.74));
+  border-color: rgba(26, 66, 53, 0.1);
+  box-shadow: 0 10px 22px rgba(22, 40, 33, 0.05);
 }
 
 .nav-item.is-active {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
-    var(--module-wash);
-  border-color: var(--module-line);
-  box-shadow: 0 16px 32px rgba(2, 8, 8, 0.22);
-  color: #f7fbf8;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 247, 0.9)),
+    color-mix(in srgb, var(--module-wash) 92%, rgba(255, 255, 255, 0.9));
+  border-color: color-mix(in srgb, var(--module-line) 80%, rgba(24, 58, 47, 0.08));
+  box-shadow:
+    0 14px 30px color-mix(in srgb, var(--module-shadow) 32%, rgba(23, 41, 34, 0.06)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  color: #122b24;
 }
 
 .nav-item.is-active::before {
-  background: linear-gradient(180deg, var(--module-accent), rgba(255, 255, 255, 0.95));
+  background: linear-gradient(180deg, var(--module-accent), color-mix(in srgb, var(--module-accent) 45%, #ffffff));
 }
 
 .nav-icon {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(237, 244, 240, 0.82);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 250, 247, 0.78));
+  border: 1px solid rgba(24, 58, 47, 0.08);
+  color: #6a7d75;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
 .nav-item.is-active .nav-icon {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)), var(--module-wash);
-  border-color: var(--module-line);
-  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 248, 0.88)),
+    color-mix(in srgb, var(--module-wash) 88%, rgba(255, 255, 255, 0.72));
+  border-color: color-mix(in srgb, var(--module-line) 82%, rgba(24, 58, 47, 0.08));
+  color: var(--module-accent-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.94),
+    0 6px 16px color-mix(in srgb, var(--module-shadow) 18%, rgba(23, 41, 34, 0.04));
 }
 
 .nav-copy strong {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: inherit;
 }
 
 .nav-count {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(237, 243, 240, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  color: #62726c;
+  border: 1px solid rgba(24, 58, 47, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
 
 .nav-item.is-active .nav-count {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--module-wash) 58%, rgba(255, 255, 255, 0.92));
+  color: var(--module-accent-deep);
+  border-color: color-mix(in srgb, var(--module-line) 76%, rgba(24, 58, 47, 0.08));
 }
 
 .main {
