@@ -377,31 +377,19 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
       <main class="main module-main">
         ${renderModuleHeader(pageId, config, stats)}
 
-        <section class="content-layout">
-          <section class="panel table-panel">
-            <div class="panel-headline ${config.searchMode === "toolbar" ? "with-toolbar" : ""}">
-              <h2>${escapeHtml(tableTitle)}</h2>
-              ${renderPanelSearch(config)}
-            </div>
-            <div class="panel-body">
-              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
-            </div>
-          </section>
-
-          <aside class="detail-rail">
-            <section class="panel detail-panel">
-              <div class="panel-headline">
-                <h2>详情</h2>
-              </div>
-              <div class="panel-body">
-                ${selected ? config.renderDetail(selected, shared) : `
-                  <div class="empty-state">
-                    <strong>暂无记录</strong>
-                  </div>
-                `}
-              </div>
-            </section>
-          </aside>
+        <section class="panel table-panel">
+          <div class="panel-headline ${config.searchMode === "toolbar" ? "with-toolbar" : ""}">
+            <h2>${escapeHtml(tableTitle)}</h2>
+            ${renderPanelSearch(config)}
+          </div>
+          <div class="panel-body">
+            ${filteredViews.length
+              ? renderTable(config.columns, filteredViews, selected, {
+                expandedContent: selected ? config.renderDetail(selected, shared) : "",
+                expandedLabel: `${config.title}详情`
+              })
+              : renderEmptyState(config.title, allViews.length)}
+          </div>
         </section>
 
         ${renderPageDialogs(pageId, shared, selected)}
@@ -419,30 +407,18 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
       <main class="main module-main">
         ${renderModuleHeader(pageId, config, stats)}
 
-        <section class="content-layout">
-          <section class="panel table-panel">
-            <div class="panel-headline">
-              <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
-            </div>
-            <div class="panel-body">
-              ${filteredViews.length ? renderTable(config.columns, filteredViews, selected) : renderEmptyState(config.title, allViews.length)}
-            </div>
-          </section>
-
-          <aside class="detail-rail">
-            <section class="panel detail-panel">
-              <div class="panel-headline">
-                <h2>详情</h2>
-              </div>
-              <div class="panel-body">
-                ${selected ? config.renderDetail(selected, shared) : `
-                  <div class="empty-state">
-                    <strong>请选择记录</strong>
-                  </div>
-                `}
-              </div>
-            </section>
-          </aside>
+        <section class="panel table-panel">
+          <div class="panel-headline">
+            <h2>${pageId === "farming-trace" ? "种植过程主线" : "加工过程主线"}</h2>
+          </div>
+          <div class="panel-body">
+            ${filteredViews.length
+              ? renderTable(config.columns, filteredViews, selected, {
+                expandedContent: selected ? config.renderDetail(selected, shared) : "",
+                expandedLabel: `${config.title}详情`
+              })
+              : renderEmptyState(config.title, allViews.length)}
+          </div>
         </section>
 
         <section class="panel">
@@ -779,7 +755,8 @@ function shouldShowStats(stats) {
   });
 }
 
-function renderTable(columns, rows, selected) {
+function renderTable(columns, rows, selected, options = {}) {
+  const expandedColspan = Math.max(columns.length, 1);
   return `
     <div class="table-wrap">
       <table class="data-table">
@@ -787,11 +764,23 @@ function renderTable(columns, rows, selected) {
           <tr>${columns.map((column) => `<th>${escapeHtml(column.label)}</th>`).join("")}</tr>
         </thead>
         <tbody>
-          ${rows.map((row) => `
-            <tr data-row-id="${escapeAttribute(row.id)}" class="${selected && selected.id === row.id ? "is-selected" : ""}">
-              ${columns.map((column) => `<td data-label="${escapeAttribute(column.label)}">${column.render(row)}</td>`).join("")}
-            </tr>
-          `).join("")}
+          ${rows.map((row) => {
+            const isSelected = Boolean(selected && selected.id === row.id);
+            return `
+              <tr data-row-id="${escapeAttribute(row.id)}" class="${isSelected ? "is-selected" : ""}">
+                ${columns.map((column) => `<td data-label="${escapeAttribute(column.label)}">${column.render(row)}</td>`).join("")}
+              </tr>
+              ${isSelected && options.expandedContent ? `
+                <tr class="row-detail" data-detail-for="${escapeAttribute(row.id)}">
+                  <td colspan="${expandedColspan}" class="row-detail-cell" aria-label="${escapeAttribute(options.expandedLabel || "详情")}">
+                    <div class="row-detail-shell">
+                      ${options.expandedContent}
+                    </div>
+                  </td>
+                </tr>
+              ` : ""}
+            `;
+          }).join("")}
         </tbody>
       </table>
     </div>
@@ -1329,7 +1318,8 @@ function bindModule(root, pageId, config, shared, selected) {
 
     const row = event.target.closest("tr[data-row-id]");
     if (row && !event.target.closest("button,a")) {
-      APP_STATE.selectedId = row.dataset.rowId || "";
+      const nextId = row.dataset.rowId || "";
+      APP_STATE.selectedId = APP_STATE.selectedId === nextId ? "" : nextId;
       renderAndBind(root, pageId);
     }
   });
@@ -3019,9 +3009,9 @@ function pickSelectedRecord(filtered, allRecords, selectedId) {
     return null;
   }
   if (!selectedId) {
-    return filtered[0];
+    return null;
   }
-  return filtered.find((item) => item.id === selectedId) || filtered[0];
+  return filtered.find((item) => item.id === selectedId) || null;
 }
 
 function readWorkflowStore() {
