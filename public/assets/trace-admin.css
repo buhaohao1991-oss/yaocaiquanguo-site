@@ -3106,8 +3106,8 @@ body::before {
 }
 
 .sidebar {
-  padding: 24px 18px 20px;
-  gap: 18px;
+  padding: 28px 18px 20px;
+  gap: 0;
   background:
     radial-gradient(circle at 0% 0%, rgba(67, 193, 149, 0.14), transparent 24%),
     radial-gradient(circle at 100% 100%, rgba(184, 134, 51, 0.12), transparent 24%),
@@ -3183,6 +3183,7 @@ body::before {
 
 .nav-group {
   gap: 10px;
+  padding-top: 2px;
 }
 
 .nav-item,
@@ -3642,7 +3643,7 @@ body::before {
   .sidebar {
     position: static;
     min-height: auto;
-    padding: 20px 18px 14px;
+    padding: 14px 18px 14px;
   }
 
   .nav-group {
@@ -3685,16 +3686,6 @@ body::before {
   .page-copy h1,
   .detail-hero h3 {
     font-size: 28px;
-  }
-
-  .sidebar-brand--compact {
-    padding: 2px 0 10px;
-  }
-
-  .sidebar-brand-emblem {
-    width: 40px;
-    height: 40px;
-    border-radius: 13px;
   }
 
   .home-stage {

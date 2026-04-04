@@ -712,16 +712,6 @@ function renderBrandMarkSvg() {
   `;
 }
 
-function renderSidebarBrand() {
-  return `
-    <div class="sidebar-brand sidebar-brand--compact">
-      <div class="sidebar-brand-emblem brand-mark">
-        ${renderBrandMarkSvg()}
-      </div>
-    </div>
-  `;
-}
-
 function renderHomeModuleCard(item, shared) {
   const count = navCountFor(item.id, shared);
   return `
@@ -738,8 +728,6 @@ function renderHomeModuleCard(item, shared) {
 function renderSidebar(activeId, shared) {
   return `
     <aside class="sidebar">
-      ${renderSidebarBrand()}
-
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderSidebarItem(item, activeId, shared)).join("")}
       </nav>
