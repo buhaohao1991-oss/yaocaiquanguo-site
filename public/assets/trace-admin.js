@@ -351,7 +351,14 @@ function renderHomeHero() {
   return `
     <div class="home-stage-grid">
       <div class="home-stage-brand">
-        ${renderBrandSignature("home-brand-panel")}
+        <div class="home-stage-emblem brand-mark">
+          ${renderBrandMarkSvg()}
+        </div>
+        <div class="home-stage-copy">
+          <span class="home-stage-kicker">中药材溯源平台</span>
+          <strong>溯源工作台</strong>
+          <small>基地 / 农事 / 采收 / 工艺 / 赋码</small>
+        </div>
       </div>
     </div>
   `;
@@ -691,19 +698,6 @@ function renderPublicInfoCard(title, lines) {
   `;
 }
 
-function renderBrandSignature(className) {
-  return `
-    <div class="${className}">
-      <div class="brand-mark">
-        ${renderBrandMarkSvg()}
-      </div>
-      <div class="brand-copy">
-        <strong>中药材溯源平台</strong>
-      </div>
-    </div>
-  `;
-}
-
 function renderBrandMarkSvg() {
   return `
     <svg viewBox="0 0 64 64" fill="none" class="brand-mark-svg">
@@ -715,6 +709,16 @@ function renderBrandMarkSvg() {
       <path d="M32 36C37.5 31.5 42 33 44.5 38.5C39.5 40 36 39.5 32 36Z" fill="#5FA884"></path>
       <path d="M23 46H41" stroke="#97AA9B" stroke-width="2.5" stroke-linecap="round"></path>
     </svg>
+  `;
+}
+
+function renderSidebarBrand() {
+  return `
+    <div class="sidebar-brand sidebar-brand--compact">
+      <div class="sidebar-brand-emblem brand-mark">
+        ${renderBrandMarkSvg()}
+      </div>
+    </div>
   `;
 }
 
@@ -734,11 +738,7 @@ function renderHomeModuleCard(item, shared) {
 function renderSidebar(activeId, shared) {
   return `
     <aside class="sidebar">
-      <div class="sidebar-brand sidebar-brand--compact">
-        <div class="brand-mark">
-          ${renderBrandMarkSvg()}
-        </div>
-      </div>
+      ${renderSidebarBrand()}
 
       <nav class="nav-group">
         ${NAV_ITEMS.map((item) => renderSidebarItem(item, activeId, shared)).join("")}
