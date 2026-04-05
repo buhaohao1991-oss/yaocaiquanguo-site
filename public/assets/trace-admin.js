@@ -3781,6 +3781,71 @@ async function loadTraceMapSdk() {
   return TRACE_MAP_RUNTIME.sdkPromise;
 }
 
+function currentTraceProjectionCode() {
+  return window.T && window.T.gq && window.T.gq.EW === 0 ? "EPSG:900913" : "EPSG:4326";
+}
+
+function createTraceTileLayer(getUrl) {
+  const layer = new window.T.TileLayer("", {
+    minZoom: 1,
+    maxZoom: 18
+  });
+  layer.getTileUrl = getUrl;
+  return layer;
+}
+
+function ensureTraceMapTypes() {
+  if (!(window.T && window.T.MapType && window.T.TileLayer && window.T.w)) {
+    return;
+  }
+
+  try {
+    if (!window.TMAP_NORMAL_MAP) {
+      const vectorLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.t()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.r()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      const vectorLabelLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.Y()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.T()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_NORMAL_MAP = new window.T.MapType([vectorLayer, vectorLabelLayer], "TMAP_NORMAL_MAP", { a: 1 });
+    }
+
+    if (!window.TMAP_SATELLITE_MAP) {
+      const imageLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.I()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.U()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_SATELLITE_MAP = new window.T.MapType([imageLayer], "TMAP_SATELLITE_MAP");
+    }
+
+    if (!window.TMAP_HYBRID_MAP) {
+      const imageLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.I()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.U()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      const imageLabelLayer = createTraceTileLayer((tile) => {
+        return currentTraceProjectionCode() === "EPSG:900913"
+          ? `${window.T.w.i()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`
+          : `${window.T.w.u()}TILECOL=${tile.x}&TILEROW=${tile.y}&TILEMATRIX=${tile.z}`;
+      });
+      window.TMAP_HYBRID_MAP = new window.T.MapType([imageLayer, imageLabelLayer], "TMAP_HYBRID_MAP");
+    }
+  } catch (error) {
+    // Fallback to provider default map type when custom satellite layers are unavailable.
+  }
+}
+
+function getPreferredTraceMapType() {
+  ensureTraceMapTypes();
+  return window.TMAP_HYBRID_MAP || window.TMAP_SATELLITE_MAP || window.TMAP_NORMAL_MAP || null;
+}
+
 async function geocodeTraceAddress(keyword) {
   const config = getTraceMapConfig();
   const url = `https://api.tianditu.gov.cn/geocoder?ds=${encodeURIComponent(JSON.stringify({ keyWord: keyword }))}&tk=${encodeURIComponent(config.tk)}`;
@@ -3874,6 +3939,7 @@ function bindBaseTraceMap(root, dialog) {
     state.loading = true;
     try {
       await loadTraceMapSdk();
+      ensureTraceMapTypes();
       if (emptyState) {
         emptyState.hidden = true;
       }
@@ -3884,6 +3950,10 @@ function bindBaseTraceMap(root, dialog) {
         lat: config.defaultCenter[1]
       };
       state.map.centerAndZoom(new window.T.LngLat(center.lng, center.lat), coordinates ? config.detailZoom : config.defaultZoom);
+      const preferredMapType = getPreferredTraceMapType();
+      if (preferredMapType && typeof state.map.setMapType === "function") {
+        state.map.setMapType(preferredMapType);
+      }
       if (typeof state.map.enableScrollWheelZoom === "function") {
         state.map.enableScrollWheelZoom();
       }
@@ -4162,10 +4232,15 @@ async function mountBaseTracePreview(container) {
 
   try {
     await loadTraceMapSdk();
+    ensureTraceMapTypes();
     container.innerHTML = "";
     const center = coordinates || { lng: config.defaultCenter[0], lat: config.defaultCenter[1] };
     const map = new window.T.Map(container);
     map.centerAndZoom(new window.T.LngLat(center.lng, center.lat), coordinates ? config.detailZoom : config.defaultZoom);
+    const preferredMapType = getPreferredTraceMapType();
+    if (preferredMapType && typeof map.setMapType === "function") {
+      map.setMapType(preferredMapType);
+    }
     if (coordinates) {
       map.addOverLay(new window.T.Marker(new window.T.LngLat(coordinates.lng, coordinates.lat)));
     }
