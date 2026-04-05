@@ -500,13 +500,12 @@ function renderModuleHeader(pageId, config, stats) {
 function renderBaseDetailPage(shared, view) {
   const actionButtons = view ? `
     <div class="page-hero-actions detail-page-actions">
-      ${statusPill(view.statusLabel, view.statusTone)}
-      <a class="button ghost" href="base-trace.html">返回台账</a>
+      <a class="button ghost" href="base-trace.html">返回</a>
       <button class="button primary" type="button" data-edit-record="${escapeAttribute(view.id)}">编辑基地档案</button>
     </div>
   ` : `
     <div class="page-hero-actions detail-page-actions">
-      <a class="button ghost" href="base-trace.html">返回台账</a>
+      <a class="button ghost" href="base-trace.html">返回</a>
     </div>
   `;
 
@@ -2601,16 +2600,24 @@ function renderBaseDetailBody(view, shared) {
   return `
     ${renderMetricGrid([
       { label: "基地面积", value: view.areaText },
-      { label: "档案完整度", value: `${view.readiness}%` },
-      { label: "关联种源", value: `${view.seedCount} 条` },
-      { label: "关联种植", value: `${view.plantCount} 条` }
-    ])}
-    ${renderActionBar([
-      continueAction("继续新增种源", "seed-trace", { baseId: view.id, herb: view.herb }),
-      subtleTextAction("坐标", view.coordinateText || "未设置坐标")
+      { label: "种植药材", value: view.herb || "--" },
+      { label: "基地负责人", value: view.manager || "--" },
+      { label: "档案完整度", value: `${view.readiness}%` }
     ])}
     ${renderInfoRack([
-      infoCard("主档信息", [view.manager, view.baseType, view.cooperationMode]),
+      infoCard("主档信息", [
+        view.code,
+        view.baseType || "--",
+        view.cooperationMode || "--"
+      ]),
+      infoCard("地理与环境", [
+        view.addressLine || "未填写地区地址",
+        view.coordinateText || "未设置坐标",
+        [
+          view.altitude ? `${formatDecimal(view.altitude)} m 海拔` : "",
+          view.avgTemp ? `${formatDecimal(view.avgTemp)} ℃ 年均温` : ""
+        ].filter(Boolean).join(" · ") || "未补充海拔与气候"
+      ]),
       infoCard("资料状态", [
         `${view.landCertStatus || "待补土地租赁证明"} · ${view.landLeasePhotoCount} 张`,
         `${view.envReportStatus || "待补环境监测"} · ${view.envMonitorPhotoCount} 张`,
