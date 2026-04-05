@@ -1728,14 +1728,24 @@ textarea::placeholder {
 
 .table-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 6px;
   align-items: center;
+}
+
+.table-actions .chip {
+  min-height: 34px;
+  padding: 0 10px;
 }
 
 .table-actions .chip.is-active {
   background: rgba(35, 141, 116, 0.12);
   color: var(--accent-deep);
+}
+
+.chip.edit {
+  background: rgba(84, 117, 183, 0.1);
+  color: #35538f;
 }
 
 .photo-window-panel {

@@ -83,6 +83,7 @@ const PAGE_CONFIGS = {
     kicker: "BASE TRACE",
     subtitle: "先把种植主体、基地资料和地理信息建成主档，后续种源、采收、加工都会从这里接上。",
     actionLabel: "新建基地档案",
+    tableTitle: "",
     searchPlaceholder: "搜索基地名称、负责人、药材或地区",
     getViews: (shared) => shared.views.bases,
     getStats: (shared, views) => [
@@ -92,14 +93,14 @@ const PAGE_CONFIGS = {
     ],
     searchText: (view) => [view.name, view.code, view.manager, view.herb, view.addressLine].join(" "),
     columns: [
-      { label: "基地名称", render: (view) => titleCell(view.name, view.code) },
+      { label: "基地名称", render: (view) => titleOnlyCell(view.name) },
       { label: "种植药材", render: (view) => view.herb },
       { label: "负责人", render: (view) => view.manager },
       { label: "面积", render: (view) => view.areaText },
-      { label: "资料归档", render: (view) => statusPill(view.statusLabel, view.statusTone) },
       { label: "下游链路", render: (view) => metricMini(`${view.seedCount} 种源 / ${view.plantCount} 种植`) },
       { label: "操作", render: (view) => tableActionGroup([
         selectActionButton(view.id, APP_STATE.selectedId === view.id),
+        editActionButton(view.id),
         deleteActionButton(view.id)
       ]) }
     ],
@@ -374,7 +375,8 @@ function renderHomeHero() {
 
 function renderEntityPage(pageId, config, shared, allViews, filteredViews, selected) {
   const stats = config.getStats(shared, allViews);
-  const tableTitle = config.tableTitle || `${config.title}台账`;
+  const tableTitle = config.tableTitle === undefined ? `${config.title}台账` : config.tableTitle;
+  const hasHeadline = Boolean(tableTitle || config.searchMode === "toolbar");
   return `
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
@@ -382,10 +384,12 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
         ${renderModuleHeader(pageId, config, stats)}
 
         <section class="panel table-panel">
-          <div class="panel-headline ${config.searchMode === "toolbar" ? "with-toolbar" : ""}">
-            <h2>${escapeHtml(tableTitle)}</h2>
-            ${renderPanelSearch(config)}
-          </div>
+          ${hasHeadline ? `
+            <div class="panel-headline ${config.searchMode === "toolbar" ? "with-toolbar" : ""}">
+              ${tableTitle ? `<h2>${escapeHtml(tableTitle)}</h2>` : `<div class="panel-headline-spacer" aria-hidden="true"></div>`}
+              ${renderPanelSearch(config)}
+            </div>
+          ` : ""}
           <div class="panel-body">
             ${filteredViews.length
               ? renderTable(config.columns, filteredViews, selected, {
@@ -802,7 +806,8 @@ function renderEmptyState(moduleTitle, totalCount) {
 
 function renderPageDialogs(pageId, shared, selected) {
   if (pageId === "base-trace") {
-    return renderDialogShell("primary", "新建基地档案", renderBaseDialog(shared, readDraft(pageId)), true);
+    const draft = readDraft(pageId);
+    return renderDialogShell("primary", draft.recordId ? "编辑基地档案" : "新建基地档案", renderBaseDialog(shared, draft), true);
   }
 
   if (pageId === "farming-trace") {
@@ -848,6 +853,7 @@ function renderBaseDialog(shared, draft) {
   return `
     <div class="dialog-map-layout is-base-dialog">
       <div class="dialog-form-column">
+        <input type="hidden" name="recordId" value="${escapeAttribute(draft.recordId || "")}">
         ${renderFormSection("基本信息", [
           fieldText("name", "基地名称", "例如：甘肃岷县党参基地", true, draft.name),
           fieldText("code", "基地编号", "例如：BASE-202604-001", true, draft.code || suggestCode("BASE", shared.store.bases.length + 1)),
@@ -1306,6 +1312,12 @@ function bindModule(root, pageId, config, shared, selected) {
       if (kind === "secondary" && !selected) {
         return;
       }
+      if (pageId === "base-trace" && kind === "primary") {
+        clearDraft(pageId);
+        renderAndBind(root, pageId);
+        openDialog(root, pageId, kind);
+        return;
+      }
       openDialog(root, pageId, kind);
       return;
     }
@@ -1324,6 +1336,14 @@ function bindModule(root, pageId, config, shared, selected) {
       const nextId = selectButton.dataset.selectRecord || "";
       APP_STATE.selectedId = APP_STATE.selectedId === nextId ? "" : nextId;
       renderAndBind(root, pageId);
+      return;
+    }
+
+    const editButton = event.target.closest("[data-edit-record]");
+    if (editButton) {
+      event.stopPropagation();
+      const recordId = editButton.dataset.editRecord || "";
+      handleEditRecord(pageId, recordId, shared, root);
       return;
     }
 
@@ -1634,8 +1654,10 @@ function getFormContextState(pageId, kind, values, shared, selected) {
 function createRecordFromForm(pageId, kind, values, shared, selected) {
   updateWorkflowStore((store) => {
     if (pageId === "base-trace") {
+      const existingIndex = values.recordId ? store.bases.findIndex((item) => item.id === values.recordId) : -1;
+      const current = existingIndex >= 0 ? store.bases[existingIndex] : null;
       const base = {
-        id: entityId("BASE", store.bases.length + 1),
+        id: current ? current.id : entityId("BASE", store.bases.length + 1),
         code: values.code || suggestCode("BASE", store.bases.length + 1),
         name: values.name,
         manager: values.manager,
@@ -1657,10 +1679,15 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         envMonitorPhotos: normalizeTracePhotoList(values.envMonitorPhotos),
         intro: values.intro,
         photos: normalizeTracePhotoList(values.photos),
-        createdAt: isoDate()
+        createdAt: current ? current.createdAt : isoDate()
       };
-      store.bases.unshift(base);
-      addActivity(store, "建立基地档案", `${base.name} 已进入主档`, "基地资料、坐标和后续链路从这里起步");
+      if (existingIndex >= 0) {
+        store.bases.splice(existingIndex, 1, base);
+        addActivity(store, "更新基地档案", `${base.name} 已更新`, "基础信息、资料和地理信息已同步调整");
+      } else {
+        store.bases.unshift(base);
+        addActivity(store, "建立基地档案", `${base.name} 已进入主档`, "基地资料、坐标和后续链路从这里起步");
+      }
       return;
     }
 
@@ -1858,6 +1885,9 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
 }
 
 function resolveSelectedIdAfterCreate(pageId, kind, values) {
+  if (pageId === "base-trace" && kind === "primary") {
+    return values.recordId || "";
+  }
   if (pageId === "farming-trace" && kind === "secondary") {
     return values.plantId || "";
   }
@@ -1929,6 +1959,45 @@ function handleDeleteRecord(pageId, recordId, shared, root) {
 
   APP_STATE.selectedId = "";
   renderAndBind(root, pageId);
+}
+
+function handleEditRecord(pageId, recordId, shared, root) {
+  if (pageId !== "base-trace") {
+    return;
+  }
+  const record = shared.maps.baseById.get(recordId);
+  if (!record) {
+    return;
+  }
+
+  writeDraft(pageId, {
+    recordId: record.id,
+    code: record.code,
+    name: record.name,
+    manager: record.manager,
+    herb: record.herb,
+    baseType: record.baseType,
+    cooperationMode: record.cooperationMode,
+    areaMu: record.areaMu,
+    address: record.address,
+    detailAddress: record.detailAddress,
+    longitude: record.longitude,
+    latitude: record.latitude,
+    altitude: record.altitude,
+    avgTemp: record.avgTemp,
+    soilPh: record.soilPh,
+    soilEc: record.soilEc,
+    landCertStatus: record.landCertStatus,
+    envReportStatus: record.envReportStatus,
+    landLeasePhotos: record.landLeasePhotos || [],
+    envMonitorPhotos: record.envMonitorPhotos || [],
+    intro: record.intro,
+    photos: record.photos || []
+  });
+
+  APP_STATE.selectedId = record.id;
+  renderAndBind(root, pageId);
+  openDialog(root, pageId, "primary");
 }
 
 function handleDeleteSubrecord(pageId, recordId, shared, root, selected) {
@@ -2837,6 +2906,14 @@ function titleCell(title, meta) {
   `;
 }
 
+function titleOnlyCell(title) {
+  return `
+    <div class="title-cell">
+      <strong>${escapeHtml(title)}</strong>
+    </div>
+  `;
+}
+
 function stackedCell(top, bottom) {
   return `
     <div class="stacked-cell">
@@ -2856,6 +2933,10 @@ function tableActionGroup(actions) {
 
 function selectActionButton(id, active = false) {
   return `<button class="chip neutral ${active ? "is-active" : ""}" type="button" data-select-record="${escapeAttribute(id)}">${active ? "收起" : "详情"}</button>`;
+}
+
+function editActionButton(id) {
+  return `<button class="chip edit" type="button" data-edit-record="${escapeAttribute(id)}">编辑</button>`;
 }
 
 function deleteActionButton(id) {
@@ -3663,28 +3744,32 @@ function renderBaseMediaSection(draft) {
           fieldName: "landLeasePhotos",
           actionLabel: "上传证明",
           emptyText: "暂无证明图片",
-          statusField: fieldSelect("landCertStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.landCertStatus || "待补充")
+          statusField: fieldSelect("landCertStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.landCertStatus || "待补充"),
+          initialPhotos: draft.landLeasePhotos
         })}
         ${renderCompactPhotoUploadCard({
           title: "环境监测",
           fieldName: "envMonitorPhotos",
           actionLabel: "上传图片",
           emptyText: "暂无监测图片",
-          statusField: fieldSelect("envReportStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.envReportStatus || "待补充")
+          statusField: fieldSelect("envReportStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.envReportStatus || "待补充"),
+          initialPhotos: draft.envMonitorPhotos
         })}
         ${renderCompactPhotoUploadCard({
           title: "基地照片",
           fieldName: "photos",
           actionLabel: "上传照片",
           emptyText: "暂无基地照片",
-          wide: true
+          wide: true,
+          initialPhotos: draft.photos
         })}
       </div>
     </section>
   `;
 }
 
-function renderCompactPhotoUploadCard({ title, fieldName, actionLabel, emptyText, statusField = null, wide = false }) {
+function renderCompactPhotoUploadCard({ title, fieldName, actionLabel, emptyText, statusField = null, wide = false, initialPhotos = [] }) {
+  const serializedPhotos = escapeAttribute(JSON.stringify(normalizeTracePhotoList(initialPhotos)));
   return `
     <article class="base-media-card form-section-photo ${wide ? "is-wide" : ""}" data-photo-section>
       <div class="base-media-card-head">
@@ -3700,7 +3785,7 @@ function renderCompactPhotoUploadCard({ title, fieldName, actionLabel, emptyText
       <input
         type="hidden"
         name="${escapeAttribute(fieldName)}"
-        value="[]"
+        value="${serializedPhotos}"
         data-photo-store
         data-photo-title="${escapeAttribute(title)}"
         data-photo-empty="${escapeAttribute(emptyText)}"
