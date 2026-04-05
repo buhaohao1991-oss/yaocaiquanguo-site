@@ -2600,28 +2600,29 @@ function renderBaseDetailBody(view, shared) {
   return `
     ${renderMetricGrid([
       { label: "基地面积", value: view.areaText },
-      { label: "种植药材", value: view.herb || "--" },
+      { label: "主要药材", value: view.herb || "--" },
       { label: "基地负责人", value: view.manager || "--" },
-      { label: "档案完整度", value: `${view.readiness}%` }
+      { label: "建档完整度", value: `${view.readiness}%` }
     ])}
     ${renderInfoRack([
       infoCard("主档信息", [
-        view.code,
-        view.baseType || "--",
-        view.cooperationMode || "--"
+        `基地编号：${view.code || "--"}`,
+        `基地类型：${view.baseType || "--"}`,
+        `合作方式：${view.cooperationMode || "--"}`
       ]),
       infoCard("地理与环境", [
-        view.addressLine || "未填写地区地址",
-        view.coordinateText || "未设置坐标",
-        [
-          view.altitude ? `${formatDecimal(view.altitude)} m 海拔` : "",
-          view.avgTemp ? `${formatDecimal(view.avgTemp)} ℃ 年均温` : ""
-        ].filter(Boolean).join(" · ") || "未补充海拔与气候"
+        `所属地区：${view.address || "未填写"}`,
+        `详细地址：${view.detailAddress || "未填写"}`,
+        `经纬度：${view.coordinateText || "未设置"}`,
+        `海拔与气候：${[
+          view.altitude ? `${formatDecimal(view.altitude)} m` : "",
+          view.avgTemp ? `年均温 ${formatDecimal(view.avgTemp)} ℃` : ""
+        ].filter(Boolean).join("，") || "暂未补充"}`
       ]),
       infoCard("资料状态", [
-        `${view.landCertStatus || "待补土地租赁证明"} · ${view.landLeasePhotoCount} 张`,
-        `${view.envReportStatus || "待补环境监测"} · ${view.envMonitorPhotoCount} 张`,
-        `${view.photoCount} 张基地照片`
+        `土地租赁证明：${view.landCertStatus || "待补充"}（${view.landLeasePhotoCount} 张）`,
+        `环境监测资料：${view.envReportStatus || "待补充"}（${view.envMonitorPhotoCount} 张）`,
+        `基地现场照片：${view.photoCount} 张`
       ])
     ])}
     ${renderBaseMap(view)}
