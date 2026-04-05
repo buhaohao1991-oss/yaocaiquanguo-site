@@ -13,6 +13,7 @@ const NAV_ITEMS = [
 const STORE_KEY = "trace-admin-workflow-v2";
 const DRAFT_KEY_PREFIX = "trace-admin-draft-v2:";
 const TRACE_QUERY_PAGE = "trace-query.html";
+const BASE_DETAIL_PAGE = "base-detail.html";
 const TRACE_PUBLIC_SNAPSHOT_PARAM = "p";
 const TRACE_MAP_PAGE_ID = "base-trace";
 const TRACE_MAP_SCRIPT_ID = "trace-map-sdk";
@@ -99,11 +100,12 @@ const PAGE_CONFIGS = {
       { label: "面积", render: (view) => view.areaText },
       { label: "下游链路", render: (view) => metricMini(`${view.seedCount} 种源 / ${view.plantCount} 种植`) },
       { label: "操作", render: (view) => tableActionGroup([
-        selectActionButton(view.id, APP_STATE.selectedId === view.id),
+        detailPageActionButton(view.id),
         editActionButton(view.id),
         deleteActionButton(view.id)
       ]) }
     ],
+    inlineDetail: false,
     renderDetail: (view, shared) => renderBaseDetail(view, shared)
   },
   "seed-trace": {
@@ -320,6 +322,15 @@ function renderAndBind(root, pageId) {
     return;
   }
 
+  if (pageId === "base-detail") {
+    const baseId = new URLSearchParams(window.location.search).get("id") || "";
+    const view = shared.views.bases.find((item) => item.id === baseId) || null;
+    document.title = view ? `中药材溯源平台 - ${view.name}` : "中药材溯源平台 - 基地详情";
+    root.innerHTML = renderBaseDetailPage(shared, view);
+    bindBaseDetailPage(root, shared, view);
+    return;
+  }
+
   const config = PAGE_CONFIGS[pageId];
   if (!config) {
     root.innerHTML = renderHomePage(shared);
@@ -377,6 +388,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
   const stats = config.getStats(shared, allViews);
   const tableTitle = config.tableTitle === undefined ? `${config.title}台账` : config.tableTitle;
   const hasHeadline = Boolean(tableTitle || config.searchMode === "toolbar");
+  const selectedDetail = config.inlineDetail === false ? null : selected;
   return `
     <div class="app-shell">
       ${renderSidebar(pageId, shared)}
@@ -393,7 +405,7 @@ function renderEntityPage(pageId, config, shared, allViews, filteredViews, selec
           <div class="panel-body">
             ${filteredViews.length
               ? renderTable(config.columns, filteredViews, selected, {
-                expandedContent: selected ? config.renderDetail(selected, shared) : "",
+                expandedContent: selectedDetail ? config.renderDetail(selectedDetail, shared) : "",
                 expandedLabel: `${config.title}详情`
               })
               : renderEmptyState(config.title, allViews.length)}
@@ -482,6 +494,55 @@ function renderModuleHeader(pageId, config, stats) {
         ` : ""}
       </div>
     </section>
+  `;
+}
+
+function renderBaseDetailPage(shared, view) {
+  const actionButtons = view ? `
+    <div class="page-hero-actions detail-page-actions">
+      ${statusPill(view.statusLabel, view.statusTone)}
+      <a class="button ghost" href="base-trace.html">返回台账</a>
+      <button class="button primary" type="button" data-edit-record="${escapeAttribute(view.id)}">编辑基地档案</button>
+    </div>
+  ` : `
+    <div class="page-hero-actions detail-page-actions">
+      <a class="button ghost" href="base-trace.html">返回台账</a>
+    </div>
+  `;
+
+  return `
+    <div class="app-shell">
+      ${renderSidebar("base-trace", shared)}
+      <main class="main module-main detail-page-main">
+        <section class="page-hero module-header no-stats detail-page-header">
+          <div class="page-copy">
+            <span class="page-kicker">中药材溯源平台</span>
+            <h1>${escapeHtml(view ? view.name : "未找到基地档案")}</h1>
+            <p>${escapeHtml(view
+              ? [view.code, view.herb, view.addressLine].filter(Boolean).join(" · ")
+              : "当前基地记录不存在，可能已被删除。")}</p>
+          </div>
+          <div class="page-hero-side is-compact">
+            ${actionButtons}
+          </div>
+        </section>
+
+        ${view ? `
+          <section class="panel detail-panel detail-page-panel">
+            <div class="panel-body">
+              ${renderBaseDetailBody(view, shared)}
+            </div>
+          </section>
+          ${renderPageDialogs("base-detail", shared, view)}
+        ` : `
+          <section class="panel detail-page-panel">
+            <div class="panel-body">
+              ${renderEmptyState("基地档案", 0)}
+            </div>
+          </section>
+        `}
+      </main>
+    </div>
   `;
 }
 
@@ -805,8 +866,8 @@ function renderEmptyState(moduleTitle, totalCount) {
 }
 
 function renderPageDialogs(pageId, shared, selected) {
-  if (pageId === "base-trace") {
-    const draft = readDraft(pageId);
+  if (pageId === "base-trace" || pageId === "base-detail") {
+    const draft = readDraft("base-trace");
     return renderDialogShell("primary", draft.recordId ? "编辑基地档案" : "新建基地档案", renderBaseDialog(shared, draft), true);
   }
 
@@ -1261,6 +1322,9 @@ function bindTraceQuery(root, shared) {
 }
 
 function bindModule(root, pageId, config, shared, selected) {
+  if (root._baseDetailClickHandler) {
+    root.removeEventListener("click", root._baseDetailClickHandler);
+  }
   const searchInput = root.querySelector("[data-search-input]");
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
@@ -1330,7 +1394,7 @@ function bindModule(root, pageId, config, shared, selected) {
       return;
     }
 
-    const selectButton = event.target.closest("[data-select-record]");
+    const selectButton = config.inlineDetail === false ? null : event.target.closest("[data-select-record]");
     if (selectButton) {
       event.stopPropagation();
       const nextId = selectButton.dataset.selectRecord || "";
@@ -1364,7 +1428,7 @@ function bindModule(root, pageId, config, shared, selected) {
       return;
     }
 
-    const row = event.target.closest("tr[data-row-id]");
+    const row = config.inlineDetail === false ? null : event.target.closest("tr[data-row-id]");
     if (row && !event.target.closest("button,a")) {
       const nextId = row.dataset.rowId || "";
       APP_STATE.selectedId = APP_STATE.selectedId === nextId ? "" : nextId;
@@ -1440,7 +1504,7 @@ function openDialog(root, pageId, kind) {
   if (form) {
     updateFormContext(form, pageId, buildSharedData(readWorkflowStore()), kind);
   }
-  if (pageId === "base-trace") {
+  if (pageId === "base-trace" || pageId === "base-detail") {
     window.requestAnimationFrame(() => activateBaseTraceMap(root));
   }
 }
@@ -1962,15 +2026,16 @@ function handleDeleteRecord(pageId, recordId, shared, root) {
 }
 
 function handleEditRecord(pageId, recordId, shared, root) {
-  if (pageId !== "base-trace") {
+  if (pageId !== "base-trace" && pageId !== "base-detail") {
     return;
   }
   const record = shared.maps.baseById.get(recordId);
   if (!record) {
     return;
   }
+  const draftPageId = pageId === "base-detail" ? "base-trace" : pageId;
 
-  writeDraft(pageId, {
+  writeDraft(draftPageId, {
     recordId: record.id,
     code: record.code,
     name: record.name,
@@ -2528,6 +2593,12 @@ function buildWarehouseView(item, relations) {
 function renderBaseDetail(view, shared) {
   return `
     ${renderDetailHero(view.name, view.statusLabel, view.statusTone, `${view.code} · ${view.herb}`)}
+    ${renderBaseDetailBody(view, shared)}
+  `;
+}
+
+function renderBaseDetailBody(view, shared) {
+  return `
     ${renderMetricGrid([
       { label: "基地面积", value: view.areaText },
       { label: "档案完整度", value: `${view.readiness}%` },
@@ -2931,6 +3002,10 @@ function tableActionGroup(actions) {
   return `<div class="table-actions">${actions.join("")}</div>`;
 }
 
+function detailPageActionButton(id) {
+  return `<a class="chip neutral" href="${escapeAttribute(buildBaseDetailUrl(id))}">详情</a>`;
+}
+
 function selectActionButton(id, active = false) {
   return `<button class="chip neutral ${active ? "is-active" : ""}" type="button" data-select-record="${escapeAttribute(id)}">${active ? "收起" : "详情"}</button>`;
 }
@@ -2945,6 +3020,10 @@ function deleteActionButton(id) {
 
 function publicPreviewLink(href) {
   return `<a class="chip neutral" href="${escapeAttribute(href)}" target="_blank" rel="noreferrer">查询页</a>`;
+}
+
+function buildBaseDetailUrl(id) {
+  return `${BASE_DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
 }
 
 function navCountFor(pageId, shared) {
@@ -3146,6 +3225,86 @@ function readWorkflowStore() {
   } catch (error) {
     return structuredClone(EMPTY_WORKFLOW_STORE);
   }
+}
+
+function bindBaseDetailPage(root, shared, view) {
+  if (root._moduleClickHandler) {
+    root.removeEventListener("click", root._moduleClickHandler);
+  }
+  if (root._baseDetailClickHandler) {
+    root.removeEventListener("click", root._baseDetailClickHandler);
+  }
+
+  root._baseDetailClickHandler = (event) => {
+    const continueButton = event.target.closest("[data-continue-workflow]");
+    if (continueButton) {
+      handleContinueWorkflow(continueButton);
+      return;
+    }
+
+    const closeButton = event.target.closest("[data-close-dialog]");
+    if (closeButton) {
+      const kind = closeButton.dataset.closeDialog;
+      const dialog = root.querySelector(`[data-dialog="${kind}"]`);
+      if (dialog) {
+        dialog.close();
+      }
+      return;
+    }
+
+    const editButton = event.target.closest("[data-edit-record]");
+    if (editButton) {
+      event.preventDefault();
+      const recordId = editButton.dataset.editRecord || (view ? view.id : "");
+      if (recordId) {
+        handleEditRecord("base-detail", recordId, shared, root);
+      }
+    }
+  };
+
+  root.addEventListener("click", root._baseDetailClickHandler);
+
+  const dialogs = root.querySelectorAll("dialog[data-dialog]");
+  dialogs.forEach((dialog) => {
+    dialog.addEventListener("click", (event) => {
+      const frame = dialog.querySelector(".dialog-frame");
+      if (!frame || frame.contains(event.target)) {
+        return;
+      }
+      dialog.close();
+    });
+  });
+
+  const forms = root.querySelectorAll("form[data-form-kind]");
+  forms.forEach((form) => {
+    bindFormIntelligence(form, "base-trace", shared, view);
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (form._baseTracePhotoController) {
+        await form._baseTracePhotoController.waitUntilReady();
+      }
+      if (!form.reportValidity()) {
+        return;
+      }
+      const kind = form.dataset.formKind || "primary";
+      const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
+      const validation = validateDialogSubmission("base-trace", kind, values);
+      if (!validation.ok) {
+        window.alert(validation.message);
+        return;
+      }
+      createRecordFromForm("base-trace", kind, values, shared, view);
+      clearDraft("base-trace");
+      const targetId = values.recordId || (view ? view.id : "");
+      window.history.replaceState({}, "", buildBaseDetailUrl(targetId));
+      renderAndBind(root, "base-detail");
+    });
+  });
+
+  const dialog = root.querySelector('[data-dialog="primary"]');
+  bindBaseTraceMap(root, dialog);
+  bindBaseTracePhotos(root, dialog);
+  bindBaseTracePreviewMaps(root);
 }
 
 function mergeStore(parsed) {

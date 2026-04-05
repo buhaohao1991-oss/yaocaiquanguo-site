@@ -3935,6 +3935,26 @@ body::before {
   width: 100%;
 }
 
+.detail-page-main {
+  align-content: start;
+}
+
+.detail-page-header .page-copy {
+  max-width: 760px;
+}
+
+.detail-page-actions {
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.detail-page-panel .panel-body {
+  display: grid;
+  gap: 18px;
+}
+
 .panel-headline.with-toolbar {
   align-items: center;
 }
