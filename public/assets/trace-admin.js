@@ -1995,7 +1995,7 @@ function handleEditRecord(pageId, recordId, shared, root) {
     photos: record.photos || []
   });
 
-  APP_STATE.selectedId = record.id;
+  APP_STATE.selectedId = "";
   renderAndBind(root, pageId);
   openDialog(root, pageId, "primary");
 }

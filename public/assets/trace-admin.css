@@ -1733,6 +1733,15 @@ textarea::placeholder {
   align-items: center;
 }
 
+.data-table thead th:last-child,
+.data-table tbody td:last-child {
+  text-align: center;
+}
+
+.data-table tbody td:last-child .table-actions {
+  justify-content: center;
+}
+
 .table-actions .chip {
   min-height: 34px;
   padding: 0 10px;
