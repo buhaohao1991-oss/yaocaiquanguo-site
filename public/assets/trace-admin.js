@@ -1227,7 +1227,11 @@ function renderDialogContextFallback() {
 }
 
 function bindHome(root, shared) {
-  root.addEventListener("click", (event) => {
+  if (root._homeClickHandler) {
+    root.removeEventListener("click", root._homeClickHandler);
+  }
+
+  root._homeClickHandler = (event) => {
     const clearButton = event.target.closest("[data-clear-workflow]");
     if (clearButton) {
       if (window.confirm("确定清空当前浏览器里的整套流程数据吗？")) {
@@ -1241,7 +1245,9 @@ function bindHome(root, shared) {
     if (continueButton) {
       handleContinueWorkflow(continueButton);
     }
-  });
+  };
+
+  root.addEventListener("click", root._homeClickHandler);
 }
 
 function bindTraceQuery(root, shared) {
@@ -1257,7 +1263,11 @@ function bindModule(root, pageId, config, shared, selected) {
     });
   }
 
-  root.addEventListener("click", async (event) => {
+  if (root._moduleClickHandler) {
+    root.removeEventListener("click", root._moduleClickHandler);
+  }
+
+  root._moduleClickHandler = async (event) => {
     const copyButton = event.target.closest("[data-copy-public-url]");
     if (copyButton) {
       event.preventDefault();
@@ -1340,7 +1350,9 @@ function bindModule(root, pageId, config, shared, selected) {
       APP_STATE.selectedId = APP_STATE.selectedId === nextId ? "" : nextId;
       renderAndBind(root, pageId);
     }
-  });
+  };
+
+  root.addEventListener("click", root._moduleClickHandler);
 
   const dialogs = root.querySelectorAll("dialog[data-dialog]");
   dialogs.forEach((dialog) => {
