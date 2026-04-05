@@ -112,13 +112,13 @@ const PAGE_CONFIGS = {
     kind: "entity",
     title: "种源备案",
     kicker: "SEED SOURCE",
-    subtitle: "围绕种源批次、供应商、资质状态和关联网点建立可回查的种苗档案。",
+    subtitle: "围绕种源批次、供应商、鉴定报告和关联网点建立可回查的种苗档案。",
     actionLabel: "新增种源批次",
     searchPlaceholder: "搜索种源批次、基地、药材或供应商",
     getViews: (shared) => shared.views.seeds,
     getStats: (shared, views) => [
       { label: "种源批次", value: String(views.length), tone: "primary" },
-      { label: "已归档资质", value: String(views.filter((item) => item.certificateStatus === "已归档").length), tone: "good" },
+      { label: "已上传报告", value: String(views.filter((item) => item.certificateStatus === "已归档" && item.reportPhotoCount > 0).length), tone: "good" },
       { label: "进入种植", value: String(views.filter((item) => item.plantCount > 0).length), tone: "normal" }
     ],
     searchText: (view) => [view.batchNo, view.herb, view.baseName, view.supplierName, view.brand].join(" "),
@@ -952,6 +952,7 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
       <div class="dialog-standard-main">
         ${hiddenFields}
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
+        ${renderDialogAttachmentSections(pageId, kind, draft)}
       </div>
       <aside class="dialog-context ${contextState.variant === "empty" ? "is-compact" : ""}" data-form-context-shell>
         <div data-form-context>
@@ -960,6 +961,19 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
       </aside>
     </div>
   `;
+}
+
+function renderDialogAttachmentSections(pageId, kind, draft) {
+  if (pageId === "seed-trace" && kind === "primary") {
+    return renderTracePhotoUploadSection({
+      title: "报告图片",
+      fieldName: "reportPhotos",
+      actionLabel: "增加报告图片",
+      emptyText: "暂未添加鉴定报告图片",
+      initialPhotos: draft.reportPhotos
+    });
+  }
+  return "";
 }
 
 function renderFormSection(title, fields, options = {}) {
@@ -1077,14 +1091,14 @@ function getDialogSections(pageId, kind, shared, draft, selected) {
         ]
       },
       {
-        title: "供应商与资质",
+        title: "供应商与鉴定",
         fields: [
           fieldText("supplierName", "供应商名称", "例如：岷州种苗中心", true, draft.supplierName),
           fieldText("supplierPhone", "联系电话", "例如：13900000000", false, draft.supplierPhone),
           fieldDate("boughtDate", "种源日期", true, draft.boughtDate || isoDate()),
           fieldNumber("quantity", "到货数量（kg）", "例如：320", true, draft.quantity),
-          fieldSelect("certificateStatus", "资质状态", DOCUMENT_STATUS_OPTIONS, true, draft.certificateStatus || "待补充"),
-          fieldTextarea("note", "补充说明", "记录资质文件、批次说明或特殊要求", false, draft.note)
+          fieldSelect("certificateStatus", "鉴定报告", DOCUMENT_STATUS_OPTIONS, true, draft.certificateStatus || "待补充"),
+          fieldTextarea("note", "补充说明", "记录鉴定结论、批次说明或特殊要求", false, draft.note)
         ]
       }
     ];
@@ -1481,6 +1495,11 @@ function bindModule(root, pageId, config, shared, selected) {
     bindBaseTracePreviewMaps(root);
   }
 
+  if (pageId === "seed-trace") {
+    const dialog = root.querySelector('[data-dialog="primary"]');
+    bindBaseTracePhotos(root, dialog);
+  }
+
   if (pageId === "trace-code-management") {
     mountTraceQrPreviews(root);
   }
@@ -1522,6 +1541,16 @@ function validateDialogSubmission(pageId, kind, values) {
       return {
         ok: false,
         message: "环境监测已归档时，需要上传至少 1 张环境监测图片。"
+      };
+    }
+  }
+
+  if (pageId === "seed-trace" && kind === "primary") {
+    const reportPhotos = normalizeTracePhotoList(values.reportPhotos);
+    if (values.certificateStatus === "已归档" && !reportPhotos.length) {
+      return {
+        ok: false,
+        message: "鉴定报告已归档时，需要上传至少 1 张报告图片。"
       };
     }
   }
@@ -1769,6 +1798,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         boughtDate: values.boughtDate || isoDate(),
         quantity: toNumber(values.quantity),
         certificateStatus: values.certificateStatus,
+        reportPhotos: normalizeTracePhotoList(values.reportPhotos),
         note: values.note,
         createdAt: isoDate()
       };
@@ -2417,6 +2447,7 @@ function buildBaseView(item, maps, relations) {
 function buildSeedView(item, maps, relations) {
   const base = maps.baseById.get(item.baseId);
   const plantCount = (relations.plantsBySeedId.get(item.id) || []).length;
+  const reportPhotos = normalizeTracePhotoList(item.reportPhotos);
   const readiness = completionScore([
     item.baseId,
     item.batchNo,
@@ -2424,17 +2455,19 @@ function buildSeedView(item, maps, relations) {
     item.supplierName,
     item.quantity,
     item.boughtDate,
-    item.certificateStatus === "已归档"
+    item.certificateStatus === "已归档" && reportPhotos.length > 0
   ]);
   return {
     ...item,
+    reportPhotos,
+    reportPhotoCount: reportPhotos.length,
     baseName: base ? base.name : "--",
     baseCode: base ? base.code : "--",
     baseAddress: base ? compactAddress(base.address, base.detailAddress) : "--",
     quantityText: `${formatDecimal(item.quantity)} kg`,
     plantCount,
-    statusLabel: item.certificateStatus === "已归档" ? "可投种" : "待补资质",
-    statusTone: item.certificateStatus === "已归档" ? "good" : "warn",
+    statusLabel: item.certificateStatus === "已归档" && reportPhotos.length ? "可投种" : "待补报告",
+    statusTone: item.certificateStatus === "已归档" && reportPhotos.length ? "good" : "warn",
     readiness,
     createdAt: item.createdAt || isoDate()
   };
@@ -2639,7 +2672,7 @@ function renderSeedDetail(view, shared) {
       { label: "到货数量", value: view.quantityText },
       { label: "品牌", value: view.brand || "--" },
       { label: "已进种植", value: `${view.plantCount} 条` },
-      { label: "资质状态", value: view.certificateStatus || "待补充" }
+      { label: "鉴定报告", value: view.certificateStatus || "待补充" }
     ])}
     ${renderActionBar([
       continueAction("继续建立种植过程", "farming-trace", { seedId: view.id, baseId: view.baseId }),
@@ -2647,9 +2680,14 @@ function renderSeedDetail(view, shared) {
     ])}
     ${renderInfoRack([
       infoCard("上游基地", [view.baseName, view.baseCode, view.baseAddress]),
-      infoCard("供应商信息", [view.supplierName, view.supplierPhone || "--", `${view.sourceType} / ${view.breedMaterial}`])
+      infoCard("供应商信息", [view.supplierName, view.supplierPhone || "--", `${view.sourceType} / ${view.breedMaterial}`]),
+      infoCard("报告情况", [
+        `鉴定报告：${view.certificateStatus || "待补充"}`,
+        `报告图片：${view.reportPhotoCount || 0} 张`
+      ])
     ])}
     ${renderNarrativeBlock("批次备注", view.note)}
+    ${renderTracePhotoDetailBlock("鉴定报告图片", view.reportPhotos, "还没有鉴定报告图片", "可以在种源备案弹窗里继续补充报告图片。")}
   `;
 }
 
@@ -3974,7 +4012,8 @@ function renderBaseDocumentPhotoSection(title, fieldName, actionLabel) {
   });
 }
 
-function renderTracePhotoUploadSection({ title, fieldName, actionLabel, emptyText }) {
+function renderTracePhotoUploadSection({ title, fieldName, actionLabel, emptyText, initialPhotos = [] }) {
+  const serializedPhotos = escapeAttribute(JSON.stringify(normalizeTracePhotoList(initialPhotos)));
   return `
     <section class="form-section form-section-photo" data-photo-section>
       <div class="form-section-head section-flex">
@@ -3987,7 +4026,7 @@ function renderTracePhotoUploadSection({ title, fieldName, actionLabel, emptyTex
       <input
         type="hidden"
         name="${escapeAttribute(fieldName)}"
-        value="[]"
+        value="${serializedPhotos}"
         data-photo-store
         data-photo-title="${escapeAttribute(title)}"
         data-photo-empty="${escapeAttribute(emptyText)}"
