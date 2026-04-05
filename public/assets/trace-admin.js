@@ -455,18 +455,19 @@ function renderCompoundPage(pageId, config, shared, allViews, filteredViews, sel
 
 function renderModuleHeader(pageId, config, stats) {
   const navItem = NAV_ITEMS.find((item) => item.id === pageId);
+  const hasStats = shouldShowStats(stats);
   return `
-    <section class="page-hero module-header">
+    <section class="page-hero module-header ${hasStats ? "has-stats" : "no-stats"}">
       <div class="page-copy">
         <span class="page-kicker">中药材溯源平台</span>
         <h1>${escapeHtml(config.title)}</h1>
         <p>${escapeHtml((navItem && navItem.subtitle) || config.title)}</p>
       </div>
-      <div class="page-hero-side">
+      <div class="page-hero-side ${hasStats ? "" : "is-compact"}">
         <div class="page-hero-actions">
           <button class="button primary" type="button" data-open-dialog="primary">${escapeHtml(config.actionLabel)}</button>
         </div>
-        ${shouldShowStats(stats) ? `
+        ${hasStats ? `
           <div class="stat-grid">
             ${stats.map((stat) => renderStatCard(stat)).join("")}
           </div>
