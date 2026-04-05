@@ -92,12 +92,16 @@ const PAGE_CONFIGS = {
     ],
     searchText: (view) => [view.name, view.code, view.manager, view.herb, view.addressLine].join(" "),
     columns: [
-      { label: "基地档案", render: (view) => titleCell(view.name, `${view.code} · ${view.herb}`) },
+      { label: "基地名称", render: (view) => titleCell(view.name, view.code) },
+      { label: "种植药材", render: (view) => view.herb },
       { label: "负责人", render: (view) => view.manager },
       { label: "面积", render: (view) => view.areaText },
-      { label: "资料状态", render: (view) => statusPill(view.statusLabel, view.statusTone) },
-      { label: "下游关联", render: (view) => metricMini(`${view.seedCount} 种源 / ${view.plantCount} 种植`) },
-      { label: "操作", render: (view) => deleteActionButton(view.id) }
+      { label: "资料归档", render: (view) => statusPill(view.statusLabel, view.statusTone) },
+      { label: "下游链路", render: (view) => metricMini(`${view.seedCount} 种源 / ${view.plantCount} 种植`) },
+      { label: "操作", render: (view) => tableActionGroup([
+        selectActionButton(view.id, APP_STATE.selectedId === view.id),
+        deleteActionButton(view.id)
+      ]) }
     ],
     renderDetail: (view, shared) => renderBaseDetail(view, shared)
   },
@@ -842,33 +846,29 @@ function renderDialogShell(kind, title, body, wide = false) {
 
 function renderBaseDialog(shared, draft) {
   return `
-    <div class="dialog-map-layout">
+    <div class="dialog-map-layout is-base-dialog">
       <div class="dialog-form-column">
-        ${renderFormSection("基础档案", [
+        ${renderFormSection("基本信息", [
           fieldText("name", "基地名称", "例如：甘肃岷县党参基地", true, draft.name),
           fieldText("code", "基地编号", "例如：BASE-202604-001", true, draft.code || suggestCode("BASE", shared.store.bases.length + 1)),
-          fieldText("manager", "负责人", "例如：赵青林", true, draft.manager),
-          fieldText("herb", "主栽药材", "例如：党参", true, draft.herb),
-          fieldSelect("baseType", "基地类型", BASE_TYPES, true, draft.baseType),
+          fieldText("manager", "基地负责人", "例如：赵青林", true, draft.manager),
+          fieldText("herb", "种植药材", "例如：党参", true, draft.herb),
+          fieldNumber("areaMu", "面积（亩）", "例如：128", true, draft.areaMu),
+          fieldText("address", "所属地区", "例如：甘肃省定西市岷县", true, draft.address, { mapSearch: true }),
+          fieldText("detailAddress", "详细地址", "例如：岷阳镇西寨村五社", true, draft.detailAddress, { span: 2 }),
+          fieldSelect("baseType", "基地类型", BASE_TYPES, true, draft.baseType, { span: 1 }),
           fieldSelect("cooperationMode", "合作模式", COOPERATION_MODES, true, draft.cooperationMode),
-          fieldNumber("areaMu", "基地面积（亩）", "例如：128", true, draft.areaMu)
-        ])}
-        ${renderFormSection("地理与资料", [
-          fieldText("address", "地区", "例如：甘肃省定西市岷县", true, draft.address, { mapSearch: true }),
-          fieldTextarea("detailAddress", "详细地址", "例如：岷阳镇西寨村五社", true, draft.detailAddress),
-          fieldSelect("landCertStatus", "土地租赁证明", DOCUMENT_STATUS_OPTIONS, true, draft.landCertStatus || "待补充"),
-          fieldSelect("envReportStatus", "环境监测", DOCUMENT_STATUS_OPTIONS, true, draft.envReportStatus || "待补充"),
+          fieldText("intro", "基地介绍", "一句话说明基地背景、管理标准或产区特点", false, draft.intro, { span: 2 })
+        ], { className: "base-section base-basic-section", gridClass: "base-form-grid base-form-grid--3" })}
+        ${renderFormSection("定位与环境", [
           fieldNumber("longitude", "经度", "例如：104.037624", false, draft.longitude, { mapLongitude: true }),
           fieldNumber("latitude", "纬度", "例如：34.438215", false, draft.latitude, { mapLatitude: true }),
           fieldNumber("altitude", "海拔（m）", "例如：2310", false, draft.altitude),
           fieldNumber("avgTemp", "年均温（℃）", "例如：13.5", false, draft.avgTemp),
           fieldNumber("soilPh", "土壤 pH", "例如：6.8", false, draft.soilPh),
-          fieldNumber("soilEc", "土壤 EC", "例如：0.38", false, draft.soilEc),
-          fieldTextarea("intro", "基地介绍", "一句话说明基地背景、管理标准或产区特点", false, draft.intro)
-        ])}
-        ${renderBaseDocumentPhotoSection("土地租赁证明", "landLeasePhotos", "增加证明")}
-        ${renderBaseDocumentPhotoSection("环境监测", "envMonitorPhotos", "增加图片")}
-        ${renderBasePhotoSection()}
+          fieldNumber("soilEc", "土壤 EC", "例如：0.38", false, draft.soilEc)
+        ], { className: "base-section base-env-section", gridClass: "base-form-grid base-form-grid--3" })}
+        ${renderBaseMediaSection(draft)}
       </div>
       <aside class="dialog-map-column">
         ${renderBaseMapEditor()}
@@ -896,13 +896,15 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   `;
 }
 
-function renderFormSection(title, fields) {
+function renderFormSection(title, fields, options = {}) {
+  const sectionClassName = ["form-section", options.className || ""].filter(Boolean).join(" ");
+  const gridClassName = ["form-grid", options.gridClass || ""].filter(Boolean).join(" ");
   return `
-    <section class="form-section">
+    <section class="${sectionClassName}">
       <div class="form-section-head">
         <h4>${escapeHtml(title)}</h4>
       </div>
-      <div class="form-grid">
+      <div class="${gridClassName}">
         ${fields.map((item) => renderField(item)).join("")}
       </div>
     </section>
@@ -917,6 +919,12 @@ function renderField(field) {
   const classes = ["field"];
   if (field.full) {
     classes.push("is-full");
+  }
+  if (field.className) {
+    classes.push(field.className);
+  }
+  if (field.span) {
+    classes.push(`span-${field.span}`);
   }
   const requiredText = field.required ? "required" : "";
   const dataAttrs = [];
@@ -1297,6 +1305,15 @@ function bindModule(root, pageId, config, shared, selected) {
       event.stopPropagation();
       const recordId = deleteButton.dataset.deleteRecord;
       handleDeleteRecord(pageId, recordId, shared, root);
+      return;
+    }
+
+    const selectButton = event.target.closest("[data-select-record]");
+    if (selectButton) {
+      event.stopPropagation();
+      const nextId = selectButton.dataset.selectRecord || "";
+      APP_STATE.selectedId = APP_STATE.selectedId === nextId ? "" : nextId;
+      renderAndBind(root, pageId);
       return;
     }
 
@@ -2821,6 +2838,14 @@ function metricMini(value) {
   return `<span class="metric-mini">${escapeHtml(value)}</span>`;
 }
 
+function tableActionGroup(actions) {
+  return `<div class="table-actions">${actions.join("")}</div>`;
+}
+
+function selectActionButton(id, active = false) {
+  return `<button class="chip neutral ${active ? "is-active" : ""}" type="button" data-select-record="${escapeAttribute(id)}">${active ? "收起" : "详情"}</button>`;
+}
+
 function deleteActionButton(id) {
   return `<button class="chip danger" type="button" data-delete-record="${escapeAttribute(id)}">删除</button>`;
 }
@@ -2932,21 +2957,26 @@ function fieldNumber(name, label, placeholder, required, value, extra = {}) {
 }
 
 function fieldDate(name, label, required, value) {
-  return { name, label, required, value, type: "date" };
+  let extra = {};
+  if (arguments.length > 4) {
+    extra = arguments[4] || {};
+  }
+  return { name, label, required, value, type: "date", ...extra };
 }
 
-function fieldTextarea(name, label, placeholder, required, value) {
-  return { name, label, placeholder, required, value, type: "textarea", full: true };
+function fieldTextarea(name, label, placeholder, required, value, extra = {}) {
+  return { name, label, placeholder, required, value, type: "textarea", full: true, ...extra };
 }
 
-function fieldSelect(name, label, options, required, value) {
+function fieldSelect(name, label, options, required, value, extra = {}) {
   return {
     name,
     label,
     required,
     value,
     type: "select",
-    options: normalizeSelectOptions(options)
+    options: normalizeSelectOptions(options),
+    ...extra
   };
 }
 
@@ -3609,6 +3639,68 @@ function renderBasePhotoSection() {
   });
 }
 
+function renderBaseMediaSection(draft) {
+  return `
+    <section class="form-section base-media-section">
+      <div class="form-section-head">
+        <h4>基地图片资料</h4>
+      </div>
+      <div class="base-media-grid">
+        ${renderCompactPhotoUploadCard({
+          title: "土地租赁证明",
+          fieldName: "landLeasePhotos",
+          actionLabel: "上传证明",
+          emptyText: "暂无证明图片",
+          statusField: fieldSelect("landCertStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.landCertStatus || "待补充")
+        })}
+        ${renderCompactPhotoUploadCard({
+          title: "环境监测",
+          fieldName: "envMonitorPhotos",
+          actionLabel: "上传图片",
+          emptyText: "暂无监测图片",
+          statusField: fieldSelect("envReportStatus", "资料状态", DOCUMENT_STATUS_OPTIONS, true, draft.envReportStatus || "待补充")
+        })}
+        ${renderCompactPhotoUploadCard({
+          title: "基地照片",
+          fieldName: "photos",
+          actionLabel: "上传照片",
+          emptyText: "暂无基地照片",
+          wide: true
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderCompactPhotoUploadCard({ title, fieldName, actionLabel, emptyText, statusField = null, wide = false }) {
+  return `
+    <article class="base-media-card form-section-photo ${wide ? "is-wide" : ""}" data-photo-section>
+      <div class="base-media-card-head">
+        <div class="base-media-card-copy">
+          <h5>${escapeHtml(title)}</h5>
+          ${statusField ? `<div class="base-media-status">${renderField({ ...statusField, className: "field-compact" })}</div>` : ""}
+        </div>
+        <div class="photo-section-actions">
+          <span class="chip neutral" data-photo-count>0 张</span>
+          <button class="button ghost button-inline" type="button" data-open-photo-window>${escapeHtml(actionLabel)}</button>
+        </div>
+      </div>
+      <input
+        type="hidden"
+        name="${escapeAttribute(fieldName)}"
+        value="[]"
+        data-photo-store
+        data-photo-title="${escapeAttribute(title)}"
+        data-photo-empty="${escapeAttribute(emptyText)}"
+      >
+      <div class="photo-strip" data-photo-grid>
+        <div class="photo-empty">${escapeHtml(emptyText)}</div>
+      </div>
+      ${renderBasePhotoWindow(title, emptyText)}
+    </article>
+  `;
+}
+
 function renderBaseDocumentPhotoSection(title, fieldName, actionLabel) {
   return renderTracePhotoUploadSection({
     title,
@@ -3712,7 +3804,7 @@ function renderBaseMapEditor() {
       <div class="trace-live-map" data-trace-map-editor-canvas>
         <div class="trace-live-map-state" data-trace-map-editor-empty>${emptyMessage}</div>
       </div>
-      <div class="map-editor-note">点击地图即可回填经纬度；保留我们自己的地图风格和展示方式。</div>
+      <div class="map-editor-note">点击地图回填经纬度。</div>
     </section>
   `;
 }
