@@ -118,7 +118,7 @@ const PAGE_CONFIGS = {
     getViews: (shared) => shared.views.seeds,
     getStats: (shared, views) => [
       { label: "种源批次", value: String(views.length), tone: "primary" },
-      { label: "已上传报告", value: String(views.filter((item) => item.certificateStatus === "已归档" && item.reportPhotoCount > 0).length), tone: "good" },
+      { label: "已上传鉴定报告", value: String(views.filter((item) => item.certificateStatus === "已归档" && item.reportPhotoCount > 0).length), tone: "good" },
       { label: "进入种植", value: String(views.filter((item) => item.plantCount > 0).length), tone: "normal" }
     ],
     searchText: (view) => [view.batchNo, view.herb, view.baseName, view.supplierName, view.brand].join(" "),
@@ -966,10 +966,10 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
 function renderDialogAttachmentSections(pageId, kind, draft) {
   if (pageId === "seed-trace" && kind === "primary") {
     return renderTracePhotoUploadSection({
-      title: "报告图片",
+      title: "种源鉴定报告",
       fieldName: "reportPhotos",
       actionLabel: "增加报告图片",
-      emptyText: "暂未添加鉴定报告图片",
+      emptyText: "暂未添加种源鉴定报告图片",
       initialPhotos: draft.reportPhotos
     });
   }
@@ -1091,14 +1091,12 @@ function getDialogSections(pageId, kind, shared, draft, selected) {
         ]
       },
       {
-        title: "供应商与鉴定",
+        title: "供应商信息",
         fields: [
           fieldText("supplierName", "供应商名称", "例如：岷州种苗中心", true, draft.supplierName),
           fieldText("supplierPhone", "联系电话", "例如：13900000000", false, draft.supplierPhone),
           fieldDate("boughtDate", "种源日期", true, draft.boughtDate || isoDate()),
-          fieldNumber("quantity", "到货数量（kg）", "例如：320", true, draft.quantity),
-          fieldSelect("certificateStatus", "鉴定报告", DOCUMENT_STATUS_OPTIONS, true, draft.certificateStatus || "待补充"),
-          fieldTextarea("note", "补充说明", "记录鉴定结论、批次说明或特殊要求", false, draft.note)
+          fieldNumber("quantity", "到货数量（kg）", "例如：320", true, draft.quantity)
         ]
       }
     ];
@@ -1545,16 +1543,6 @@ function validateDialogSubmission(pageId, kind, values) {
     }
   }
 
-  if (pageId === "seed-trace" && kind === "primary") {
-    const reportPhotos = normalizeTracePhotoList(values.reportPhotos);
-    if (values.certificateStatus === "已归档" && !reportPhotos.length) {
-      return {
-        ok: false,
-        message: "鉴定报告已归档时，需要上传至少 1 张报告图片。"
-      };
-    }
-  }
-
   return { ok: true };
 }
 
@@ -1785,6 +1773,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
 
     if (pageId === "seed-trace") {
       const base = shared.maps.baseById.get(values.baseId);
+      const reportPhotos = normalizeTracePhotoList(values.reportPhotos);
       const record = {
         id: entityId("SEED", store.seeds.length + 1),
         baseId: values.baseId,
@@ -1797,7 +1786,7 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         supplierPhone: values.supplierPhone,
         boughtDate: values.boughtDate || isoDate(),
         quantity: toNumber(values.quantity),
-        certificateStatus: values.certificateStatus,
+        certificateStatus: reportPhotos.length ? "已归档" : "待补充",
         reportPhotos: normalizeTracePhotoList(values.reportPhotos),
         note: values.note,
         createdAt: isoDate()
@@ -2455,7 +2444,7 @@ function buildSeedView(item, maps, relations) {
     item.supplierName,
     item.quantity,
     item.boughtDate,
-    item.certificateStatus === "已归档" && reportPhotos.length > 0
+    reportPhotos.length > 0
   ]);
   return {
     ...item,
@@ -2466,8 +2455,8 @@ function buildSeedView(item, maps, relations) {
     baseAddress: base ? compactAddress(base.address, base.detailAddress) : "--",
     quantityText: `${formatDecimal(item.quantity)} kg`,
     plantCount,
-    statusLabel: item.certificateStatus === "已归档" && reportPhotos.length ? "可投种" : "待补报告",
-    statusTone: item.certificateStatus === "已归档" && reportPhotos.length ? "good" : "warn",
+    statusLabel: reportPhotos.length ? "可投种" : "待补报告",
+    statusTone: reportPhotos.length ? "good" : "warn",
     readiness,
     createdAt: item.createdAt || isoDate()
   };
@@ -2672,7 +2661,7 @@ function renderSeedDetail(view, shared) {
       { label: "到货数量", value: view.quantityText },
       { label: "品牌", value: view.brand || "--" },
       { label: "已进种植", value: `${view.plantCount} 条` },
-      { label: "鉴定报告", value: view.certificateStatus || "待补充" }
+      { label: "鉴定报告", value: view.reportPhotoCount ? "已上传" : "待补充" }
     ])}
     ${renderActionBar([
       continueAction("继续建立种植过程", "farming-trace", { seedId: view.id, baseId: view.baseId }),
@@ -2682,12 +2671,12 @@ function renderSeedDetail(view, shared) {
       infoCard("上游基地", [view.baseName, view.baseCode, view.baseAddress]),
       infoCard("供应商信息", [view.supplierName, view.supplierPhone || "--", `${view.sourceType} / ${view.breedMaterial}`]),
       infoCard("报告情况", [
-        `鉴定报告：${view.certificateStatus || "待补充"}`,
-        `报告图片：${view.reportPhotoCount || 0} 张`
+        `种源鉴定报告：${view.reportPhotoCount ? "已上传" : "待补充"}`,
+        `种源鉴定报告图片：${view.reportPhotoCount || 0} 张`
       ])
     ])}
     ${renderNarrativeBlock("批次备注", view.note)}
-    ${renderTracePhotoDetailBlock("鉴定报告图片", view.reportPhotos, "还没有鉴定报告图片", "可以在种源备案弹窗里继续补充报告图片。")}
+    ${renderTracePhotoDetailBlock("种源鉴定报告", view.reportPhotos, "还没有种源鉴定报告图片", "可以在种源备案弹窗里继续补充报告图片。")}
   `;
 }
 
