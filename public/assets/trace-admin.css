@@ -3202,8 +3202,8 @@ body::before {
 }
 
 .dialog-standard-layout.is-context-empty {
-  grid-template-columns: minmax(0, 1fr) 208px;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
 }
 
 .dialog-context {
@@ -3211,9 +3211,8 @@ body::before {
   max-width: 312px;
 }
 
-.dialog-context.is-compact {
-  position: static;
-  max-width: 208px;
+.dialog-context.is-hidden {
+  display: none;
 }
 
 .context-card {

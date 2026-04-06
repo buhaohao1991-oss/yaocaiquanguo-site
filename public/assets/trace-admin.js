@@ -947,6 +947,7 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   const sections = getDialogSections(pageId, kind, shared, draft, selected);
   const hiddenFields = getHiddenDialogFields(pageId, kind, selected);
   const contextState = getFormContextState(pageId, kind, normalizeValues(draft || {}), shared, selected);
+  const contextHtml = contextState.variant === "empty" ? "" : contextState.html;
   return `
     <div class="dialog-standard-layout ${contextState.variant === "empty" ? "is-context-empty" : ""}" data-dialog-layout>
       <div class="dialog-standard-main">
@@ -954,9 +955,9 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
         ${renderDialogAttachmentSections(pageId, kind, draft)}
       </div>
-      <aside class="dialog-context ${contextState.variant === "empty" ? "is-compact" : ""}" data-form-context-shell>
+      <aside class="dialog-context ${contextState.variant === "empty" ? "is-hidden" : ""}" data-form-context-shell>
         <div data-form-context>
-          ${contextState.html}
+          ${contextHtml}
         </div>
       </aside>
     </div>
@@ -1616,9 +1617,9 @@ function updateFormContext(form, pageId, shared, kind) {
   }
   const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
   const contextState = getFormContextState(pageId, kind, values, shared);
-  context.innerHTML = contextState.html;
+  context.innerHTML = contextState.variant === "empty" ? "" : contextState.html;
   if (contextShell) {
-    contextShell.classList.toggle("is-compact", contextState.variant === "empty");
+    contextShell.classList.toggle("is-hidden", contextState.variant === "empty");
   }
   if (layout) {
     layout.classList.toggle("is-context-empty", contextState.variant === "empty");
