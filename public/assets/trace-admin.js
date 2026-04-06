@@ -14,6 +14,7 @@ const STORE_KEY = "trace-admin-workflow-v2";
 const DRAFT_KEY_PREFIX = "trace-admin-draft-v2:";
 const TRACE_QUERY_PAGE = "trace-query.html";
 const BASE_DETAIL_PAGE = "base-detail.html";
+const SEED_DETAIL_PAGE = "seed-detail.html";
 const TRACE_PUBLIC_SNAPSHOT_PARAM = "p";
 const TRACE_MAP_PAGE_ID = "base-trace";
 const TRACE_MAP_SCRIPT_ID = "trace-map-sdk";
@@ -100,7 +101,7 @@ const PAGE_CONFIGS = {
       { label: "面积", render: (view) => view.areaText },
       { label: "下游链路", render: (view) => metricMini(`${view.seedCount} 种源 / ${view.plantCount} 种植`) },
       { label: "操作", render: (view) => tableActionGroup([
-        detailPageActionButton(view.id),
+        detailPageActionButton(buildBaseDetailUrl(view.id)),
         editActionButton(view.id),
         deleteActionButton(view.id)
       ]) }
@@ -114,6 +115,7 @@ const PAGE_CONFIGS = {
     kicker: "SEED SOURCE",
     subtitle: "围绕种源批次、基地归属、来源方式和鉴定报告建立可回查的种苗档案。",
     actionLabel: "新增种源批次",
+    tableTitle: "",
     searchPlaceholder: "搜索种源批次、基地、药材或来源方式",
     getViews: (shared) => shared.views.seeds,
     getStats: (shared, views) => [
@@ -123,13 +125,18 @@ const PAGE_CONFIGS = {
     ],
     searchText: (view) => [view.batchNo, view.herb, view.baseName, view.sourceType, view.breedMaterial, view.brand].join(" "),
     columns: [
-      { label: "种源批次", render: (view) => titleCell(view.batchNo, `${view.herb} · ${view.baseName}`) },
+      { label: "种源批次", render: (view) => titleOnlyCell(view.batchNo) },
       { label: "关联基地", render: (view) => view.baseName },
       { label: "药材名称", render: (view) => view.herb || "--" },
       { label: "来源", render: (view) => `${view.sourceType} / ${view.breedMaterial}` },
       { label: "状态", render: (view) => statusPill(view.statusLabel, view.statusTone) },
-      { label: "操作", render: (view) => deleteActionButton(view.id) }
+      { label: "操作", render: (view) => tableActionGroup([
+        detailPageActionButton(buildSeedDetailUrl(view.id)),
+        editActionButton(view.id),
+        deleteActionButton(view.id)
+      ]) }
     ],
+    inlineDetail: false,
     renderDetail: (view, shared) => renderSeedDetail(view, shared)
   },
   "farming-trace": {
@@ -328,6 +335,15 @@ function renderAndBind(root, pageId) {
     document.title = view ? `中药材溯源平台 - ${view.name}` : "中药材溯源平台 - 基地详情";
     root.innerHTML = renderBaseDetailPage(shared, view);
     bindBaseDetailPage(root, shared, view);
+    return;
+  }
+
+  if (pageId === "seed-detail") {
+    const seedId = new URLSearchParams(window.location.search).get("id") || "";
+    const view = shared.views.seeds.find((item) => item.id === seedId) || null;
+    document.title = view ? `中药材溯源平台 - ${view.batchNo}` : "中药材溯源平台 - 种源详情";
+    root.innerHTML = renderSeedDetailPage(shared, view);
+    bindSeedDetailPage(root, shared, view);
     return;
   }
 
@@ -537,6 +553,54 @@ function renderBaseDetailPage(shared, view) {
           <section class="panel detail-page-panel">
             <div class="panel-body">
               ${renderEmptyState("基地档案", 0)}
+            </div>
+          </section>
+        `}
+      </main>
+    </div>
+  `;
+}
+
+function renderSeedDetailPage(shared, view) {
+  const actionButtons = view ? `
+    <div class="page-hero-actions detail-page-actions">
+      <a class="button ghost" href="seed-trace.html">返回</a>
+      <button class="button primary" type="button" data-edit-record="${escapeAttribute(view.id)}">编辑种源批次</button>
+    </div>
+  ` : `
+    <div class="page-hero-actions detail-page-actions">
+      <a class="button ghost" href="seed-trace.html">返回</a>
+    </div>
+  `;
+
+  return `
+    <div class="app-shell">
+      ${renderSidebar("seed-trace", shared)}
+      <main class="main module-main detail-page-main">
+        <section class="page-hero module-header no-stats detail-page-header">
+          <div class="page-copy">
+            <span class="page-kicker">中药材溯源平台</span>
+            <h1>${escapeHtml(view ? view.batchNo : "未找到种源批次")}</h1>
+            <p>${escapeHtml(view
+              ? [view.herb, view.baseName, `${view.sourceType} / ${view.breedMaterial}`].filter(Boolean).join(" · ")
+              : "当前种源记录不存在，可能已被删除。")}</p>
+          </div>
+          <div class="page-hero-side is-compact">
+            ${actionButtons}
+          </div>
+        </section>
+
+        ${view ? `
+          <section class="panel detail-panel detail-page-panel">
+            <div class="panel-body">
+              ${renderSeedDetailBody(view, shared)}
+            </div>
+          </section>
+          ${renderPageDialogs("seed-detail", shared, view)}
+        ` : `
+          <section class="panel detail-page-panel">
+            <div class="panel-body">
+              ${renderEmptyState("种源批次", 0)}
             </div>
           </section>
         `}
@@ -870,6 +934,11 @@ function renderPageDialogs(pageId, shared, selected) {
     return renderDialogShell("primary", draft.recordId ? "编辑基地档案" : "新建基地档案", renderBaseDialog(shared, draft), true);
   }
 
+  if (pageId === "seed-trace" || pageId === "seed-detail") {
+    const draft = readDraft("seed-trace");
+    return renderDialogShell("primary", draft.recordId ? "编辑种源批次" : "新增种源批次", renderStandardDialogLayout("seed-trace", "primary", shared, draft, selected));
+  }
+
   if (pageId === "farming-trace") {
     return [
       renderDialogShell("primary", "新建种植过程", renderStandardDialogLayout(pageId, "primary", shared, readDraft(pageId), selected)),
@@ -951,6 +1020,7 @@ function renderStandardDialogLayout(pageId, kind, shared, draft, selected) {
   return `
     <div class="dialog-standard-layout ${contextState.variant === "empty" ? "is-context-empty" : ""}" data-dialog-layout>
       <div class="dialog-standard-main">
+        <input type="hidden" name="recordId" value="${escapeAttribute(draft.recordId || "")}">
         ${hiddenFields}
         ${sections.map((section) => renderFormSection(section.title, section.fields)).join("")}
         ${renderDialogAttachmentSections(pageId, kind, draft)}
@@ -1509,8 +1579,13 @@ function openDialog(root, pageId, kind) {
   }
   dialog.showModal();
   const form = dialog.querySelector("form");
+  const dialogPageId = pageId === "base-detail"
+    ? "base-trace"
+    : pageId === "seed-detail"
+      ? "seed-trace"
+      : pageId;
   if (form) {
-    updateFormContext(form, pageId, buildSharedData(readWorkflowStore()), kind);
+    updateFormContext(form, dialogPageId, buildSharedData(readWorkflowStore()), kind);
   }
   if (pageId === "base-trace" || pageId === "base-detail") {
     window.requestAnimationFrame(() => activateBaseTraceMap(root));
@@ -1766,8 +1841,10 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
     if (pageId === "seed-trace") {
       const base = shared.maps.baseById.get(values.baseId);
       const reportPhotos = normalizeTracePhotoList(values.reportPhotos);
+      const existingIndex = values.recordId ? store.seeds.findIndex((item) => item.id === values.recordId) : -1;
+      const current = existingIndex >= 0 ? store.seeds[existingIndex] : null;
       const record = {
-        id: entityId("SEED", store.seeds.length + 1),
+        id: current ? current.id : entityId("SEED", store.seeds.length + 1),
         baseId: values.baseId,
         batchNo: values.batchNo || suggestCode("SEED", store.seeds.length + 1),
         herb: values.herb || (base ? base.herb : ""),
@@ -1777,10 +1854,15 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         certificateStatus: reportPhotos.length ? "已归档" : "待补充",
         reportPhotos: normalizeTracePhotoList(values.reportPhotos),
         note: values.note,
-        createdAt: isoDate()
+        createdAt: current ? current.createdAt : isoDate()
       };
-      store.seeds.unshift(record);
-      addActivity(store, "备案种源批次", `${record.batchNo} 已绑定基地`, `${record.herb} · ${record.sourceType}`);
+      if (existingIndex >= 0) {
+        store.seeds.splice(existingIndex, 1, record);
+        addActivity(store, "更新种源批次", `${record.batchNo} 已更新`, `${record.herb} · ${record.sourceType}`);
+      } else {
+        store.seeds.unshift(record);
+        addActivity(store, "备案种源批次", `${record.batchNo} 已绑定基地`, `${record.herb} · ${record.sourceType}`);
+      }
       return;
     }
 
@@ -2032,43 +2114,65 @@ function handleDeleteRecord(pageId, recordId, shared, root) {
 }
 
 function handleEditRecord(pageId, recordId, shared, root) {
-  if (pageId !== "base-trace" && pageId !== "base-detail") {
+  if (pageId === "base-trace" || pageId === "base-detail") {
+    const record = shared.maps.baseById.get(recordId);
+    if (!record) {
+      return;
+    }
+    const draftPageId = pageId === "base-detail" ? "base-trace" : pageId;
+
+    writeDraft(draftPageId, {
+      recordId: record.id,
+      code: record.code,
+      name: record.name,
+      manager: record.manager,
+      herb: record.herb,
+      baseType: record.baseType,
+      cooperationMode: record.cooperationMode,
+      areaMu: record.areaMu,
+      address: record.address,
+      detailAddress: record.detailAddress,
+      longitude: record.longitude,
+      latitude: record.latitude,
+      altitude: record.altitude,
+      avgTemp: record.avgTemp,
+      soilPh: record.soilPh,
+      soilEc: record.soilEc,
+      landCertStatus: record.landCertStatus,
+      envReportStatus: record.envReportStatus,
+      landLeasePhotos: record.landLeasePhotos || [],
+      envMonitorPhotos: record.envMonitorPhotos || [],
+      intro: record.intro,
+      photos: record.photos || []
+    });
+
+    APP_STATE.selectedId = "";
+    renderAndBind(root, pageId);
+    openDialog(root, pageId, "primary");
     return;
   }
-  const record = shared.maps.baseById.get(recordId);
-  if (!record) {
-    return;
+
+  if (pageId === "seed-trace" || pageId === "seed-detail") {
+    const record = shared.maps.seedById.get(recordId);
+    if (!record) {
+      return;
+    }
+    writeDraft("seed-trace", {
+      recordId: record.id,
+      baseId: record.baseId,
+      batchNo: record.batchNo,
+      herb: record.herb,
+      breedMaterial: record.breedMaterial,
+      sourceType: record.sourceType,
+      brand: record.brand,
+      reportPhotos: record.reportPhotos || [],
+      note: record.note
+    });
+
+    APP_STATE.selectedId = "";
+    renderAndBind(root, pageId);
+    openDialog(root, pageId, "primary");
   }
-  const draftPageId = pageId === "base-detail" ? "base-trace" : pageId;
-
-  writeDraft(draftPageId, {
-    recordId: record.id,
-    code: record.code,
-    name: record.name,
-    manager: record.manager,
-    herb: record.herb,
-    baseType: record.baseType,
-    cooperationMode: record.cooperationMode,
-    areaMu: record.areaMu,
-    address: record.address,
-    detailAddress: record.detailAddress,
-    longitude: record.longitude,
-    latitude: record.latitude,
-    altitude: record.altitude,
-    avgTemp: record.avgTemp,
-    soilPh: record.soilPh,
-    soilEc: record.soilEc,
-    landCertStatus: record.landCertStatus,
-    envReportStatus: record.envReportStatus,
-    landLeasePhotos: record.landLeasePhotos || [],
-    envMonitorPhotos: record.envMonitorPhotos || [],
-    intro: record.intro,
-    photos: record.photos || []
-  });
-
-  APP_STATE.selectedId = "";
-  renderAndBind(root, pageId);
-  openDialog(root, pageId, "primary");
 }
 
 function handleDeleteSubrecord(pageId, recordId, shared, root, selected) {
@@ -2645,6 +2749,12 @@ function renderBaseDetailBody(view, shared) {
 function renderSeedDetail(view, shared) {
   return `
     ${renderDetailHero(view.batchNo, view.statusLabel, view.statusTone, `${view.herb} · ${view.baseName}`)}
+    ${renderSeedDetailBody(view, shared)}
+  `;
+}
+
+function renderSeedDetailBody(view, shared) {
+  return `
     ${renderMetricGrid([
       { label: "关联基地", value: view.baseName || "--" },
       { label: "主要药材", value: view.herb || "--" },
@@ -3033,8 +3143,8 @@ function tableActionGroup(actions) {
   return `<div class="table-actions">${actions.join("")}</div>`;
 }
 
-function detailPageActionButton(id) {
-  return `<a class="chip neutral" href="${escapeAttribute(buildBaseDetailUrl(id))}">详情</a>`;
+function detailPageActionButton(href) {
+  return `<a class="chip neutral" href="${escapeAttribute(href)}">详情</a>`;
 }
 
 function selectActionButton(id, active = false) {
@@ -3055,6 +3165,10 @@ function publicPreviewLink(href) {
 
 function buildBaseDetailUrl(id) {
   return `${BASE_DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
+}
+
+function buildSeedDetailUrl(id) {
+  return `${SEED_DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
 }
 
 function navCountFor(pageId, shared) {
@@ -3336,6 +3450,83 @@ function bindBaseDetailPage(root, shared, view) {
   bindBaseTraceMap(root, dialog);
   bindBaseTracePhotos(root, dialog);
   bindBaseTracePreviewMaps(root);
+}
+
+function bindSeedDetailPage(root, shared, view) {
+  if (root._moduleClickHandler) {
+    root.removeEventListener("click", root._moduleClickHandler);
+  }
+  if (root._seedDetailClickHandler) {
+    root.removeEventListener("click", root._seedDetailClickHandler);
+  }
+
+  root._seedDetailClickHandler = (event) => {
+    const continueButton = event.target.closest("[data-continue-workflow]");
+    if (continueButton) {
+      handleContinueWorkflow(continueButton);
+      return;
+    }
+
+    const closeButton = event.target.closest("[data-close-dialog]");
+    if (closeButton) {
+      const kind = closeButton.dataset.closeDialog;
+      const dialog = root.querySelector(`[data-dialog="${kind}"]`);
+      if (dialog) {
+        dialog.close();
+      }
+      return;
+    }
+
+    const editButton = event.target.closest("[data-edit-record]");
+    if (editButton) {
+      event.preventDefault();
+      const recordId = editButton.dataset.editRecord || (view ? view.id : "");
+      if (recordId) {
+        handleEditRecord("seed-detail", recordId, shared, root);
+      }
+    }
+  };
+
+  root.addEventListener("click", root._seedDetailClickHandler);
+
+  const dialogs = root.querySelectorAll("dialog[data-dialog]");
+  dialogs.forEach((dialog) => {
+    dialog.addEventListener("click", (event) => {
+      const frame = dialog.querySelector(".dialog-frame");
+      if (!frame || frame.contains(event.target)) {
+        return;
+      }
+      dialog.close();
+    });
+  });
+
+  const forms = root.querySelectorAll("form[data-form-kind]");
+  forms.forEach((form) => {
+    bindFormIntelligence(form, "seed-trace", shared, view);
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (form._baseTracePhotoController) {
+        await form._baseTracePhotoController.waitUntilReady();
+      }
+      if (!form.reportValidity()) {
+        return;
+      }
+      const values = normalizeValues(Object.fromEntries(new FormData(form).entries()));
+      const validation = validateDialogSubmission("seed-trace", "primary", values);
+      if (!validation.ok) {
+        window.alert(validation.message);
+        return;
+      }
+      createRecordFromForm("seed-trace", "primary", values, shared, view);
+      clearDraft("seed-trace");
+      const targetId = values.recordId || (view ? view.id : "");
+      window.history.replaceState({}, "", buildSeedDetailUrl(targetId));
+      renderAndBind(root, "seed-detail");
+    });
+  });
+
+  const dialog = root.querySelector('[data-dialog="primary"]');
+  bindBaseTracePhotos(root, dialog);
 }
 
 function mergeStore(parsed) {
