@@ -1,7 +1,7 @@
 const NAV_ITEMS = [
   { id: "home", href: "index.html", title: "首页", subtitle: "总览与待办" },
   { id: "base-trace", href: "base-trace.html", title: "基地溯源", subtitle: "种植基地主档" },
-  { id: "seed-trace", href: "seed-trace.html", title: "种源备案", subtitle: "种苗与供应商" },
+  { id: "seed-trace", href: "seed-trace.html", title: "种源备案", subtitle: "种苗与鉴定" },
   { id: "farming-trace", href: "farming-trace.html", title: "种植与农事", subtitle: "过程与田间留痕" },
   { id: "harvest-trace", href: "harvest-trace.html", title: "采收追溯", subtitle: "采收批次管理" },
   { id: "processing-trace", href: "processing-trace.html", title: "初加工与工艺", subtitle: "加工过程与步骤" },
@@ -112,21 +112,21 @@ const PAGE_CONFIGS = {
     kind: "entity",
     title: "种源备案",
     kicker: "SEED SOURCE",
-    subtitle: "围绕种源批次、供应商、鉴定报告和关联网点建立可回查的种苗档案。",
+    subtitle: "围绕种源批次、基地归属、来源方式和鉴定报告建立可回查的种苗档案。",
     actionLabel: "新增种源批次",
-    searchPlaceholder: "搜索种源批次、基地、药材或供应商",
+    searchPlaceholder: "搜索种源批次、基地、药材或来源方式",
     getViews: (shared) => shared.views.seeds,
     getStats: (shared, views) => [
       { label: "种源批次", value: String(views.length), tone: "primary" },
       { label: "已上传鉴定报告", value: String(views.filter((item) => item.certificateStatus === "已归档" && item.reportPhotoCount > 0).length), tone: "good" },
       { label: "进入种植", value: String(views.filter((item) => item.plantCount > 0).length), tone: "normal" }
     ],
-    searchText: (view) => [view.batchNo, view.herb, view.baseName, view.supplierName, view.brand].join(" "),
+    searchText: (view) => [view.batchNo, view.herb, view.baseName, view.sourceType, view.breedMaterial, view.brand].join(" "),
     columns: [
       { label: "种源批次", render: (view) => titleCell(view.batchNo, `${view.herb} · ${view.baseName}`) },
-      { label: "供应商", render: (view) => view.supplierName },
+      { label: "关联基地", render: (view) => view.baseName },
+      { label: "药材名称", render: (view) => view.herb || "--" },
       { label: "来源", render: (view) => `${view.sourceType} / ${view.breedMaterial}` },
-      { label: "到货", render: (view) => view.quantityText },
       { label: "状态", render: (view) => statusPill(view.statusLabel, view.statusTone) },
       { label: "操作", render: (view) => deleteActionButton(view.id) }
     ],
@@ -665,8 +665,8 @@ function renderTracePublicDetail(traceData) {
           ])}
           ${renderPublicInfoCard("种源备案", [
             traceData.seedBatch || "--",
-            traceData.supplierName || "--",
-            traceData.seedBrand || "--"
+            traceData.seedHerb || "--",
+            traceData.seedSourceLabel || traceData.seedBrand || "--"
           ])}
         </div>
         ${traceData.baseCoordinates ? `
@@ -1089,15 +1089,6 @@ function getDialogSections(pageId, kind, shared, draft, selected) {
           fieldSelect("breedMaterial", "繁殖材料", BREED_MATERIALS, true, draft.breedMaterial),
           fieldSelect("sourceType", "来源方式", SOURCE_TYPES, true, draft.sourceType),
           fieldText("brand", "种源品牌", "例如：岷州良种", false, draft.brand)
-        ]
-      },
-      {
-        title: "供应商信息",
-        fields: [
-          fieldText("supplierName", "供应商名称", "例如：岷州种苗中心", true, draft.supplierName),
-          fieldText("supplierPhone", "联系电话", "例如：13900000000", false, draft.supplierPhone),
-          fieldDate("boughtDate", "种源日期", true, draft.boughtDate || isoDate()),
-          fieldNumber("quantity", "到货数量（kg）", "例如：320", true, draft.quantity)
         ]
       }
     ];
@@ -1640,7 +1631,7 @@ function getFormContextState(pageId, kind, values, shared, selected) {
     return (seed || base)
       ? { variant: "full", html: renderDialogContextCard("上游链路", [
         base ? `${base.name} · ${base.code}` : "未选择基地",
-        seed ? `${seed.batchNo} · ${seed.supplierName}` : "未选择种源",
+        seed ? `${seed.batchNo} · ${seed.herb || seed.breedMaterial || "种源批次"}` : "未选择种源",
         "保存后可继续补充农事记录"
       ]) }
       : { variant: "empty", html: renderDialogContextFallback() };
@@ -1783,17 +1774,13 @@ function createRecordFromForm(pageId, kind, values, shared, selected) {
         breedMaterial: values.breedMaterial,
         sourceType: values.sourceType,
         brand: values.brand,
-        supplierName: values.supplierName,
-        supplierPhone: values.supplierPhone,
-        boughtDate: values.boughtDate || isoDate(),
-        quantity: toNumber(values.quantity),
         certificateStatus: reportPhotos.length ? "已归档" : "待补充",
         reportPhotos: normalizeTracePhotoList(values.reportPhotos),
         note: values.note,
         createdAt: isoDate()
       };
       store.seeds.unshift(record);
-      addActivity(store, "备案种源批次", `${record.batchNo} 已绑定基地`, `${record.supplierName} · ${record.herb}`);
+      addActivity(store, "备案种源批次", `${record.batchNo} 已绑定基地`, `${record.herb} · ${record.sourceType}`);
       return;
     }
 
@@ -2442,9 +2429,8 @@ function buildSeedView(item, maps, relations) {
     item.baseId,
     item.batchNo,
     item.herb,
-    item.supplierName,
-    item.quantity,
-    item.boughtDate,
+    item.breedMaterial,
+    item.sourceType,
     reportPhotos.length > 0
   ]);
   return {
@@ -2577,8 +2563,9 @@ function buildQrView(item, maps) {
     baseAddress: base ? compactAddress(base.address, base.detailAddress) : "--",
     baseCoordinates: base ? readTraceMapCoordinates(base) : null,
     seedBatch: seed ? seed.batchNo : "--",
+    seedHerb: seed ? seed.herb : "--",
+    seedSourceLabel: seed ? `${seed.sourceType || "--"} / ${seed.breedMaterial || "--"}` : "--",
     seedBrand: seed ? seed.brand : "--",
-    supplierName: seed ? seed.supplierName : "--",
     warehouseName: warehouse ? warehouse.name : "--",
     warehouseConditions: warehouse ? warehouse.conditions : "--",
     warehouseMethod: warehouse ? warehouse.method : "--",
@@ -2659,18 +2646,26 @@ function renderSeedDetail(view, shared) {
   return `
     ${renderDetailHero(view.batchNo, view.statusLabel, view.statusTone, `${view.herb} · ${view.baseName}`)}
     ${renderMetricGrid([
-      { label: "到货数量", value: view.quantityText },
-      { label: "品牌", value: view.brand || "--" },
+      { label: "关联基地", value: view.baseName || "--" },
+      { label: "主要药材", value: view.herb || "--" },
       { label: "已进种植", value: `${view.plantCount} 条` },
       { label: "鉴定报告", value: view.reportPhotoCount ? "已上传" : "待补充" }
     ])}
     ${renderActionBar([
       continueAction("继续建立种植过程", "farming-trace", { seedId: view.id, baseId: view.baseId }),
-      subtleTextAction("查看基地", `${view.baseName} · ${view.baseCode}`)
+      subtleTextAction("种源品牌", view.brand || "--")
     ])}
     ${renderInfoRack([
-      infoCard("上游基地", [view.baseName, view.baseCode, view.baseAddress]),
-      infoCard("供应商信息", [view.supplierName, view.supplierPhone || "--", `${view.sourceType} / ${view.breedMaterial}`]),
+      infoCard("种源基础", [
+        `种源批次：${view.batchNo || "--"}`,
+        `繁殖材料：${view.breedMaterial || "--"}`,
+        `来源方式：${view.sourceType || "--"}`
+      ]),
+      infoCard("关联基地", [
+        `基地名称：${view.baseName || "--"}`,
+        `基地编号：${view.baseCode || "--"}`,
+        `所属地区：${view.baseAddress || "--"}`
+      ]),
       infoCard("报告情况", [
         `种源鉴定报告：${view.reportPhotoCount ? "已上传" : "待补充"}`,
         `种源鉴定报告图片：${view.reportPhotoCount || 0} 张`
@@ -3459,8 +3454,8 @@ function buildPublicTraceSnapshot(view, views) {
     ] : [],
     s: [
       compactTraceText(view.seedBatch, 24),
-      compactTraceText(view.supplierName, 36),
-      compactTraceText(view.seedBrand, 24)
+      compactTraceText(view.seedHerb, 24),
+      compactTraceText(view.seedSourceLabel || view.seedBrand, 32)
     ],
     p: compactTraceText(view.plantBatch, 24),
     h: [
@@ -3494,7 +3489,8 @@ function buildPublicTraceDetailFromView(view, shared) {
     baseAddress: view.baseAddress,
     baseCoordinates: view.baseCoordinates,
     seedBatch: view.seedBatch,
-    supplierName: view.supplierName,
+    seedHerb: view.seedHerb,
+    seedSourceLabel: view.seedSourceLabel,
     seedBrand: view.seedBrand,
     plantBatch: view.plantBatch,
     harvestName: view.harvestName,
@@ -3546,8 +3542,9 @@ function buildPublicTraceDetailFromSnapshot(snapshot, fallbackCode, snapshotToke
     baseAddress: baseInfo[2] || "--",
     baseCoordinates: Number.isFinite(baseCoordinates && baseCoordinates.lng) && Number.isFinite(baseCoordinates && baseCoordinates.lat) ? baseCoordinates : null,
     seedBatch: seedInfo[0] || "--",
-    supplierName: seedInfo[1] || "--",
-    seedBrand: seedInfo[2] || "--",
+    seedHerb: seedInfo[1] || "--",
+    seedSourceLabel: seedInfo[2] || "--",
+    seedBrand: "--",
     plantBatch: snapshot && snapshot.p ? snapshot.p : "--",
     harvestName: harvestInfo[0] || "--",
     harvestBatch: harvestInfo[1] || "--",
